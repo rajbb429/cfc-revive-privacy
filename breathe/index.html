@@ -37,6 +37,7 @@
     --seg1: #d8c6f0; /* hold full */
     --seg2: #9fd6cf; /* exhale */
     --seg3: #7f8aa6; /* hold empty */
+    --strain: #f0b98a; /* maneuver effort */
     --display: "Marcellus", "Cormorant Garamond", Georgia, serif;
     --body: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
@@ -47,7 +48,7 @@
     --accent: #9fdacd; --ink: #e8f5f1; --muted: #86aba6;
     --line: rgba(232, 245, 241, 0.14); --glass: rgba(232, 245, 241, 0.06); --glassHi: rgba(232, 245, 241, 0.12);
     --sheet: #0f2a2e;
-    --seg0: #a6e0f0; --seg1: #bfe8d6; --seg2: #7fcfbf; --seg3: #5f8f8f;
+    --seg0: #a6e0f0; --seg1: #bfe8d6; --seg2: #7fcfbf; --seg3: #5f8f8f; --strain: #f2c28c;
   }
   :root[data-scene="moss"] {
     color-scheme: dark;
@@ -56,7 +57,7 @@
     --accent: #c7d7a5; --ink: #eef0e5; --muted: #9ba68f;
     --line: rgba(238, 240, 229, 0.14); --glass: rgba(238, 240, 229, 0.06); --glassHi: rgba(238, 240, 229, 0.12);
     --sheet: #1b261c;
-    --seg0: #cfe0a8; --seg1: #e6dcae; --seg2: #a9cfa4; --seg3: #7f8c73;
+    --seg0: #cfe0a8; --seg1: #e6dcae; --seg2: #a9cfa4; --seg3: #7f8c73; --strain: #e8b27e;
   }
   :root[data-scene="dawn"] {
     color-scheme: light;
@@ -65,7 +66,7 @@
     --accent: #a15f4a; --ink: #2d2630; --muted: #7a6d77;
     --line: rgba(45, 38, 48, 0.14); --glass: rgba(255, 255, 255, 0.45); --glassHi: rgba(255, 255, 255, 0.75);
     --sheet: #faf5ef;
-    --seg0: #e59a7c; --seg1: #c99bb8; --seg2: #8fb1c9; --seg3: #b8a9b0;
+    --seg0: #e59a7c; --seg1: #c99bb8; --seg2: #8fb1c9; --seg3: #b8a9b0; --strain: #d9793f;
   }
 
   *, *::before, *::after { box-sizing: border-box; }
@@ -104,6 +105,8 @@
   :root[data-phase="in"] .tint { opacity: 0.16; transition-duration: 4s; }
   :root[data-phase="hold"] .tint { opacity: 0.13; transition-duration: 7s; }
   :root[data-phase="out"] .tint { opacity: 0.05; transition-duration: 6s; }
+  :root[data-phase="strain"] .tint { opacity: 0.2; transition-duration: 1.5s; background: radial-gradient(60% 50% at 50% 45%, var(--strain), transparent 70%); }
+  :root[data-phase="strain"] .halo { background: radial-gradient(circle, color-mix(in srgb, var(--strain) 55%, transparent) 0%, transparent 68%); }
   @keyframes driftA { to { transform: translate(18vmax, 14vmax) scale(1.15); } }
   @keyframes driftB { to { transform: translate(-16vmax, -12vmax) scale(1.1); } }
 
@@ -145,10 +148,12 @@
   .stage svg.ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
   .seg { fill: none; stroke-width: 3; stroke-linecap: round; opacity: 0.32; transition: opacity .8s, stroke-width .8s; }
   .seg.on { opacity: 1; stroke-width: 4.5; }
-  .seg[data-i="0"] { stroke: var(--seg0); }
-  .seg[data-i="1"] { stroke: var(--seg1); }
-  .seg[data-i="2"] { stroke: var(--seg2); }
-  .seg[data-i="3"] { stroke: var(--seg3); }
+  [data-vis="rise"] { --c: var(--seg0); }
+  [data-vis="full"] { --c: var(--seg1); }
+  [data-vis="fall"] { --c: var(--seg2); }
+  [data-vis="empty"], [data-vis="free"] { --c: var(--seg3); }
+  [data-vis="press"], [data-vis="pull"] { --c: var(--strain); }
+  .seg { stroke: var(--c); }
   .tick-label { fill: var(--muted); font-family: var(--body); font-size: 11px; letter-spacing: 0.12em; text-anchor: middle; dominant-baseline: middle; }
   .dot { fill: var(--ink); }
   .dot-glow { fill: var(--accent); opacity: .35; }
@@ -186,7 +191,7 @@
   .meta { font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1.3em; text-align: center; }
 
   /* Pattern legend: the four phases in order, current one lit. */
-  .legend { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: min(100%, 400px); list-style: none; margin: 0; padding: 0; }
+  .legend { display: grid; grid-template-columns: repeat(var(--n, 4), 1fr); gap: 6px; width: min(100%, 400px); list-style: none; margin: 0; padding: 0; }
   .legend li {
     display: flex; flex-direction: column; align-items: center; gap: 2px;
     padding: 8px 4px 7px; border-radius: 14px; transition: background-color .6s, color .6s;
@@ -195,11 +200,19 @@
   .legend li b { font-weight: 500; font-size: 1.2rem; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.1; }
   .legend li span { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; }
   .legend li i { width: 18px; height: 3px; border-radius: 2px; opacity: .8; }
-  .legend li:nth-child(1) i { background: var(--seg0); }
-  .legend li:nth-child(2) i { background: var(--seg1); }
-  .legend li:nth-child(3) i { background: var(--seg2); }
-  .legend li:nth-child(4) i { background: var(--seg3); }
+  .legend li i { background: var(--c); }
   .legend li.on { background: var(--glass); color: var(--ink); }
+
+  /* Exercise switcher */
+  .exercises { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+  .exercises.away { visibility: hidden; }
+  .ex-btn {
+    display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: transparent;
+    border-radius: 999px; padding: 6px 13px; cursor: pointer; color: var(--muted); font-size: 0.86rem;
+  }
+  .ex-btn[aria-pressed="true"] { background: var(--glassHi); color: var(--ink); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+  .ex-btn svg { width: 12px; height: 12px; opacity: .8; }
+  .ex-btn:not(.locked) svg { display: none; }
 
   /* Controls */
   footer { display: flex; flex-direction: column; align-items: center; gap: 14px; }
@@ -318,6 +331,32 @@
   .done .primary { min-width: 130px; height: 48px; }
   .done .secondary { height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid var(--line); background: transparent; cursor: pointer; color: var(--ink); }
 
+  /* Paywall */
+  .pro { padding: 8px 22px calc(env(safe-area-inset-bottom, 0px) + 24px); display: flex; flex-direction: column; gap: 14px; }
+  .pro-hero { display: flex; align-items: center; gap: 16px; }
+  .pro-hero .mini-orb { width: 58px; height: 58px; flex: none; border-radius: 50%; background: radial-gradient(circle at 36% 30%, #fff, var(--orb1) 40%, var(--strain)); box-shadow: 0 0 36px -6px var(--strain); }
+  .pro h2 { font-family: var(--display); font-weight: 400; font-size: 1.55rem; margin: 0; text-wrap: balance; }
+  .pro .sub { margin: 2px 0 0; color: var(--muted); font-size: .9rem; }
+  .perks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .perks li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; }
+  .perks svg { width: 20px; height: 20px; color: var(--accent); margin-top: 1px; }
+  .perks b { font-weight: 500; display: block; }
+  .perks small { color: var(--muted); font-size: .82rem; }
+  .pro .primary { width: 100%; }
+  .pro .row-btns { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .link-btn { border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 8px 4px; font-size: .9rem; text-decoration: underline; text-underline-offset: 3px; }
+  .link-btn:hover { color: var(--ink); }
+  .pro-note { font-size: .8rem; color: var(--muted); text-align: center; margin: 0; }
+  .pro-status { font-size: .88rem; text-align: center; min-height: 1.2em; margin: 0; color: var(--ink); }
+  .preview-unlock { border: 1px dashed var(--line); background: transparent; color: var(--muted); border-radius: 12px; padding: 10px; cursor: pointer; font-size: .85rem; }
+
+  /* Safety sheet */
+  .warn { margin-top: 18px; border-radius: 16px; padding: 12px 14px; background: color-mix(in srgb, var(--strain) 14%, transparent); border: 1px solid color-mix(in srgb, var(--strain) 40%, transparent); }
+  .warn h3 { margin-top: 2px; color: var(--ink); }
+  .ack { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; margin-top: 18px; cursor: pointer; }
+  .ack input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent); }
+  .sheet .actions { margin-top: 16px; justify-content: flex-end; }
+
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   [hidden] { display: none !important; }
 
@@ -344,7 +383,7 @@
 
 <div class="app">
   <header>
-    <div class="brand"><b>Stillwater</b><span>4 · 7 · 6 · 6</span></div>
+    <div class="brand"><b>Stillwater</b><span id="brandTag">4 · 7 · 6 · 6</span></div>
     <nav class="tools" aria-label="Menu">
       <button class="icon-btn" id="btn-stats" type="button" aria-label="Your practice">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 20V13M12 20V5M19 20v-9"/></svg>
@@ -352,13 +391,19 @@
       <button class="icon-btn" id="btn-settings" type="button" aria-label="Settings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
       </button>
-      <button class="icon-btn" id="btn-info" type="button" aria-label="About 4-7-6-6 breathing">
+      <button class="icon-btn" id="btn-info" type="button" aria-label="About this exercise">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8v.2"/></svg>
       </button>
     </nav>
   </header>
 
   <main>
+    <div class="exercises" id="exercises" role="group" aria-label="Exercise">
+      <button class="ex-btn" type="button" data-ex="4766">4-7-6-6</button>
+      <button class="ex-btn" type="button" data-ex="valsalva"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Valsalva</button>
+      <button class="ex-btn" type="button" data-ex="muller"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Müller</button>
+    </div>
+
     <div class="stage" id="stage" role="button" tabindex="0" aria-label="Start breathing session">
       <svg class="ring" viewBox="0 0 400 400" aria-hidden="true">
         <g id="segs"></g>
@@ -378,12 +423,7 @@
 
     <div class="meta" id="meta">Tap the circle or Begin</div>
 
-    <ol class="legend" id="legend" aria-label="Breathing pattern">
-      <li><i></i><b>4</b><span>Inhale</span></li>
-      <li><i></i><b>7</b><span>Hold</span></li>
-      <li><i></i><b>6</b><span>Exhale</span></li>
-      <li><i></i><b>6</b><span>Hold</span></li>
-    </ol>
+    <ol class="legend" id="legend" aria-label="Pattern"></ol>
   </main>
 
   <footer>
@@ -394,6 +434,13 @@
         <button type="button" data-min="10">10</button>
         <button type="button" data-min="15">15</button>
         <button type="button" data-min="0" aria-label="Open-ended">∞</button>
+      </div>
+      <div class="seg-ctl" role="group" aria-label="Rounds" id="roundCtl" hidden>
+        <button type="button" data-rounds="1">1 round</button>
+        <button type="button" data-rounds="2">2</button>
+        <button type="button" data-rounds="3">3</button>
+        <button type="button" data-rounds="4">4</button>
+        <button type="button" data-rounds="5">5</button>
       </div>
       <div class="dur-note" id="durNote"></div>
     </div>
@@ -449,6 +496,32 @@
     <div class="row">
       <label for="opt-counts">Show counting<small>1 to 4, 1 to 7, and so on</small></label>
       <span class="switch"><input type="checkbox" id="opt-counts"><span></span></span>
+    </div>
+
+    <h3>Valsalva &amp; Müller</h3>
+    <div class="row">
+      <div class="lbl">Valsalva bear-down<small>15 s is the clinical standard</small></div>
+      <div class="chips" data-setting="vStrain" data-num>
+        <button class="chip" type="button" data-v="5">5 s</button>
+        <button class="chip" type="button" data-v="10">10 s</button>
+        <button class="chip" type="button" data-v="15">15 s</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="lbl">Müller pull-in</div>
+      <div class="chips" data-setting="mStrain" data-num>
+        <button class="chip" type="button" data-v="5">5 s</button>
+        <button class="chip" type="button" data-v="8">8 s</button>
+        <button class="chip" type="button" data-v="10">10 s</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="lbl">Recovery between rounds<small>Breathe normally and stay seated</small></div>
+      <div class="chips" data-setting="recovery" data-num>
+        <button class="chip" type="button" data-v="30">30 s</button>
+        <button class="chip" type="button" data-v="45">45 s</button>
+        <button class="chip" type="button" data-v="60">60 s</button>
+      </div>
     </div>
 
     <h3>Scene</h3>
@@ -512,8 +585,64 @@
     <h3>Shortcuts</h3>
     <p><kbd>Space</kbd> start or pause · <kbd>Esc</kbd> end · <kbd>S</kbd> settings</p>
 
+    <h3>Full app</h3>
+    <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times. The safety notes for both stay free to read: pick either one above and tap <b>i</b>.</p>
+
     <h3>Privacy</h3>
-    <p>No account, no ads, no analytics. Everything runs on your device, and your session history stays in this browser. Once opened, it works offline and can be added to your home screen.</p>
+    <p>No account, no ads, no analytics. Everything runs on your device, and your session history stays in this browser. Purchases go through Google Play; the app only learns whether you own the unlock. Once opened, it works offline and can be added to your home screen. <a href="privacy.html" style="color: var(--accent)">Privacy policy</a></p>
+  </div>
+</dialog>
+
+<!-- Paywall -->
+<dialog id="dlg-pro" aria-labelledby="pro-title">
+  <div class="pro">
+    <div class="grabber"></div>
+    <div class="pro-hero">
+      <div class="mini-orb" aria-hidden="true"></div>
+      <div>
+        <h2 id="pro-title">Unlock the full app</h2>
+        <p class="sub">One-time purchase. No subscription, no ads.</p>
+      </div>
+    </div>
+    <ul class="perks">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Valsalva maneuver</b><small>Breathe in, bear down against a closed airway, recover</small></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Müller maneuver</b><small>Breathe out, pull in against a closed airway, recover</small></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Your timings</b><small>Effort from 5 to 15 s, 1 to 5 rounds, 30 to 60 s recovery</small></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Every exercise added later</b><small>Included, at no extra cost</small></div></li>
+    </ul>
+    <button class="primary" type="button" id="btn-buy">Unlock full app</button>
+    <p class="pro-status" id="pro-status" role="status"></p>
+    <div class="row-btns">
+      <button class="link-btn" type="button" id="btn-restore">Restore purchase</button>
+      <button class="link-btn" type="button" data-close>Not now</button>
+    </div>
+    <button class="preview-unlock" type="button" id="btn-preview-unlock" hidden>Preview build: unlock without paying</button>
+    <p class="pro-note">4-7-6-6 breathing stays free, with every sound and setting.</p>
+  </div>
+</dialog>
+
+<!-- Maneuver safety -->
+<dialog id="dlg-safety" aria-labelledby="safety-title">
+  <div class="sheet">
+    <div class="grabber"></div>
+    <div class="sheet-head">
+      <h2 id="safety-title">Before you start</h2>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div id="safety-body"></div>
+    <div class="warn">
+      <h3>Don't do this if you have</h3>
+      <p>Heart disease or an irregular heartbeat, a recent heart attack or stroke, high or very low blood pressure, an aneurysm, glaucoma or a retinal problem, a lung condition or a past collapsed lung, a hernia, recent eye, ear, chest or abdominal surgery, or if you are pregnant. Ask your doctor first.</p>
+      <h3>Stop right away if you feel</h3>
+      <p>Dizzy or faint, chest pain, a pounding or irregular heartbeat, a sudden headache, changes in your vision, or ear pain. Never practice standing up, while driving, or in water.</p>
+    </div>
+    <p style="font-size:.85rem;color:var(--muted)">These are physical maneuvers, not relaxation exercises. They change the pressure in your chest and your heart rate. This app guides timing only and is not medical advice.</p>
+    <div id="safety-start">
+      <label class="ack" for="ack"><input type="checkbox" id="ack"><span>I'm sitting or lying down, none of the above applies to me, and I'll use moderate effort.</span></label>
+      <div class="actions">
+        <button class="primary" type="button" id="btn-safe-start" disabled>Start</button>
+      </div>
+    </div>
   </div>
 </dialog>
 
@@ -523,7 +652,7 @@
     <div class="mini-orb" aria-hidden="true"></div>
     <h2 id="done-title">Well breathed.</h2>
     <p class="sum" id="done-sum"></p>
-    <p>Stay here a moment and notice how you feel.</p>
+    <p id="done-note">Stay here a moment and notice how you feel.</p>
     <div class="actions">
       <button class="secondary" type="button" id="btn-again">Again</button>
       <button class="primary" type="button" id="btn-done">Done</button>
@@ -535,59 +664,137 @@
 (() => {
   'use strict';
 
-  // ---------- Pattern ----------
-  const PH = [
-    { k: 'in',   word: 'Breathe in',  d: 4, hint: 'through the nose',       say: 'Breathe in' },
-    { k: 'hold', word: 'Hold',        d: 7, hint: 'lungs full, stay soft',   say: 'Hold' },
-    { k: 'out',  word: 'Breathe out', d: 6, hint: 'slow, through the mouth', say: 'Breathe out' },
-    { k: 'rest', word: 'Hold',        d: 6, hint: 'lungs empty, at ease',    say: 'Hold' },
-  ];
-  const OFF = [0, 4, 11, 17];
-  const CYCLE = 23;
-  const LEAD = 4; // settle-in seconds before the first inhale
-  const SMIN = 0.7, SMAX = 1;
+  // ---------- Purchase setup ----------
+  // Google Play Billing through the Digital Goods API (app installed from Play as a
+  // Trusted Web Activity). Play refunds a purchase that isn't acknowledged within
+  // 3 days, so set verifyUrl to a server that checks the token with the Play
+  // Developer API and acknowledges it, answering {"ok": true}.
+  const BILLING = {
+    sku: 'stillwater_full',
+    method: 'https://play.google.com/billing',
+    verifyUrl: '',
+    previewUnlock: false, // shows a no-payment unlock button; keep false in release builds
+  };
 
   // ---------- Storage (best effort) ----------
   const store = {
     get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
   };
-  const DEFAULTS = { minutes: 5, sound: 'bowl', ambience: 'none', volume: 0.7, voice: false, haptics: true, counts: true, scene: 'auto' };
+  const DEFAULTS = {
+    ex: '4766', minutes: 5, rounds: 3, vStrain: 10, mStrain: 8, recovery: 45,
+    sound: 'bowl', ambience: 'none', volume: 0.7, voice: false, haptics: true, counts: true, scene: 'auto',
+  };
   const set = Object.assign({}, DEFAULTS, store.get('stillwater.settings', {}));
   const saveSettings = () => store.set('stillwater.settings', set);
+
+  // ---------- Exercises ----------
+  // vis: how the orb moves. rise/fall ease between small and full, full/empty rest,
+  // press/pull tremble under effort, free breathes loosely during recovery.
+  const RECOVER = () => ({ k: 'recover', vis: 'free', word: 'Release', d: set.recovery, hint: 'breathe normally, stay seated', say: 'Release. Breathe normally.', label: 'Recover' });
+  const EX = {
+    '4766': {
+      name: '4-7-6-6', tag: '4 · 7 · 6 · 6', free: true, unit: ['breath', 'breaths'],
+      idle: ['Breathe with me', 'one full breath'],
+      lead: { d: 4, word: 'Settle in', hint: 'breathe out fully', say: 'Settle in' },
+      phases: () => [
+        { k: 'in', vis: 'rise', word: 'Breathe in', d: 4, hint: 'through the nose', say: 'Breathe in', label: 'Inhale' },
+        { k: 'hold', vis: 'full', word: 'Hold', d: 7, hint: 'lungs full, stay soft', say: 'Hold', label: 'Hold' },
+        { k: 'out', vis: 'fall', word: 'Breathe out', d: 6, hint: 'slow, through the mouth', say: 'Breathe out', label: 'Exhale' },
+        { k: 'rest', vis: 'empty', word: 'Hold', d: 6, hint: 'lungs empty, at ease', say: 'Hold', label: 'Hold' },
+      ],
+    },
+    valsalva: {
+      name: 'Valsalva', tag: 'Valsalva', unit: ['round', 'rounds'],
+      idle: ['Valsalva', 'bear down, then recover'],
+      lead: { d: 8, word: 'Sit down', hint: 'breathe normally', say: 'Sit down and breathe normally.' },
+      phases: () => [
+        { k: 'in', vis: 'rise', word: 'Breathe in', d: 4, hint: 'a normal breath, not a full one', say: 'Breathe in', label: 'Inhale' },
+        { k: 'strain', vis: 'press', word: 'Bear down', d: set.vStrain, hint: 'mouth shut, nose pinched, push gently', say: 'Bear down', label: 'Bear down', ticks: true },
+        RECOVER(),
+      ],
+      about: `<p>You breathe out hard against a closed airway, as if blowing up a stiff balloon. Doctors use it to check how your heart and blood pressure respond, and divers and pilots use a softer version to clear their ears. Doctors sometimes teach it to slow certain fast heart rhythms. Use it that way only if your doctor has told you to.</p>
+        <h3>How it goes</h3>
+        <ul><li>Sit down. Take a normal breath in.</li><li>Close your mouth, pinch your nose, and bear down with moderate effort until the timer ends.</li><li>Release and breathe normally. Stay seated through the recovery.</li></ul>`,
+    },
+    muller: {
+      name: 'Müller', tag: 'Müller', unit: ['round', 'rounds'],
+      idle: ['Müller', 'pull in, then recover'],
+      lead: { d: 8, word: 'Sit down', hint: 'breathe normally', say: 'Sit down and breathe normally.' },
+      phases: () => [
+        { k: 'out', vis: 'fall', word: 'Breathe out', d: 5, hint: 'empty your lungs', say: 'Breathe out', label: 'Exhale' },
+        { k: 'strain', vis: 'pull', word: 'Pull in', d: set.mStrain, hint: 'mouth shut, nose pinched, try to inhale', say: 'Pull in', label: 'Pull in', ticks: true },
+        RECOVER(),
+      ],
+      about: `<p>The reverse of Valsalva: you try to breathe in hard against a closed airway, which creates strong suction in your chest. Clinicians use it to study the heart and the upper airway, for example when assessing sleep apnea.</p>
+        <h3>How it goes</h3>
+        <ul><li>Sit down. Breathe out fully.</li><li>Close your mouth, pinch your nose, and try to breathe in with moderate effort until the timer ends.</li><li>Release and breathe normally. Stay seated through the recovery.</li></ul>`,
+    },
+  };
+
+  const SMIN = 0.7, SMAX = 1, SMID = 0.85;
+  const START = { rise: SMIN, full: SMAX, fall: SMAX, empty: SMIN, press: 0.97, pull: 0.72, free: SMID };
+  const END = { rise: SMAX, full: SMAX, fall: SMIN, empty: SMIN, press: 0.97, pull: 0.72, free: SMID };
+  const HAPTIC = { rise: [35], full: [18], fall: [30, 90, 30], empty: [18], press: [70], pull: [70], free: [20, 60, 20] };
 
   // ---------- Elements ----------
   const $ = (id) => document.getElementById(id);
   const root = document.documentElement;
   const el = {
     stage: $('stage'), orb: $('orb'), halo: $('halo'), word: $('word'), count: $('count'), hint: $('hint'),
-    meta: $('meta'), legend: $('legend').children, segs: $('segs'), dot: $('dot'), dotGlow: $('dotGlow'),
-    main: $('btn-main'), end: $('btn-end'), durations: $('durations'), durCtl: $('durCtl'), durNote: $('durNote'), live: $('live'),
+    meta: $('meta'), legend: $('legend'), segs: $('segs'), dot: $('dot'), dotGlow: $('dotGlow'),
+    main: $('btn-main'), end: $('btn-end'), durations: $('durations'), durCtl: $('durCtl'), roundCtl: $('roundCtl'),
+    durNote: $('durNote'), live: $('live'), exercises: $('exercises'), brandTag: $('brandTag'),
   };
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
-  // ---------- Ring geometry ----------
+  // ---------- Plan: the exercise's timeline ----------
+  let P = null; // { id, ex, ph, off, cycle, lead, events }
+  function buildPlan(id) {
+    const ex = EX[id], ph = ex.phases(), off = [];
+    let t = 0;
+    ph.forEach((p) => { off.push(t); t += p.d; });
+    // Audio events inside one cycle: phase starts plus 3-2-1 ticks near the end of an effort.
+    const events = [];
+    ph.forEach((p, i) => {
+      events.push({ t: off[i], type: 'phase', i });
+      if (p.ticks) for (let k = 3; k >= 1; k--) if (p.d > k + 1) events.push({ t: off[i] + p.d - k, type: 'tick' });
+    });
+    events.sort((a, b) => a.t - b.t);
+    return { id, ex, ph, off, cycle: t, lead: ex.lead.d, events };
+  }
+
+  // ---------- Ring ----------
   const CX = 200, CY = 200, R = 182;
   const polar = (deg, r = R) => { const a = (deg - 90) * Math.PI / 180; return [CX + r * Math.cos(a), CY + r * Math.sin(a)]; };
-  (function drawRing() {
+  function drawPattern() {
+    el.segs.innerHTML = '';
     const gap = 2.2;
-    PH.forEach((p, i) => {
-      const a0 = OFF[i] / CYCLE * 360 + gap, a1 = (OFF[i] + p.d) / CYCLE * 360 - gap;
+    P.ph.forEach((p, i) => {
+      const a0 = P.off[i] / P.cycle * 360 + gap, a1 = (P.off[i] + p.d) / P.cycle * 360 - gap;
       const [x0, y0] = polar(a0), [x1, y1] = polar(a1);
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('d', `M${x0.toFixed(2)} ${y0.toFixed(2)} A${R} ${R} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`);
-      path.setAttribute('class', 'seg'); path.dataset.i = i;
+      path.setAttribute('class', 'seg'); path.dataset.vis = p.vis;
       el.segs.appendChild(path);
     });
-  })();
-  const segEls = el.segs.children;
+    el.legend.innerHTML = '';
+    el.legend.style.setProperty('--n', P.ph.length);
+    P.ph.forEach((p) => {
+      const li = document.createElement('li');
+      li.dataset.vis = p.vis;
+      li.innerHTML = `<i></i><b>${p.d}</b><span>${p.label}</span>`;
+      el.legend.appendChild(li);
+    });
+    el.brandTag.textContent = P.ex.tag;
+  }
+  function lightPhase(i) {
+    [...el.segs.children].forEach((s, j) => s.classList.toggle('on', j === i));
+    [...el.legend.children].forEach((s, j) => s.classList.toggle('on', j === i));
+  }
 
   // ---------- Session state ----------
-  const S = {
-    status: 'idle', // idle | running | paused
-    startPerf: 0, pausedAt: 0, pausedTotal: 0,
-    cycles: Infinity, lastKey: null, leadFrom: 0.8, idleScale: 0.8,
-  };
+  const S = { status: 'idle', startPerf: 0, pausedAt: 0, pausedTotal: 0, cycles: Infinity, lastKey: null, leadFrom: 0.8, idleScale: 0.8 };
   const now = () => performance.now();
   const elapsedSec = () => {
     if (S.status === 'idle') return 0;
@@ -595,18 +802,23 @@
     return (t - S.startPerf - S.pausedTotal) / 1000;
   };
   function stateAt(sec) {
-    if (sec < LEAD) return { lead: true, t: sec };
-    const s = sec - LEAD;
-    const cyc = Math.floor(s / CYCLE);
-    const ct = s - cyc * CYCLE;
-    let i = 3;
-    for (let j = 0; j < 4; j++) if (ct < OFF[j] + PH[j].d) { i = j; break; }
-    const pt = ct - OFF[i];
-    return { lead: false, cyc, ct, i, pt, p: pt / PH[i].d };
+    if (sec < P.lead) return { lead: true, t: sec };
+    const s = sec - P.lead;
+    const cyc = Math.floor(s / P.cycle);
+    const ct = s - cyc * P.cycle;
+    let i = P.ph.length - 1;
+    for (let j = 0; j < P.ph.length; j++) if (ct < P.off[j] + P.ph[j].d) { i = j; break; }
+    const pt = ct - P.off[i];
+    return { lead: false, cyc, ct, i, pt, p: pt / P.ph[i].d };
   }
-  const cyclesFor = (min) => (min > 0 ? Math.max(1, Math.round(min * 60 / CYCLE)) : Infinity);
-  const totalSec = () => LEAD + S.cycles * CYCLE;
+  const isMinutes = () => P.id === '4766';
+  const cyclesFor = () => {
+    if (!isMinutes()) return set.rounds;
+    return set.minutes > 0 ? Math.max(1, Math.round(set.minutes * 60 / P.cycle)) : Infinity;
+  };
+  const totalSec = () => P.lead + S.cycles * P.cycle;
   const fmt = (s) => { s = Math.max(0, Math.round(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+  const plural = (n) => (n === 1 ? P.ex.unit[0] : P.ex.unit[1]);
 
   // ---------- Audio ----------
   const A = { ctx: null, master: null, cue: null, amb: null, next: 0, noise: null };
@@ -634,7 +846,6 @@
     A.cue = A.ctx.createGain();
     A.cue.connect(A.master);
   }
-  // Session seconds -> AudioContext time
   const audioAt = (sec) => A.ctx.currentTime + (sec - elapsedSec());
 
   function bowl(freq, at, amp, dur = 6) {
@@ -651,9 +862,18 @@
       o.start(at); o.stop(at + d + 0.05);
     });
   }
-  function tone(i, at) {
-    if (i === 3) return; // silence while resting empty
-    const c = A.ctx, d = PH[i].d, lo = 174.6, hi = 261.6;
+  function tick(at) {
+    const c = A.ctx, o = c.createOscillator(), g = c.createGain();
+    o.type = 'sine'; o.frequency.value = 880;
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(0.07, at + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + 0.18);
+    o.connect(g).connect(A.cue); o.start(at); o.stop(at + 0.2);
+  }
+  // A soft tone that rises with the inhale and falls with the exhale.
+  function tone(vis, at, d) {
+    if (!['rise', 'full', 'fall'].includes(vis)) return;
+    const c = A.ctx, lo = 174.6, hi = 261.6;
     const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 820; f.Q.value = 0.4;
     const g = c.createGain(); g.connect(f).connect(A.cue);
     const oscs = [['sine', 0, 1], ['triangle', 6, 0.35], ['sine', -1200, 0.25]].map(([type, det, lvl]) => {
@@ -661,7 +881,7 @@
       o.type = type; o.detune.value = det; og.gain.value = lvl;
       o.connect(og).connect(g); return o;
     });
-    const [f0, f1] = i === 0 ? [lo, hi] : i === 1 ? [hi, hi] : [hi, lo];
+    const [f0, f1] = vis === 'rise' ? [lo, hi] : vis === 'full' ? [hi, hi] : [hi, lo];
     oscs.forEach((o) => {
       o.frequency.setValueAtTime(f0, at);
       o.frequency.exponentialRampToValueAtTime(f1, at + d);
@@ -669,26 +889,35 @@
     });
     const e = 0.12, G = g.gain;
     G.setValueAtTime(0.0001, at);
-    if (i === 0) { G.linearRampToValueAtTime(0.03, at + e); G.linearRampToValueAtTime(0.2, at + d - e); }
-    else if (i === 1) { G.linearRampToValueAtTime(0.2, at + e); G.linearRampToValueAtTime(0.06, at + d - e); }
+    if (vis === 'rise') { G.linearRampToValueAtTime(0.03, at + e); G.linearRampToValueAtTime(0.2, at + d - e); }
+    else if (vis === 'full') { G.linearRampToValueAtTime(0.2, at + e); G.linearRampToValueAtTime(0.06, at + d - e); }
     else { G.linearRampToValueAtTime(0.06, at + e); G.linearRampToValueAtTime(0.17, at + 1.2); G.linearRampToValueAtTime(0.02, at + d - e); }
     G.linearRampToValueAtTime(0.0001, at + d);
   }
-  const BOWL = [[523.25, 0.2], [392, 0.1], [329.63, 0.18], [261.63, 0.09]];
-  function cue(i, at) {
-    if (set.sound === 'bowl') bowl(BOWL[i][0], at, BOWL[i][1]);
-    else if (set.sound === 'tone') tone(i, at);
+  const BOWL = { rise: [523.25, 0.2], full: [392, 0.1], fall: [329.63, 0.18], empty: [261.63, 0.09], press: [196, 0.2], pull: [196, 0.2] };
+  function cue(p, at) {
+    if (set.sound === 'off') return;
+    if (p.vis === 'free') { bowl(392, at, 0.1, 5); bowl(523.25, at + 0.18, 0.08, 5); return; } // release chime
+    if (set.sound === 'tone' && ['rise', 'full', 'fall'].includes(p.vis)) tone(p.vis, at, p.d);
+    else if (BOWL[p.vis]) bowl(BOWL[p.vis][0], at, BOWL[p.vis][1]);
   }
   function endChime(at) {
     if (set.sound === 'off') return;
     bowl(261.63, at, 0.12, 8); bowl(392, at + 0.25, 0.08, 7); bowl(523.25, at + 0.5, 0.06, 6);
   }
+  const eventCount = () => S.cycles * P.events.length;
   const eventTime = (n) => {
-    const total = S.cycles * 4;
-    if (n < total) return LEAD + Math.floor(n / 4) * CYCLE + OFF[n % 4];
+    const total = eventCount();
+    if (n < total) return P.lead + Math.floor(n / P.events.length) * P.cycle + P.events[n % P.events.length].t;
     if (n === total && isFinite(total)) return totalSec();
     return null;
   };
+  function playEvent(n, at) {
+    if (n === eventCount()) { endChime(at); return; }
+    const e = P.events[n % P.events.length];
+    if (e.type === 'tick') { if (set.sound !== 'off') tick(at); }
+    else cue(P.ph[e.i], at);
+  }
   function resyncCues() {
     if (!A.ctx) return;
     freshCueBus();
@@ -698,7 +927,10 @@
     A.next = n;
     // Tone mode: pick up the current phase mid-way so resuming isn't silent.
     const st = stateAt(sec);
-    if (set.sound === 'tone' && !st.lead && st.pt > 0.3 && st.pt < PH[st.i].d - 0.5) tone(st.i, A.ctx.currentTime - st.pt);
+    if (set.sound === 'tone' && !st.lead) {
+      const p = P.ph[st.i];
+      if (st.pt > 0.3 && st.pt < p.d - 0.5) tone(p.vis, A.ctx.currentTime - st.pt, p.d);
+    }
     scheduleAhead();
   }
   function scheduleAhead() {
@@ -708,10 +940,7 @@
       const t = eventTime(A.next);
       if (t == null || t > horizon) break;
       const at = audioAt(t);
-      if (at >= A.ctx.currentTime - 0.3) {
-        if (A.next === S.cycles * 4) endChime(Math.max(at, A.ctx.currentTime));
-        else cue(A.next % 4, Math.max(at, A.ctx.currentTime + 0.01));
-      }
+      if (at >= A.ctx.currentTime - 0.3) playEvent(A.next, Math.max(at, A.ctx.currentTime + 0.01));
       A.next++;
     }
   }
@@ -763,8 +992,8 @@
     if (S.status === 'running') { resyncCues(); return; }
     freshCueBus();
     const t = A.ctx.currentTime + 0.05;
-    if (set.sound === 'bowl') bowl(BOWL[0][0], t, BOWL[0][1], 4);
-    if (set.sound === 'tone') { const saved = PH[0].d; PH[0].d = 2; tone(0, t); PH[0].d = saved; }
+    if (set.sound === 'bowl') bowl(BOWL.rise[0], t, BOWL.rise[1], 4);
+    if (set.sound === 'tone') tone('rise', t, 2);
   }
 
   // ---------- Voice & haptics ----------
@@ -787,7 +1016,6 @@
     } catch {}
   }
   const canVibrate = typeof navigator.vibrate === 'function';
-  const HAPTIC = [[35], [18], [30, 90, 30], [18]];
   const buzz = (p) => { if (set.haptics && canVibrate) try { navigator.vibrate(p); } catch {} };
 
   // ---------- Wake lock ----------
@@ -797,17 +1025,160 @@
   }
   function dropWake() { try { wake && wake.release(); } catch {} wake = null; }
 
+  // ---------- Full app unlock ----------
+  const Pro = {
+    unlocked: !!store.get('stillwater.pro', false),
+    service: null,
+    price: '',
+    grant(on = true) {
+      this.unlocked = on; store.set('stillwater.pro', on);
+      refreshLocks();
+    },
+    async init() {
+      if (typeof window.getDigitalGoodsService !== 'function') { refreshPaywall(); return; }
+      try {
+        this.service = await window.getDigitalGoodsService(BILLING.method);
+        const [item] = await this.service.getDetails([BILLING.sku]);
+        if (item && item.price) {
+          try { this.price = new Intl.NumberFormat(undefined, { style: 'currency', currency: item.price.currency }).format(+item.price.value); } catch {}
+        }
+        await this.restore(true);
+      } catch { this.service = null; }
+      refreshPaywall();
+    },
+    async verify(token) {
+      if (BILLING.verifyUrl) {
+        const r = await fetch(BILLING.verifyUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sku: BILLING.sku, purchaseToken: token }) });
+        return r.ok && !!(await r.json()).ok;
+      }
+      if (this.service && typeof this.service.acknowledge === 'function') { try { await this.service.acknowledge(token, 'onetime'); } catch {} }
+      return true;
+    },
+    async buy() {
+      const req = new PaymentRequest(
+        [{ supportedMethods: BILLING.method, data: { sku: BILLING.sku } }],
+        { total: { label: 'Total', amount: { currency: 'USD', value: '0' } } },
+      );
+      const res = await req.show();
+      const ok = await this.verify(res.details.purchaseToken).catch(() => false);
+      await res.complete(ok ? 'success' : 'fail');
+      if (!ok) throw new Error('verify');
+      this.grant(true);
+    },
+    async restore(silent) {
+      if (!this.service) return false;
+      const purchases = await this.service.listPurchases();
+      const mine = purchases.find((p) => p.itemId === BILLING.sku);
+      if (mine && await this.verify(mine.purchaseToken).catch(() => false)) { this.grant(true); return true; }
+      // Play is the source of truth where it's available: a refunded purchase locks again.
+      if (!mine && this.unlocked) this.grant(false);
+      return false;
+    },
+  };
+  const canPay = () => !!Pro.service && 'PaymentRequest' in window;
+  const isLocked = (id) => !EX[id].free && !Pro.unlocked;
+
+  function refreshPaywall() {
+    const buy = $('btn-buy');
+    if (Pro.unlocked) { buy.textContent = 'Unlocked'; buy.disabled = true; }
+    else if (canPay()) { buy.textContent = Pro.price ? `Unlock for ${Pro.price}` : 'Unlock full app'; buy.disabled = false; }
+    else { buy.textContent = 'Unlock in the Android app'; buy.disabled = true; }
+    $('btn-restore').hidden = !canPay();
+    $('btn-preview-unlock').hidden = !BILLING.previewUnlock || Pro.unlocked;
+    if (!canPay() && !Pro.unlocked) $('pro-status').textContent = 'Purchases work in the Stillwater app from Google Play.';
+  }
+  function refreshLocks() {
+    el.exercises.querySelectorAll('.ex-btn').forEach((b) => {
+      const locked = isLocked(b.dataset.ex);
+      b.classList.toggle('locked', locked);
+      b.setAttribute('aria-label', locked ? `${EX[b.dataset.ex].name} (locked)` : EX[b.dataset.ex].name);
+    });
+    if (isLocked(set.ex) && S.status === 'idle') selectExercise('4766');
+    refreshPaywall();
+  }
+  let pendingEx = null;
+  function openPaywall(forEx) {
+    pendingEx = forEx || null;
+    $('pro-status').textContent = '';
+    refreshPaywall();
+    openDialog('dlg-pro');
+  }
+  function afterUnlock() {
+    $('pro-status').textContent = 'Unlocked. Thank you!';
+    setTimeout(() => {
+      closeDialog($('dlg-pro'));
+      if (pendingEx) { selectExercise(pendingEx); pendingEx = null; }
+    }, 900);
+  }
+  $('btn-buy').addEventListener('click', async () => {
+    const status = $('pro-status');
+    status.textContent = '';
+    try { await Pro.buy(); afterUnlock(); }
+    catch (e) {
+      if (e && e.name === 'AbortError') return; // closed the Play sheet
+      status.textContent = e && e.message === 'verify'
+        ? "Payment went through but couldn't be confirmed. Try Restore purchase in a moment."
+        : "The purchase didn't complete. Nothing was charged.";
+    }
+  });
+  $('btn-restore').addEventListener('click', async () => {
+    const status = $('pro-status');
+    status.textContent = 'Checking Google Play…';
+    try { (await Pro.restore(false)) ? afterUnlock() : (status.textContent = 'No purchase found for this Google account.'); }
+    catch { status.textContent = "Couldn't reach Google Play. Check your connection and try again."; }
+  });
+  $('btn-preview-unlock').addEventListener('click', () => { Pro.grant(true); afterUnlock(); });
+
+  // ---------- Safety check before maneuvers ----------
+  const acks = store.get('stillwater.acks', {});
+  function openSafety(id, withStart) {
+    $('safety-title').textContent = `Before you try ${EX[id].name}`;
+    $('safety-body').innerHTML = EX[id].about;
+    $('safety-start').hidden = !withStart;
+    $('ack').checked = false; $('btn-safe-start').disabled = true;
+    openDialog('dlg-safety');
+  }
+  $('ack').addEventListener('change', (e) => { $('btn-safe-start').disabled = !e.target.checked; });
+  $('btn-safe-start').addEventListener('click', () => {
+    acks[P.id] = true; store.set('stillwater.acks', acks);
+    closeDialog($('dlg-safety'));
+    begin();
+  });
+
+  // ---------- Exercise selection ----------
+  function selectExercise(id) {
+    if (!EX[id]) id = '4766';
+    set.ex = id; saveSettings();
+    P = buildPlan(id);
+    drawPattern();
+    el.exercises.querySelectorAll('.ex-btn').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ex === id)));
+    el.durCtl.hidden = !isMinutes();
+    el.roundCtl.hidden = isMinutes();
+    durNote();
+  }
+  el.exercises.addEventListener('click', (e) => {
+    const b = e.target.closest('.ex-btn'); if (!b || S.status !== 'idle') return;
+    if (isLocked(b.dataset.ex)) openPaywall(b.dataset.ex);
+    else selectExercise(b.dataset.ex);
+  });
+
   // ---------- Session control ----------
+  function requestBegin() {
+    if (isLocked(P.id)) { openPaywall(P.id); return; }
+    if (!P.ex.free && !acks[P.id]) { openSafety(P.id, true); return; }
+    begin();
+  }
   function begin() {
     ensureAudio();
-    S.cycles = cyclesFor(set.minutes);
+    P = buildPlan(P.id);
+    S.cycles = cyclesFor();
     S.leadFrom = S.idleScale;
     S.startPerf = now(); S.pausedTotal = 0; S.lastKey = null;
     S.status = 'running';
     if (A.ctx) { A.next = 0; freshCueBus(); startAmbience(); scheduleAhead(); }
     holdWake();
     reflectControls();
-    speak('Settle in');
+    speak(P.ex.lead.say);
   }
   function pause() {
     if (S.status !== 'running') return;
@@ -829,8 +1200,8 @@
   }
   function finish(completed) {
     const sec = elapsedSec();
-    const breaths = completed ? S.cycles : Math.max(0, Math.floor((sec - LEAD) / CYCLE));
-    const practiced = Math.max(0, Math.min(sec, totalSec()) - LEAD);
+    const reps = completed ? S.cycles : Math.max(0, Math.floor((sec - P.lead) / P.cycle));
+    const practiced = Math.max(0, Math.min(sec, totalSec()) - P.lead);
     if (!completed) freshCueBus();
     stopAmbience(completed ? 3 : 0.6);
     if ('speechSynthesis' in window && !completed) speechSynthesis.cancel();
@@ -839,26 +1210,30 @@
     delete root.dataset.phase;
     document.body.classList.remove('focus');
     reflectControls();
-    if (breaths > 0) {
-      logSession(practiced, breaths);
-      $('done-sum').textContent = `${breaths} ${breaths === 1 ? 'breath' : 'breaths'} · ${fmt(practiced)}`;
+    if (reps > 0) {
+      logSession(practiced, reps);
+      $('done-title').textContent = P.ex.free ? 'Well breathed.' : 'Nicely done.';
+      $('done-sum').textContent = `${reps} ${plural(reps)} · ${fmt(practiced)}`;
+      $('done-note').textContent = P.ex.free ? 'Stay here a moment and notice how you feel.' : 'Stay seated for a minute before you stand up.';
       if (completed) speak('Well done');
       openDialog('dlg-done');
     }
   }
   function toggle() {
-    if (S.status === 'idle') begin();
+    if (S.status === 'idle') requestBegin();
     else if (S.status === 'running') pause();
     else resume();
   }
 
   function reflectControls() {
     const idle = S.status === 'idle';
-    el.main.textContent = idle ? 'Begin' : S.status === 'running' ? 'Pause' : 'Resume';
+    el.main.textContent = idle ? (isLocked(P.id) ? 'Unlock' : 'Begin') : S.status === 'running' ? 'Pause' : 'Resume';
     el.end.hidden = idle;
     el.durations.classList.toggle('away', !idle);
     el.durations.inert = !idle;
-    el.stage.setAttribute('aria-label', idle ? 'Start breathing session' : S.status === 'running' ? 'Pause session' : 'Resume session');
+    el.exercises.classList.toggle('away', !idle);
+    el.exercises.inert = !idle;
+    el.stage.setAttribute('aria-label', idle ? 'Start session' : S.status === 'running' ? 'Pause session' : 'Resume session');
     document.body.classList.toggle('focus', S.status === 'running');
   }
 
@@ -874,13 +1249,13 @@
     if (key !== S.lastKey) {
       const first = S.lastKey === null;
       S.lastKey = key;
-      if (st.lead) { root.dataset.phase = 'lead'; }
+      if (st.lead) { root.dataset.phase = 'lead'; lightPhase(-1); }
       else {
-        const p = PH[st.i];
+        const p = P.ph[st.i];
         root.dataset.phase = p.k;
-        for (let j = 0; j < 4; j++) { el.legend[j].classList.toggle('on', j === st.i); segEls[j].classList.toggle('on', j === st.i); }
+        lightPhase(st.i);
         announce(`${p.word}, ${p.d} seconds`);
-        if (!first || st.pt < 0.5) { speak(p.say); buzz(HAPTIC[st.i]); }
+        if (!first || st.pt < 0.5) { speak(p.say); buzz(HAPTIC[p.vis]); }
       }
     }
     scheduleAhead();
@@ -888,6 +1263,7 @@
 
   // ---------- Rendering ----------
   const easeInOut = (x) => 0.5 - 0.5 * Math.cos(Math.PI * Math.min(1, Math.max(0, x)));
+  const lerp = (a, b, t) => a + (b - a) * t;
   let lastWord = '', lastCount = '', lastHint = '', lastMeta = '';
   function setText(word, count, hint, meta) {
     if (word !== lastWord) { el.word.textContent = word; lastWord = word; }
@@ -907,21 +1283,46 @@
     el.dotGlow.setAttribute('cx', x.toFixed(2)); el.dotGlow.setAttribute('cy', y.toFixed(2));
   }
   function durNote() {
-    const c = cyclesFor(set.minutes);
-    el.durNote.textContent = isFinite(c) ? `${c} breaths · ${fmt(c * CYCLE)}` : 'Open-ended · end whenever you like';
+    const c = cyclesFor();
+    if (isMinutes()) el.durNote.textContent = isFinite(c) ? `${c} breaths · ${fmt(c * P.cycle)}` : 'Open-ended · end whenever you like';
+    else {
+      const effort = P.ph.find((p) => p.ticks);
+      el.durNote.textContent = `${c} ${plural(c)} · ${effort.d} s ${effort.label.toLowerCase()} · about ${fmt(P.lead + c * P.cycle)}`;
+    }
+    el.durCtl.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.min === set.minutes)));
+    el.roundCtl.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.rounds === set.rounds)));
+  }
+  function phaseScale(st) {
+    const p = P.ph[st.i], jitter = reduceMotion.matches ? 0 : 1;
+    switch (p.vis) {
+      case 'rise': return lerp(SMIN, SMAX, easeInOut(st.p));
+      case 'full': return SMAX + jitter * 0.008 * Math.sin(st.pt * 1.6);
+      case 'fall': return lerp(START.fall, SMIN, easeInOut(st.p));
+      case 'empty': return SMIN;
+      case 'press': return lerp(SMAX, START.press, easeInOut(st.pt / 0.6)) + jitter * 0.006 * Math.sin(st.pt * 22);
+      case 'pull': return lerp(SMIN, START.pull, easeInOut(st.pt / 0.6)) + jitter * 0.006 * Math.sin(st.pt * 22);
+      case 'free': {
+        // Loose breathing, eased out of the effort and into the next round's start.
+        const from = END[P.ph[(st.i + P.ph.length - 1) % P.ph.length].vis], to = START[P.ph[0].vis];
+        const loose = SMID + (jitter ? 0.05 : 0) * Math.sin(st.pt * 2 * Math.PI / 8);
+        const s = lerp(from, loose, easeInOut(st.pt / 2));
+        return lerp(to, s, easeInOut((p.d - st.pt) / 2.5));
+      }
+    }
+    return SMID;
   }
 
   function render() {
     const t = now() / 1000;
     if (S.status === 'idle') {
-      // A slow preview breath while waiting.
       const s = reduceMotion.matches ? 0.8 : 0.8 + 0.05 * Math.sin(t * 2 * Math.PI / 9);
       S.idleScale = s;
       placeOrb(s);
       placeDot(0);
-      for (let j = 0; j < 4; j++) { el.legend[j].classList.remove('on'); segEls[j].classList.remove('on'); }
-      const c = cyclesFor(set.minutes);
-      setText('Breathe with me', `23<small>s</small>`, 'one full breath', isFinite(c) ? `${c} breaths, about ${set.minutes} minutes` : 'Open-ended session');
+      lightPhase(-1);
+      const c = cyclesFor();
+      const meta = isLocked(P.id) ? 'Part of the full app' : isMinutes() ? (isFinite(c) ? `${c} breaths, about ${set.minutes} minutes` : 'Open-ended session') : `${c} ${plural(c)}, about ${fmt(P.lead + c * P.cycle)}`;
+      setText(P.ex.idle[0], `${P.cycle}<small>s</small>`, P.ex.idle[1], meta);
       return;
     }
     const sec = elapsedSec();
@@ -929,26 +1330,26 @@
     const paused = S.status === 'paused';
     let scale, word, count, hint;
     if (st.lead) {
-      scale = S.leadFrom + (SMIN - S.leadFrom) * easeInOut(st.t / LEAD);
-      word = 'Settle in'; count = String(Math.ceil(LEAD - st.t)); hint = 'breathe out fully';
+      scale = lerp(S.leadFrom, START[P.ph[0].vis], easeInOut(st.t / P.lead));
+      word = P.ex.lead.word; count = String(Math.ceil(P.lead - st.t)); hint = P.ex.lead.hint;
       placeDot(0);
     } else {
-      const p = PH[st.i];
-      if (st.i === 0) scale = SMIN + (SMAX - SMIN) * easeInOut(st.p);
-      else if (st.i === 1) scale = SMAX + (reduceMotion.matches ? 0 : 0.008 * Math.sin(st.pt * 1.6));
-      else if (st.i === 2) scale = SMAX - (SMAX - SMIN) * easeInOut(st.p);
-      else scale = SMIN;
+      const p = P.ph[st.i];
+      scale = phaseScale(st);
       word = p.word;
-      count = String(Math.min(p.d, Math.floor(st.pt) + 1));
+      // Efforts and recovery count down; breathing counts up, the way people count breaths.
+      count = (p.ticks || p.vis === 'free') ? String(Math.ceil(p.d - st.pt)) : String(Math.min(p.d, Math.floor(st.pt) + 1));
       hint = p.hint;
-      placeDot(st.ct / CYCLE);
+      if (p.vis === 'free' && st.pt > 3) word = 'Recover';
+      placeDot(st.ct / P.cycle);
     }
     if (paused) { word = 'Paused'; hint = 'tap to continue'; }
     placeOrb(scale);
+    const unit = P.ex.unit[0].replace(/^./, (c) => c.toUpperCase());
     let meta;
-    if (st.lead) meta = isFinite(S.cycles) ? `${S.cycles} breaths ahead` : 'Open-ended';
-    else if (isFinite(S.cycles)) meta = `Breath ${st.cyc + 1} of ${S.cycles} · ${fmt(totalSec() - sec)} left`;
-    else meta = `Breath ${st.cyc + 1} · ${fmt(sec - LEAD)}`;
+    if (st.lead) meta = isFinite(S.cycles) ? `${S.cycles} ${plural(S.cycles)} ahead` : 'Open-ended';
+    else if (isFinite(S.cycles)) meta = `${unit} ${st.cyc + 1} of ${S.cycles} · ${fmt(totalSec() - sec)} left`;
+    else meta = `${unit} ${st.cyc + 1} · ${fmt(sec - P.lead)}`;
     setText(word, count, hint, meta);
   }
   function frame() { logic(); render(); requestAnimationFrame(frame); }
@@ -956,9 +1357,9 @@
 
   // ---------- Stats ----------
   const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  function logSession(secs, breaths) {
+  function logSession(secs, reps) {
     const log = store.get('stillwater.log', []);
-    log.push({ d: dayKey(), s: Math.round(secs), b: breaths });
+    log.push({ d: dayKey(), s: Math.round(secs), b: P.id === '4766' ? reps : 0, x: P.id });
     store.set('stillwater.log', log.slice(-2000));
   }
   function renderStats() {
@@ -1005,9 +1406,8 @@
   function reflectSettings() {
     document.querySelectorAll('[data-setting]').forEach((g) => {
       const k = g.dataset.setting;
-      g.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === set[k])));
+      g.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === String(set[k]))));
     });
-    el.durCtl.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.min === set.minutes)));
     $('vol').value = set.volume;
     $('opt-voice').checked = set.voice;
     $('opt-haptics').checked = set.haptics;
@@ -1021,15 +1421,22 @@
     g.addEventListener('click', (e) => {
       const b = e.target.closest('button'); if (!b) return;
       const k = g.dataset.setting;
-      set[k] = b.dataset.v; saveSettings(); reflectSettings();
+      set[k] = 'num' in g.dataset ? +b.dataset.v : b.dataset.v;
+      saveSettings();
+      if (['vStrain', 'mStrain', 'recovery'].includes(k) && S.status === 'idle') { P = buildPlan(P.id); drawPattern(); }
+      reflectSettings();
       if (k === 'scene') applyScene();
       if (k === 'sound') previewSound();
-      if (k === 'ambience') { ensureAudio(); if (S.status === 'running' || S.status === 'idle') { startAmbience(); if (S.status === 'idle') setTimeout(() => S.status === 'idle' && stopAmbience(1.5), 3500); } }
+      if (k === 'ambience') { ensureAudio(); if (S.status !== 'paused') { startAmbience(); if (S.status === 'idle') setTimeout(() => S.status === 'idle' && stopAmbience(1.5), 3500); } }
     });
   });
   el.durCtl.addEventListener('click', (e) => {
     const b = e.target.closest('button'); if (!b) return;
-    set.minutes = +b.dataset.min; saveSettings(); reflectSettings();
+    set.minutes = +b.dataset.min; saveSettings(); durNote();
+  });
+  el.roundCtl.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    set.rounds = +b.dataset.rounds; saveSettings(); durNote();
   });
   $('vol').addEventListener('input', (e) => {
     set.volume = +e.target.value; saveSettings();
@@ -1046,15 +1453,15 @@
     if (id === 'dlg-stats') renderStats();
     if (d.showModal) { if (!d.open) d.showModal(); } else d.setAttribute('open', '');
   }
-  const closeDialog = (d) => (d.close ? d.close() : d.removeAttribute('open'));
+  function closeDialog(d) { d.close ? d.close() : d.removeAttribute('open'); }
   document.querySelectorAll('dialog').forEach((d) => {
     d.addEventListener('click', (e) => { if (e.target === d || e.target.closest('[data-close]')) closeDialog(d); });
   });
   $('btn-settings').addEventListener('click', () => openDialog('dlg-settings'));
   $('btn-stats').addEventListener('click', () => openDialog('dlg-stats'));
-  $('btn-info').addEventListener('click', () => openDialog('dlg-info'));
+  $('btn-info').addEventListener('click', () => (P.ex.free ? openDialog('dlg-info') : openSafety(P.id, false)));
   $('btn-done').addEventListener('click', () => closeDialog($('dlg-done')));
-  $('btn-again').addEventListener('click', () => { closeDialog($('dlg-done')); begin(); });
+  $('btn-again').addEventListener('click', () => { closeDialog($('dlg-done')); requestBegin(); });
 
   // ---------- Controls ----------
   el.main.addEventListener('click', toggle);
@@ -1076,9 +1483,12 @@
 
   // ---------- Boot ----------
   applyScene();
+  selectExercise(isLocked(set.ex) ? '4766' : set.ex);
   reflectSettings();
+  refreshLocks();
   reflectControls();
   requestAnimationFrame(frame);
+  Pro.init();
 
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
