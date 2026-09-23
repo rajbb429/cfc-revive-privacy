@@ -140,6 +140,7 @@
     aspect-ratio: 1; max-width: 100%;
     cursor: pointer; user-select: none; -webkit-user-select: none;
     border-radius: 50%;
+    container-type: inline-size;
   }
   .stage svg.ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
   .seg { fill: none; stroke-width: 3; stroke-linecap: round; opacity: 0.32; transition: opacity .8s, stroke-width .8s; }
@@ -173,11 +174,13 @@
   .readout {
     position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center; color: var(--orbInk); pointer-events: none; gap: 0;
+    /* Keep text inside the smallest orb (66% x 0.7 = 46% of the stage). */
+    width: 36cqw; margin: auto;
   }
-  .phase-word { font-family: var(--display); font-size: clamp(1.25rem, 5.4vw, 1.7rem); line-height: 1.1; letter-spacing: 0.01em; text-wrap: balance; }
-  .count { font-weight: 300; font-size: clamp(2.6rem, 12vw, 3.6rem); line-height: 1; font-variant-numeric: tabular-nums; margin-top: 4px; min-height: 1em; }
+  .phase-word { font-family: var(--display); font-size: 5.6cqw; white-space: nowrap; line-height: 1.1; letter-spacing: 0.01em; text-wrap: balance; }
+  .count { font-weight: 300; font-size: 13cqw; line-height: 1; font-variant-numeric: tabular-nums; margin-top: 4px; min-height: 1em; }
   .count small { font-size: 0.35em; color: var(--orbInkSoft); font-weight: 400; margin-left: 2px; }
-  .hint { font-size: 0.78rem; color: var(--orbInkSoft); letter-spacing: 0.04em; margin-top: 6px; min-height: 1.2em; }
+  .hint { font-size: 0.9rem; color: var(--muted); letter-spacing: 0.04em; min-height: 1.4em; text-align: center; margin-bottom: -10px; }
   body.no-counts .count { display: none; }
 
   .meta { font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1.3em; text-align: center; }
@@ -369,10 +372,10 @@
       <div class="readout">
         <div class="phase-word" id="word">Breathe with me</div>
         <div class="count" id="count">23<small>s</small></div>
-        <div class="hint" id="hint">one full breath</div>
       </div>
     </div>
 
+    <div class="hint" id="hint">one full breath</div>
     <div class="meta" id="meta">Tap the circle or Begin</div>
 
     <ol class="legend" id="legend" aria-label="Breathing pattern">
@@ -542,7 +545,7 @@
   const OFF = [0, 4, 11, 17];
   const CYCLE = 23;
   const LEAD = 4; // settle-in seconds before the first inhale
-  const SMIN = 0.58, SMAX = 1;
+  const SMIN = 0.7, SMAX = 1;
 
   // ---------- Storage (best effort) ----------
   const store = {
