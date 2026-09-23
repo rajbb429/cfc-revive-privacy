@@ -1,0 +1,16 @@
+{
+  "name": "Stillwater · 4-7-6-6 Breathing",
+  "short_name": "Stillwater",
+  "description": "A calm 4-7-6-6 breathing guide. Inhale 4, hold 7, exhale 6, hold 6.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0e1522",
+  "theme_color": "#0e1522",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

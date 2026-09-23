@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en" data-scene="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Stillwater Breath</title>
+<meta name="description" content="A calm 4-7-6-6 breathing guide: inhale 4, hold 7, exhale 6, hold 6. Sound, voice and vibration cues. Works offline, no account, no tracking.">
+<meta name="theme-color" content="#0e1522">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Figtree:wght@300;400;500;600&display=swap">
+<style>
+  /* Scene tokens. Dusk is the default; other scenes override the same set. */
+  :root {
+    color-scheme: dark;
+    --bg0: #0e1522;
+    --bg1: #1a2740;
+    --blobA: #34507a;
+    --blobB: #5b4a73;
+    --orb1: #f5eddc;
+    --orb2: #c7b7dc;
+    --orbInk: #1f2436;
+    --orbInkSoft: #545a70;
+    --accent: #b9c9e8;
+    --ink: #eef1f6;
+    --muted: #97a3ba;
+    --line: rgba(238, 241, 246, 0.14);
+    --glass: rgba(238, 241, 246, 0.06);
+    --glassHi: rgba(238, 241, 246, 0.12);
+    --sheet: #172237;
+    --seg0: #a9c7ee; /* inhale */
+    --seg1: #d8c6f0; /* hold full */
+    --seg2: #9fd6cf; /* exhale */
+    --seg3: #7f8aa6; /* hold empty */
+    --display: "Marcellus", "Cormorant Garamond", Georgia, serif;
+    --body: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  :root[data-scene="tide"] {
+    color-scheme: dark;
+    --bg0: #08191c; --bg1: #0f3035; --blobA: #1d5b5c; --blobB: #274c68;
+    --orb1: #ecf7f2; --orb2: #93d3c6; --orbInk: #10302f; --orbInkSoft: #406461;
+    --accent: #9fdacd; --ink: #e8f5f1; --muted: #86aba6;
+    --line: rgba(232, 245, 241, 0.14); --glass: rgba(232, 245, 241, 0.06); --glassHi: rgba(232, 245, 241, 0.12);
+    --sheet: #0f2a2e;
+    --seg0: #a6e0f0; --seg1: #bfe8d6; --seg2: #7fcfbf; --seg3: #5f8f8f;
+  }
+  :root[data-scene="moss"] {
+    color-scheme: dark;
+    --bg0: #111812; --bg1: #1d2a1f; --blobA: #3b5838; --blobB: #595833;
+    --orb1: #f3f0de; --orb2: #bccb9c; --orbInk: #22291c; --orbInkSoft: #56604a;
+    --accent: #c7d7a5; --ink: #eef0e5; --muted: #9ba68f;
+    --line: rgba(238, 240, 229, 0.14); --glass: rgba(238, 240, 229, 0.06); --glassHi: rgba(238, 240, 229, 0.12);
+    --sheet: #1b261c;
+    --seg0: #cfe0a8; --seg1: #e6dcae; --seg2: #a9cfa4; --seg3: #7f8c73;
+  }
+  :root[data-scene="dawn"] {
+    color-scheme: light;
+    --bg0: #f4eee7; --bg1: #eadfe6; --blobA: #f2c7b3; --blobB: #c8d3ee;
+    --orb1: #fffaf3; --orb2: #f1bda7; --orbInk: #3a2a2c; --orbInkSoft: #7c6668;
+    --accent: #a15f4a; --ink: #2d2630; --muted: #7a6d77;
+    --line: rgba(45, 38, 48, 0.14); --glass: rgba(255, 255, 255, 0.45); --glassHi: rgba(255, 255, 255, 0.75);
+    --sheet: #faf5ef;
+    --seg0: #e59a7c; --seg1: #c99bb8; --seg2: #8fb1c9; --seg3: #b8a9b0;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg0);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overflow: hidden;
+    transition: background-color 1.2s ease;
+  }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 999px; }
+
+  /* Ambient backdrop: two soft drifting clouds and a tint that brightens on the inhale. */
+  .sky {
+    position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+    background: radial-gradient(120% 90% at 50% 110%, var(--bg1), var(--bg0) 70%);
+  }
+  .cloud {
+    position: absolute; width: 70vmax; height: 70vmax; border-radius: 50%;
+    filter: blur(70px); opacity: 0.42;
+  }
+  .cloud.a { background: var(--blobA); left: -25vmax; top: -30vmax; animation: driftA 38s ease-in-out infinite alternate; }
+  .cloud.b { background: var(--blobB); right: -30vmax; bottom: -35vmax; animation: driftB 46s ease-in-out infinite alternate; }
+  .tint {
+    position: absolute; inset: 0;
+    background: radial-gradient(60% 50% at 50% 45%, var(--accent), transparent 70%);
+    opacity: 0.04; transition: opacity 3.5s ease;
+  }
+  :root[data-phase="in"] .tint { opacity: 0.16; transition-duration: 4s; }
+  :root[data-phase="hold"] .tint { opacity: 0.13; transition-duration: 7s; }
+  :root[data-phase="out"] .tint { opacity: 0.05; transition-duration: 6s; }
+  @keyframes driftA { to { transform: translate(18vmax, 14vmax) scale(1.15); } }
+  @keyframes driftB { to { transform: translate(-16vmax, -12vmax) scale(1.1); } }
+
+  /* Layout */
+  .app {
+    position: relative; z-index: 1;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    max-width: 560px; margin: 0 auto;
+    padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px calc(env(safe-area-inset-bottom, 0px) + 18px);
+  }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand b { font-family: var(--display); font-weight: 400; font-size: 1.25rem; letter-spacing: 0.02em; }
+  .brand span { font-size: 0.72rem; letter-spacing: 0.18em; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .tools { display: flex; gap: 4px; }
+  .icon-btn {
+    width: 42px; height: 42px; border-radius: 50%; border: 0; background: transparent;
+    display: grid; place-items: center; cursor: pointer; color: var(--muted);
+    transition: background-color .2s, color .2s;
+  }
+  .icon-btn:hover { background: var(--glass); color: var(--ink); }
+  .icon-btn svg { width: 21px; height: 21px; }
+  body.focus .tools, body.focus .brand span { opacity: 0.25; transition: opacity 1.5s; }
+  body.focus .tools:hover { opacity: 1; }
+
+  main { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; min-height: 0; }
+
+  /* The breath stage: ring of the 23-second cycle with the orb inside it. */
+  .stage {
+    position: relative;
+    width: min(86vw, 52vh, 420px);
+    aspect-ratio: 1; max-width: 100%;
+    cursor: pointer; user-select: none; -webkit-user-select: none;
+    border-radius: 50%;
+  }
+  .stage svg.ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .seg { fill: none; stroke-width: 3; stroke-linecap: round; opacity: 0.32; transition: opacity .8s, stroke-width .8s; }
+  .seg.on { opacity: 1; stroke-width: 4.5; }
+  .seg[data-i="0"] { stroke: var(--seg0); }
+  .seg[data-i="1"] { stroke: var(--seg1); }
+  .seg[data-i="2"] { stroke: var(--seg2); }
+  .seg[data-i="3"] { stroke: var(--seg3); }
+  .tick-label { fill: var(--muted); font-family: var(--body); font-size: 11px; letter-spacing: 0.12em; text-anchor: middle; dominant-baseline: middle; }
+  .dot { fill: var(--ink); }
+  .dot-glow { fill: var(--accent); opacity: .35; }
+
+  .orb-wrap { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+  .halo, .orb {
+    position: absolute; width: 66%; aspect-ratio: 1; border-radius: 50%;
+    will-change: transform;
+  }
+  .halo {
+    background: radial-gradient(circle, color-mix(in srgb, var(--accent) 35%, transparent) 0%, transparent 68%);
+    opacity: .7;
+  }
+  .orb {
+    background:
+      radial-gradient(circle at 36% 30%, rgba(255,255,255,.95) 0%, rgba(255,255,255,0) 38%),
+      radial-gradient(circle at 60% 72%, var(--orb2) 0%, transparent 65%),
+      var(--orb1);
+    box-shadow:
+      0 0 60px -6px color-mix(in srgb, var(--accent) 55%, transparent),
+      inset -14px -18px 40px -10px color-mix(in srgb, var(--orb2) 80%, transparent);
+  }
+  .readout {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; color: var(--orbInk); pointer-events: none; gap: 0;
+  }
+  .phase-word { font-family: var(--display); font-size: clamp(1.25rem, 5.4vw, 1.7rem); line-height: 1.1; letter-spacing: 0.01em; text-wrap: balance; }
+  .count { font-weight: 300; font-size: clamp(2.6rem, 12vw, 3.6rem); line-height: 1; font-variant-numeric: tabular-nums; margin-top: 4px; min-height: 1em; }
+  .count small { font-size: 0.35em; color: var(--orbInkSoft); font-weight: 400; margin-left: 2px; }
+  .hint { font-size: 0.78rem; color: var(--orbInkSoft); letter-spacing: 0.04em; margin-top: 6px; min-height: 1.2em; }
+  body.no-counts .count { display: none; }
+
+  .meta { font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1.3em; text-align: center; }
+
+  /* Pattern legend: the four phases in order, current one lit. */
+  .legend { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: min(100%, 400px); list-style: none; margin: 0; padding: 0; }
+  .legend li {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 8px 4px 7px; border-radius: 14px; transition: background-color .6s, color .6s;
+    color: var(--muted);
+  }
+  .legend li b { font-weight: 500; font-size: 1.2rem; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .legend li span { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; }
+  .legend li i { width: 18px; height: 3px; border-radius: 2px; opacity: .8; }
+  .legend li:nth-child(1) i { background: var(--seg0); }
+  .legend li:nth-child(2) i { background: var(--seg1); }
+  .legend li:nth-child(3) i { background: var(--seg2); }
+  .legend li:nth-child(4) i { background: var(--seg3); }
+  .legend li.on { background: var(--glass); color: var(--ink); }
+
+  /* Controls */
+  footer { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .durations { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .seg-ctl {
+    display: inline-flex; padding: 4px; gap: 2px; border-radius: 999px;
+    background: var(--glass); border: 1px solid var(--line);
+  }
+  .seg-ctl button {
+    border: 0; background: transparent; border-radius: 999px; padding: 7px 13px; cursor: pointer;
+    color: var(--muted); font-size: 0.9rem; font-variant-numeric: tabular-nums; transition: background-color .25s, color .25s;
+  }
+  .seg-ctl button[aria-pressed="true"] { background: var(--glassHi); color: var(--ink); }
+  .durations.away { visibility: hidden; }
+  .dur-note { font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .actions { display: flex; align-items: center; gap: 12px; }
+  .primary {
+    min-width: 168px; height: 54px; padding: 0 28px; border-radius: 999px; cursor: pointer;
+    border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    color: var(--ink); font-size: 1.02rem; font-weight: 500; letter-spacing: 0.04em;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    transition: background-color .25s, transform .15s;
+  }
+  .primary:hover { background: color-mix(in srgb, var(--accent) 32%, transparent); }
+  .primary:active { transform: scale(.98); }
+  .ghost {
+    height: 54px; width: 54px; border-radius: 50%; border: 1px solid var(--line); background: var(--glass);
+    cursor: pointer; display: grid; place-items: center; color: var(--muted);
+  }
+  .ghost:hover { color: var(--ink); }
+  .ghost svg { width: 18px; height: 18px; }
+
+  /* Sheets */
+  dialog {
+    border: 0; padding: 0; color: var(--ink); background: var(--sheet);
+    width: min(560px, 100%); max-width: 100%; max-height: 88vh;
+    margin: auto auto 0; border-radius: 26px 26px 0 0;
+    box-shadow: 0 -20px 60px rgba(0,0,0,.35);
+  }
+  dialog.center { margin: auto; border-radius: 26px; width: min(420px, calc(100% - 32px)); }
+  dialog::backdrop { background: rgba(5, 8, 14, 0.45); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+  dialog[open] { animation: rise .35s cubic-bezier(.2,.8,.2,1); }
+  dialog.center[open] { animation: fadeUp .5s cubic-bezier(.2,.8,.2,1); }
+  @keyframes rise { from { transform: translateY(40px); opacity: 0; } }
+  @keyframes fadeUp { from { transform: translateY(12px) scale(.98); opacity: 0; } }
+  .sheet { padding: 10px 20px calc(env(safe-area-inset-bottom, 0px) + 24px); overflow-y: auto; max-height: 88vh; }
+  .grabber { width: 38px; height: 4px; border-radius: 2px; background: var(--line); margin: 0 auto 10px; }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .sheet h2 { font-family: var(--display); font-weight: 400; font-size: 1.45rem; margin: 0; text-wrap: balance; }
+  .sheet h3 { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin: 22px 0 10px; }
+  .sheet p, .sheet li { color: color-mix(in srgb, var(--ink) 85%, var(--muted)); max-width: 62ch; }
+  .sheet ul { padding-left: 1.1rem; margin: 0; display: grid; gap: 6px; }
+
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .row label, .row .lbl { display: flex; flex-direction: column; }
+  .row small { color: var(--muted); font-size: 0.78rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+  .chip {
+    border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 6px 12px; cursor: pointer;
+    color: var(--muted); font-size: 0.86rem;
+  }
+  .chip[aria-pressed="true"] { background: var(--glassHi); color: var(--ink); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+  .switch { position: relative; width: 48px; height: 28px; flex: none; }
+  .switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .switch span { position: absolute; inset: 0; border-radius: 999px; background: var(--glassHi); border: 1px solid var(--line); transition: background-color .25s; pointer-events: none; }
+  .switch span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--muted); transition: transform .25s, background-color .25s; }
+  .switch input:checked + span { background: color-mix(in srgb, var(--accent) 45%, transparent); }
+  .switch input:checked + span::after { transform: translateX(20px); background: var(--ink); }
+  .switch input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  input[type="range"] { width: 150px; accent-color: var(--accent); }
+  .swatches { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+  .swatch { width: 34px; height: 34px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; position: relative; }
+  .swatch[aria-pressed="true"] { border-color: var(--ink); }
+  .swatch[data-v="auto"] { background: conic-gradient(#1a2740 0 50%, #f4eee7 50% 100%); }
+  .swatch[data-v="dusk"] { background: radial-gradient(circle at 35% 35%, #c7b7dc, #1a2740 70%); }
+  .swatch[data-v="tide"] { background: radial-gradient(circle at 35% 35%, #93d3c6, #0f3035 70%); }
+  .swatch[data-v="moss"] { background: radial-gradient(circle at 35% 35%, #bccb9c, #1d2a1f 70%); }
+  .swatch[data-v="dawn"] { background: radial-gradient(circle at 35% 35%, #f1bda7, #eadfe6 70%); }
+
+  /* Stats */
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .tile { padding: 12px; border-radius: 16px; background: var(--glass); }
+  .tile b { display: block; font-family: var(--display); font-weight: 400; font-size: 1.7rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .tile span { font-size: 0.74rem; color: var(--muted); }
+  .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; align-items: end; height: 130px; }
+  .day { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; height: 100%; }
+  .day em { font-style: normal; font-size: 0.72rem; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1em; }
+  .bar { width: 100%; max-width: 30px; border-radius: 8px 8px 3px 3px; background: color-mix(in srgb, var(--accent) 55%, transparent); min-height: 3px; transition: height .6s cubic-bezier(.2,.8,.2,1); }
+  .bar.zero { background: var(--line); }
+  .day.today .bar { background: var(--accent); }
+  .day span { font-size: 0.72rem; color: var(--muted); }
+  .day.today span { color: var(--ink); font-weight: 600; }
+  .empty { color: var(--muted); font-size: 0.9rem; }
+
+  .pattern-fig { display: flex; height: 10px; border-radius: 6px; overflow: hidden; gap: 2px; margin: 8px 0 6px; }
+  .pattern-fig i:nth-child(1) { flex: 4; background: var(--seg0); }
+  .pattern-fig i:nth-child(2) { flex: 7; background: var(--seg1); }
+  .pattern-fig i:nth-child(3) { flex: 6; background: var(--seg2); }
+  .pattern-fig i:nth-child(4) { flex: 6; background: var(--seg3); }
+  .pattern-cap { display: flex; font-size: 0.72rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .pattern-cap span:nth-child(1) { flex: 4; } .pattern-cap span:nth-child(2) { flex: 7; }
+  .pattern-cap span:nth-child(3) { flex: 6; } .pattern-cap span:nth-child(4) { flex: 6; }
+  kbd { font-family: var(--body); font-size: .8rem; padding: 1px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--glass); }
+
+  /* Completion */
+  .done { padding: 30px 24px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .done .mini-orb { width: 64px; height: 64px; border-radius: 50%; background: radial-gradient(circle at 36% 30%, #fff, var(--orb1) 40%, var(--orb2)); box-shadow: 0 0 40px -4px var(--accent); margin-bottom: 8px; animation: slowBreath 8s ease-in-out infinite; }
+  @keyframes slowBreath { 50% { transform: scale(1.12); } }
+  .done h2 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin: 0; }
+  .done p { margin: 0; color: var(--muted); }
+  .done .sum { font-size: 1rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .done .actions { margin-top: 14px; }
+  .done .primary { min-width: 130px; height: 48px; }
+  .done .secondary { height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid var(--line); background: transparent; cursor: pointer; color: var(--ink); }
+
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  [hidden] { display: none !important; }
+
+  @media (max-height: 640px) {
+    .legend li { padding: 5px 4px; }
+    .legend li i { display: none; }
+    main { gap: 10px; }
+    .stage { width: min(86vw, 46vh, 420px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cloud { animation: none; }
+    .tint { transition: none; }
+    dialog[open], dialog.center[open], .done .mini-orb { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sky" aria-hidden="true">
+  <div class="cloud a"></div>
+  <div class="cloud b"></div>
+  <div class="tint"></div>
+</div>
+
+<div class="app">
+  <header>
+    <div class="brand"><b>Stillwater</b><span>4 · 7 · 6 · 6</span></div>
+    <nav class="tools" aria-label="Menu">
+      <button class="icon-btn" id="btn-stats" type="button" aria-label="Your practice">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 20V13M12 20V5M19 20v-9"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-settings" type="button" aria-label="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-info" type="button" aria-label="About 4-7-6-6 breathing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8v.2"/></svg>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <div class="stage" id="stage" role="button" tabindex="0" aria-label="Start breathing session">
+      <svg class="ring" viewBox="0 0 400 400" aria-hidden="true">
+        <g id="segs"></g>
+        <circle class="dot-glow" id="dotGlow" r="11" cx="200" cy="18"></circle>
+        <circle class="dot" id="dot" r="4.5" cx="200" cy="18"></circle>
+      </svg>
+      <div class="orb-wrap">
+        <div class="halo" id="halo"></div>
+        <div class="orb" id="orb"></div>
+      </div>
+      <div class="readout">
+        <div class="phase-word" id="word">Breathe with me</div>
+        <div class="count" id="count">23<small>s</small></div>
+        <div class="hint" id="hint">one full breath</div>
+      </div>
+    </div>
+
+    <div class="meta" id="meta">Tap the circle or Begin</div>
+
+    <ol class="legend" id="legend" aria-label="Breathing pattern">
+      <li><i></i><b>4</b><span>Inhale</span></li>
+      <li><i></i><b>7</b><span>Hold</span></li>
+      <li><i></i><b>6</b><span>Exhale</span></li>
+      <li><i></i><b>6</b><span>Hold</span></li>
+    </ol>
+  </main>
+
+  <footer>
+    <div class="durations" id="durations">
+      <div class="seg-ctl" role="group" aria-label="Session length" id="durCtl">
+        <button type="button" data-min="3">3 min</button>
+        <button type="button" data-min="5">5</button>
+        <button type="button" data-min="10">10</button>
+        <button type="button" data-min="15">15</button>
+        <button type="button" data-min="0" aria-label="Open-ended">∞</button>
+      </div>
+      <div class="dur-note" id="durNote"></div>
+    </div>
+    <div class="actions">
+      <button class="ghost" id="btn-end" type="button" aria-label="End session" hidden>
+        <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>
+      </button>
+      <button class="primary" id="btn-main" type="button">Begin</button>
+    </div>
+  </footer>
+</div>
+
+<div class="sr" aria-live="polite" id="live"></div>
+
+<!-- Settings -->
+<dialog id="dlg-settings" aria-labelledby="settings-title">
+  <div class="sheet">
+    <div class="grabber"></div>
+    <div class="sheet-head">
+      <h2 id="settings-title">Settings</h2>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+
+    <h3>Guidance</h3>
+    <div class="row">
+      <div class="lbl">Sound cue<small>Plays even with the screen off</small></div>
+      <div class="chips" data-setting="sound">
+        <button class="chip" type="button" data-v="bowl">Bowl</button>
+        <button class="chip" type="button" data-v="tone">Breath tone</button>
+        <button class="chip" type="button" data-v="off">Silent</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="lbl">Ambience</div>
+      <div class="chips" data-setting="ambience">
+        <button class="chip" type="button" data-v="none">None</button>
+        <button class="chip" type="button" data-v="ocean">Ocean</button>
+        <button class="chip" type="button" data-v="rain">Rain</button>
+      </div>
+    </div>
+    <div class="row">
+      <label for="vol">Volume</label>
+      <input type="range" id="vol" min="0" max="1" step="0.05">
+    </div>
+    <div class="row">
+      <label for="opt-voice">Voice guide<small>Speaks “breathe in”, “hold”, “breathe out”</small></label>
+      <span class="switch"><input type="checkbox" id="opt-voice"><span></span></span>
+    </div>
+    <div class="row" id="row-haptics">
+      <label for="opt-haptics">Vibration<small>A gentle pulse at each change</small></label>
+      <span class="switch"><input type="checkbox" id="opt-haptics"><span></span></span>
+    </div>
+    <div class="row">
+      <label for="opt-counts">Show counting<small>1 to 4, 1 to 7, and so on</small></label>
+      <span class="switch"><input type="checkbox" id="opt-counts"><span></span></span>
+    </div>
+
+    <h3>Scene</h3>
+    <div class="row">
+      <div class="lbl" id="sceneName">Auto</div>
+      <div class="swatches" data-setting="scene">
+        <button class="swatch" type="button" data-v="auto" aria-label="Auto (follows your device)"></button>
+        <button class="swatch" type="button" data-v="dusk" aria-label="Dusk"></button>
+        <button class="swatch" type="button" data-v="tide" aria-label="Tide"></button>
+        <button class="swatch" type="button" data-v="moss" aria-label="Moss"></button>
+        <button class="swatch" type="button" data-v="dawn" aria-label="Dawn"></button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Stats -->
+<dialog id="dlg-stats" aria-labelledby="stats-title">
+  <div class="sheet">
+    <div class="grabber"></div>
+    <div class="sheet-head">
+      <h2 id="stats-title">Your practice</h2>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="tiles">
+      <div class="tile"><b id="st-streak">0</b><span>day streak</span></div>
+      <div class="tile"><b id="st-min">0</b><span>minutes total</span></div>
+      <div class="tile"><b id="st-breaths">0</b><span>breaths taken</span></div>
+    </div>
+    <h3>Last 7 days · minutes</h3>
+    <div class="week" id="week"></div>
+    <p class="empty" id="st-empty">Your first session will show up here. Even one minute counts.</p>
+  </div>
+</dialog>
+
+<!-- Info -->
+<dialog id="dlg-info" aria-labelledby="info-title">
+  <div class="sheet">
+    <div class="grabber"></div>
+    <div class="sheet-head">
+      <h2 id="info-title">About 4-7-6-6</h2>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <p>Each breath takes 23 seconds: breathe in for 4, hold for 7, breathe out for 6, and rest empty for 6. That slows you to about 2.6 breaths a minute, well below the usual 12 to 20.</p>
+    <div class="pattern-fig" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="pattern-cap" aria-hidden="true"><span>in 4</span><span>hold 7</span><span>out 6</span><span>hold 6</span></div>
+
+    <h3>How to do it</h3>
+    <ul>
+      <li>Sit or lie comfortably. Let your shoulders drop.</li>
+      <li>Breathe in quietly through your nose, into your belly.</li>
+      <li>Hold softly. Keep your throat relaxed rather than clamped.</li>
+      <li>Breathe out slowly through your mouth, as if through a straw.</li>
+      <li>Rest with empty lungs until the next breath begins.</li>
+      <li>Close your eyes if you like. The bowl or tone marks each change, so you don't need to watch.</li>
+    </ul>
+
+    <h3>Go gently</h3>
+    <p>The holds can feel long at first. If you feel dizzy, lightheaded or short of breath, return to normal breathing. Talk to a doctor before breath-holding practice if you are pregnant or have a heart or lung condition. This app is for relaxation and is not medical advice.</p>
+
+    <h3>Shortcuts</h3>
+    <p><kbd>Space</kbd> start or pause · <kbd>Esc</kbd> end · <kbd>S</kbd> settings</p>
+
+    <h3>Privacy</h3>
+    <p>No account, no ads, no analytics. Everything runs on your device, and your session history stays in this browser. Once opened, it works offline and can be added to your home screen.</p>
+  </div>
+</dialog>
+
+<!-- Completion -->
+<dialog id="dlg-done" class="center" aria-labelledby="done-title">
+  <div class="done">
+    <div class="mini-orb" aria-hidden="true"></div>
+    <h2 id="done-title">Well breathed.</h2>
+    <p class="sum" id="done-sum"></p>
+    <p>Stay here a moment and notice how you feel.</p>
+    <div class="actions">
+      <button class="secondary" type="button" id="btn-again">Again</button>
+      <button class="primary" type="button" id="btn-done">Done</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(() => {
+  'use strict';
+
+  // ---------- Pattern ----------
+  const PH = [
+    { k: 'in',   word: 'Breathe in',  d: 4, hint: 'through the nose',       say: 'Breathe in' },
+    { k: 'hold', word: 'Hold',        d: 7, hint: 'lungs full, stay soft',   say: 'Hold' },
+    { k: 'out',  word: 'Breathe out', d: 6, hint: 'slowly, through the mouth', say: 'Breathe out' },
+    { k: 'rest', word: 'Hold',        d: 6, hint: 'lungs empty, at ease',    say: 'Hold' },
+  ];
+  const OFF = [0, 4, 11, 17];
+  const CYCLE = 23;
+  const LEAD = 4; // settle-in seconds before the first inhale
+  const SMIN = 0.58, SMAX = 1;
+
+  // ---------- Storage (best effort) ----------
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  };
+  const DEFAULTS = { minutes: 5, sound: 'bowl', ambience: 'none', volume: 0.7, voice: false, haptics: true, counts: true, scene: 'auto' };
+  const set = Object.assign({}, DEFAULTS, store.get('stillwater.settings', {}));
+  const saveSettings = () => store.set('stillwater.settings', set);
+
+  // ---------- Elements ----------
+  const $ = (id) => document.getElementById(id);
+  const root = document.documentElement;
+  const el = {
+    stage: $('stage'), orb: $('orb'), halo: $('halo'), word: $('word'), count: $('count'), hint: $('hint'),
+    meta: $('meta'), legend: $('legend').children, segs: $('segs'), dot: $('dot'), dotGlow: $('dotGlow'),
+    main: $('btn-main'), end: $('btn-end'), durations: $('durations'), durCtl: $('durCtl'), durNote: $('durNote'), live: $('live'),
+  };
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+  // ---------- Ring geometry ----------
+  const CX = 200, CY = 200, R = 182;
+  const polar = (deg, r = R) => { const a = (deg - 90) * Math.PI / 180; return [CX + r * Math.cos(a), CY + r * Math.sin(a)]; };
+  (function drawRing() {
+    const gap = 2.2;
+    PH.forEach((p, i) => {
+      const a0 = OFF[i] / CYCLE * 360 + gap, a1 = (OFF[i] + p.d) / CYCLE * 360 - gap;
+      const [x0, y0] = polar(a0), [x1, y1] = polar(a1);
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', `M${x0.toFixed(2)} ${y0.toFixed(2)} A${R} ${R} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`);
+      path.setAttribute('class', 'seg'); path.dataset.i = i;
+      el.segs.appendChild(path);
+    });
+  })();
+  const segEls = el.segs.children;
+
+  // ---------- Session state ----------
+  const S = {
+    status: 'idle', // idle | running | paused
+    startPerf: 0, pausedAt: 0, pausedTotal: 0,
+    cycles: Infinity, lastKey: null, leadFrom: 0.8, idleScale: 0.8,
+  };
+  const now = () => performance.now();
+  const elapsedSec = () => {
+    if (S.status === 'idle') return 0;
+    const t = S.status === 'paused' ? S.pausedAt : now();
+    return (t - S.startPerf - S.pausedTotal) / 1000;
+  };
+  function stateAt(sec) {
+    if (sec < LEAD) return { lead: true, t: sec };
+    const s = sec - LEAD;
+    const cyc = Math.floor(s / CYCLE);
+    const ct = s - cyc * CYCLE;
+    let i = 3;
+    for (let j = 0; j < 4; j++) if (ct < OFF[j] + PH[j].d) { i = j; break; }
+    const pt = ct - OFF[i];
+    return { lead: false, cyc, ct, i, pt, p: pt / PH[i].d };
+  }
+  const cyclesFor = (min) => (min > 0 ? Math.max(1, Math.round(min * 60 / CYCLE)) : Infinity);
+  const totalSec = () => LEAD + S.cycles * CYCLE;
+  const fmt = (s) => { s = Math.max(0, Math.round(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+
+  // ---------- Audio ----------
+  const A = { ctx: null, master: null, cue: null, amb: null, next: 0, noise: null };
+  function ensureAudio() {
+    if (!A.ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      A.ctx = new AC();
+      const comp = A.ctx.createDynamicsCompressor();
+      comp.threshold.value = -14; comp.ratio.value = 3;
+      A.master = A.ctx.createGain();
+      A.master.gain.value = set.volume;
+      A.master.connect(comp).connect(A.ctx.destination);
+    }
+    if (A.ctx.state === 'suspended') A.ctx.resume();
+    return A.ctx;
+  }
+  function freshCueBus() {
+    if (!A.ctx) return;
+    if (A.cue) {
+      const old = A.cue;
+      old.gain.setTargetAtTime(0, A.ctx.currentTime, 0.08);
+      setTimeout(() => old.disconnect(), 600);
+    }
+    A.cue = A.ctx.createGain();
+    A.cue.connect(A.master);
+  }
+  // Session seconds -> AudioContext time
+  const audioAt = (sec) => A.ctx.currentTime + (sec - elapsedSec());
+
+  function bowl(freq, at, amp, dur = 6) {
+    const c = A.ctx, out = c.createGain();
+    out.connect(A.cue);
+    [[1, 1, 0], [1, 0.5, 3], [2.01, 0.35, 0], [2.76, 0.18, 0], [5.4, 0.06, 0]].forEach(([r, a, det]) => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = 'sine'; o.frequency.value = freq * r; o.detune.value = det;
+      const d = r > 2 ? dur * 0.45 : dur;
+      g.gain.setValueAtTime(0.0001, at);
+      g.gain.exponentialRampToValueAtTime(amp * a, at + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, at + d);
+      o.connect(g).connect(out);
+      o.start(at); o.stop(at + d + 0.05);
+    });
+  }
+  function tone(i, at) {
+    if (i === 3) return; // silence while resting empty
+    const c = A.ctx, d = PH[i].d, lo = 174.6, hi = 261.6;
+    const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 820; f.Q.value = 0.4;
+    const g = c.createGain(); g.connect(f).connect(A.cue);
+    const oscs = [['sine', 0, 1], ['triangle', 6, 0.35], ['sine', -1200, 0.25]].map(([type, det, lvl]) => {
+      const o = c.createOscillator(), og = c.createGain();
+      o.type = type; o.detune.value = det; og.gain.value = lvl;
+      o.connect(og).connect(g); return o;
+    });
+    const [f0, f1] = i === 0 ? [lo, hi] : i === 1 ? [hi, hi] : [hi, lo];
+    oscs.forEach((o) => {
+      o.frequency.setValueAtTime(f0, at);
+      o.frequency.exponentialRampToValueAtTime(f1, at + d);
+      o.start(at); o.stop(at + d + 0.05);
+    });
+    const e = 0.12, G = g.gain;
+    G.setValueAtTime(0.0001, at);
+    if (i === 0) { G.linearRampToValueAtTime(0.03, at + e); G.linearRampToValueAtTime(0.2, at + d - e); }
+    else if (i === 1) { G.linearRampToValueAtTime(0.2, at + e); G.linearRampToValueAtTime(0.06, at + d - e); }
+    else { G.linearRampToValueAtTime(0.06, at + e); G.linearRampToValueAtTime(0.17, at + 1.2); G.linearRampToValueAtTime(0.02, at + d - e); }
+    G.linearRampToValueAtTime(0.0001, at + d);
+  }
+  const BOWL = [[523.25, 0.2], [392, 0.1], [329.63, 0.18], [261.63, 0.09]];
+  function cue(i, at) {
+    if (set.sound === 'bowl') bowl(BOWL[i][0], at, BOWL[i][1]);
+    else if (set.sound === 'tone') tone(i, at);
+  }
+  function endChime(at) {
+    if (set.sound === 'off') return;
+    bowl(261.63, at, 0.12, 8); bowl(392, at + 0.25, 0.08, 7); bowl(523.25, at + 0.5, 0.06, 6);
+  }
+  const eventTime = (n) => {
+    const total = S.cycles * 4;
+    if (n < total) return LEAD + Math.floor(n / 4) * CYCLE + OFF[n % 4];
+    if (n === total && isFinite(total)) return totalSec();
+    return null;
+  };
+  function resyncCues() {
+    if (!A.ctx) return;
+    freshCueBus();
+    const sec = elapsedSec();
+    let n = 0;
+    while (true) { const t = eventTime(n); if (t == null || t >= sec - 0.02) break; n++; }
+    A.next = n;
+    // Tone mode: pick up the current phase mid-way so resuming isn't silent.
+    const st = stateAt(sec);
+    if (set.sound === 'tone' && !st.lead && st.pt > 0.3 && st.pt < PH[st.i].d - 0.5) tone(st.i, A.ctx.currentTime - st.pt);
+    scheduleAhead();
+  }
+  function scheduleAhead() {
+    if (!A.ctx || S.status !== 'running') return;
+    const sec = elapsedSec(), horizon = sec + 60;
+    while (true) {
+      const t = eventTime(A.next);
+      if (t == null || t > horizon) break;
+      const at = audioAt(t);
+      if (at >= A.ctx.currentTime - 0.3) {
+        if (A.next === S.cycles * 4) endChime(Math.max(at, A.ctx.currentTime));
+        else cue(A.next % 4, Math.max(at, A.ctx.currentTime + 0.01));
+      }
+      A.next++;
+    }
+  }
+  function noiseBuffer() {
+    if (A.noise) return A.noise;
+    const c = A.ctx, len = c.sampleRate * 4, b = c.createBuffer(1, len, c.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    return (A.noise = b);
+  }
+  function startAmbience() {
+    stopAmbience();
+    if (!A.ctx || set.ambience === 'none') return;
+    const c = A.ctx, t = c.currentTime;
+    const src = c.createBufferSource(); src.buffer = noiseBuffer(); src.loop = true;
+    const out = c.createGain(); out.gain.value = 0; out.connect(A.master);
+    const stops = [src];
+    if (set.ambience === 'ocean') {
+      const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 420; lp.Q.value = 0.3;
+      const swell = c.createGain(); swell.gain.value = 0.55;
+      const lfo = c.createOscillator(); lfo.frequency.value = 0.085;
+      const lfoAmt = c.createGain(); lfoAmt.gain.value = 0.42;
+      const lfoF = c.createGain(); lfoF.gain.value = 260;
+      lfo.connect(lfoAmt).connect(swell.gain); lfo.connect(lfoF).connect(lp.frequency);
+      src.connect(lp).connect(swell).connect(out);
+      lfo.start(); stops.push(lfo);
+      out.gain.setTargetAtTime(0.32, t, 1.8);
+    } else {
+      const hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 900;
+      const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 5200;
+      const body = c.createBiquadFilter(); body.type = 'lowpass'; body.frequency.value = 280;
+      const bodyG = c.createGain(); bodyG.gain.value = 0.9;
+      src.connect(hp).connect(lp).connect(out);
+      src.connect(body).connect(bodyG).connect(out);
+      out.gain.setTargetAtTime(0.09, t, 1.8);
+    }
+    src.start();
+    A.amb = { out, stops };
+  }
+  function stopAmbience(fade = 0.8) {
+    if (!A.amb || !A.ctx) return;
+    const { out, stops } = A.amb, t = A.ctx.currentTime;
+    out.gain.cancelScheduledValues(t); out.gain.setTargetAtTime(0, t, fade / 3);
+    stops.forEach((n) => { try { n.stop(t + fade + 0.2); } catch {} });
+    setTimeout(() => out.disconnect(), (fade + 0.4) * 1000);
+    A.amb = null;
+  }
+  function previewSound() {
+    if (!ensureAudio()) return;
+    if (S.status === 'running') { resyncCues(); return; }
+    freshCueBus();
+    const t = A.ctx.currentTime + 0.05;
+    if (set.sound === 'bowl') bowl(BOWL[0][0], t, BOWL[0][1], 4);
+    if (set.sound === 'tone') { const saved = PH[0].d; PH[0].d = 2; tone(0, t); PH[0].d = saved; }
+  }
+
+  // ---------- Voice & haptics ----------
+  let voice = null;
+  function pickVoice() {
+    if (!('speechSynthesis' in window)) return;
+    const vs = speechSynthesis.getVoices().filter((v) => /^en/i.test(v.lang));
+    const pref = ['Samantha', 'Serena', 'Karen', 'Moira', 'Google UK English Female', 'Natural', 'Female'];
+    voice = pref.map((p) => vs.find((v) => v.name.includes(p))).find(Boolean) || vs[0] || null;
+  }
+  if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.addEventListener?.('voiceschanged', pickVoice); }
+  function speak(text) {
+    if (!set.voice || !('speechSynthesis' in window)) return;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.82; u.pitch = 0.92; u.volume = Math.min(1, set.volume + 0.15);
+      if (voice) u.voice = voice;
+      speechSynthesis.speak(u);
+    } catch {}
+  }
+  const canVibrate = typeof navigator.vibrate === 'function';
+  const HAPTIC = [[35], [18], [30, 90, 30], [18]];
+  const buzz = (p) => { if (set.haptics && canVibrate) try { navigator.vibrate(p); } catch {} };
+
+  // ---------- Wake lock ----------
+  let wake = null;
+  async function holdWake() {
+    try { if ('wakeLock' in navigator && !wake) { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); } } catch {}
+  }
+  function dropWake() { try { wake && wake.release(); } catch {} wake = null; }
+
+  // ---------- Session control ----------
+  function begin() {
+    ensureAudio();
+    S.cycles = cyclesFor(set.minutes);
+    S.leadFrom = S.idleScale;
+    S.startPerf = now(); S.pausedTotal = 0; S.lastKey = null;
+    S.status = 'running';
+    if (A.ctx) { A.next = 0; freshCueBus(); startAmbience(); scheduleAhead(); }
+    holdWake();
+    reflectControls();
+    speak('Settle in');
+  }
+  function pause() {
+    if (S.status !== 'running') return;
+    S.pausedAt = now(); S.status = 'paused';
+    freshCueBus(); stopAmbience(0.6);
+    if ('speechSynthesis' in window) speechSynthesis.cancel();
+    root.dataset.phase = 'paused';
+    announce('Paused');
+    reflectControls(); render();
+  }
+  function resume() {
+    if (S.status !== 'paused') return;
+    ensureAudio();
+    S.pausedTotal += now() - S.pausedAt; S.status = 'running';
+    S.lastKey = null;
+    if (A.ctx) { startAmbience(); resyncCues(); }
+    holdWake();
+    reflectControls();
+  }
+  function finish(completed) {
+    const sec = elapsedSec();
+    const breaths = completed ? S.cycles : Math.max(0, Math.floor((sec - LEAD) / CYCLE));
+    const practiced = Math.max(0, Math.min(sec, totalSec()) - LEAD);
+    if (!completed) freshCueBus();
+    stopAmbience(completed ? 3 : 0.6);
+    if ('speechSynthesis' in window && !completed) speechSynthesis.cancel();
+    dropWake();
+    S.status = 'idle'; S.lastKey = null;
+    delete root.dataset.phase;
+    document.body.classList.remove('focus');
+    reflectControls();
+    if (breaths > 0) {
+      logSession(practiced, breaths);
+      $('done-sum').textContent = `${breaths} ${breaths === 1 ? 'breath' : 'breaths'} · ${fmt(practiced)}`;
+      if (completed) speak('Well done');
+      openDialog('dlg-done');
+    }
+  }
+  function toggle() {
+    if (S.status === 'idle') begin();
+    else if (S.status === 'running') pause();
+    else resume();
+  }
+
+  function reflectControls() {
+    const idle = S.status === 'idle';
+    el.main.textContent = idle ? 'Begin' : S.status === 'running' ? 'Pause' : 'Resume';
+    el.end.hidden = idle;
+    el.durations.classList.toggle('away', !idle);
+    el.durations.inert = !idle;
+    el.stage.setAttribute('aria-label', idle ? 'Start breathing session' : S.status === 'running' ? 'Pause session' : 'Resume session');
+    document.body.classList.toggle('focus', S.status === 'running');
+  }
+
+  function announce(t) { el.live.textContent = t; }
+
+  // ---------- Phase logic (runs on a timer too, so cues fire when the tab is hidden) ----------
+  function logic() {
+    if (S.status !== 'running') return;
+    const sec = elapsedSec();
+    if (isFinite(S.cycles) && sec >= totalSec()) { finish(true); return; }
+    const st = stateAt(sec);
+    const key = st.lead ? 'lead' : `${st.cyc}-${st.i}`;
+    if (key !== S.lastKey) {
+      const first = S.lastKey === null;
+      S.lastKey = key;
+      if (st.lead) { root.dataset.phase = 'lead'; }
+      else {
+        const p = PH[st.i];
+        root.dataset.phase = p.k;
+        for (let j = 0; j < 4; j++) { el.legend[j].classList.toggle('on', j === st.i); segEls[j].classList.toggle('on', j === st.i); }
+        announce(`${p.word}, ${p.d} seconds`);
+        if (!first || st.pt < 0.5) { speak(p.say); buzz(HAPTIC[st.i]); }
+      }
+    }
+    scheduleAhead();
+  }
+
+  // ---------- Rendering ----------
+  const easeInOut = (x) => 0.5 - 0.5 * Math.cos(Math.PI * Math.min(1, Math.max(0, x)));
+  let lastWord = '', lastCount = '', lastHint = '', lastMeta = '';
+  function setText(word, count, hint, meta) {
+    if (word !== lastWord) { el.word.textContent = word; lastWord = word; }
+    if (count !== lastCount) { el.count.innerHTML = count; lastCount = count; }
+    if (hint !== lastHint) { el.hint.textContent = hint; lastHint = hint; }
+    if (meta !== lastMeta) { el.meta.textContent = meta; lastMeta = meta; }
+  }
+  function placeOrb(scale) {
+    el.orb.style.transform = `scale(${scale.toFixed(4)})`;
+    const h = 0.9 + (scale - SMIN) / (SMAX - SMIN) * 0.55;
+    el.halo.style.transform = `scale(${(scale * h).toFixed(4)})`;
+    el.halo.style.opacity = (0.35 + (scale - SMIN) * 1.1).toFixed(3);
+  }
+  function placeDot(frac) {
+    const [x, y] = polar(frac * 360);
+    el.dot.setAttribute('cx', x.toFixed(2)); el.dot.setAttribute('cy', y.toFixed(2));
+    el.dotGlow.setAttribute('cx', x.toFixed(2)); el.dotGlow.setAttribute('cy', y.toFixed(2));
+  }
+  function durNote() {
+    const c = cyclesFor(set.minutes);
+    el.durNote.textContent = isFinite(c) ? `${c} breaths · ${fmt(c * CYCLE)}` : 'Open-ended · end whenever you like';
+  }
+
+  function render() {
+    const t = now() / 1000;
+    if (S.status === 'idle') {
+      // A slow preview breath while waiting.
+      const s = reduceMotion.matches ? 0.8 : 0.8 + 0.05 * Math.sin(t * 2 * Math.PI / 9);
+      S.idleScale = s;
+      placeOrb(s);
+      placeDot(0);
+      for (let j = 0; j < 4; j++) { el.legend[j].classList.remove('on'); segEls[j].classList.remove('on'); }
+      const c = cyclesFor(set.minutes);
+      setText('Breathe with me', `23<small>s</small>`, 'one full breath', isFinite(c) ? `${c} breaths, about ${set.minutes} minutes` : 'Open-ended session');
+      return;
+    }
+    const sec = elapsedSec();
+    const st = stateAt(sec);
+    const paused = S.status === 'paused';
+    let scale, word, count, hint;
+    if (st.lead) {
+      scale = S.leadFrom + (SMIN - S.leadFrom) * easeInOut(st.t / LEAD);
+      word = 'Settle in'; count = String(Math.ceil(LEAD - st.t)); hint = 'breathe out fully';
+      placeDot(0);
+    } else {
+      const p = PH[st.i];
+      if (st.i === 0) scale = SMIN + (SMAX - SMIN) * easeInOut(st.p);
+      else if (st.i === 1) scale = SMAX + (reduceMotion.matches ? 0 : 0.008 * Math.sin(st.pt * 1.6));
+      else if (st.i === 2) scale = SMAX - (SMAX - SMIN) * easeInOut(st.p);
+      else scale = SMIN;
+      word = p.word;
+      count = String(Math.min(p.d, Math.floor(st.pt) + 1));
+      hint = p.hint;
+      placeDot(st.ct / CYCLE);
+    }
+    if (paused) { word = 'Paused'; hint = 'tap to continue'; }
+    placeOrb(scale);
+    let meta;
+    if (st.lead) meta = isFinite(S.cycles) ? `${S.cycles} breaths ahead` : 'Open-ended';
+    else if (isFinite(S.cycles)) meta = `Breath ${st.cyc + 1} of ${S.cycles} · ${fmt(totalSec() - sec)} left`;
+    else meta = `Breath ${st.cyc + 1} · ${fmt(sec - LEAD)}`;
+    setText(word, count, hint, meta);
+  }
+  function frame() { logic(); render(); requestAnimationFrame(frame); }
+  setInterval(logic, 250);
+
+  // ---------- Stats ----------
+  const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  function logSession(secs, breaths) {
+    const log = store.get('stillwater.log', []);
+    log.push({ d: dayKey(), s: Math.round(secs), b: breaths });
+    store.set('stillwater.log', log.slice(-2000));
+  }
+  function renderStats() {
+    const log = store.get('stillwater.log', []);
+    const byDay = {};
+    let secs = 0, breaths = 0;
+    log.forEach((e) => { byDay[e.d] = (byDay[e.d] || 0) + e.s; secs += e.s; breaths += e.b; });
+    let streak = 0;
+    const d = new Date();
+    if (!byDay[dayKey(d)]) d.setDate(d.getDate() - 1);
+    while (byDay[dayKey(d)]) { streak++; d.setDate(d.getDate() - 1); }
+    $('st-streak').textContent = streak;
+    $('st-min').textContent = Math.round(secs / 60);
+    $('st-breaths').textContent = breaths;
+    const week = $('week'); week.innerHTML = '';
+    const days = [];
+    for (let i = 6; i >= 0; i--) { const x = new Date(); x.setDate(x.getDate() - i); days.push(x); }
+    const mins = days.map((x) => (byDay[dayKey(x)] || 0) / 60);
+    const max = Math.max(5, ...mins);
+    days.forEach((x, i) => {
+      const m = mins[i];
+      const col = document.createElement('div');
+      col.className = 'day' + (i === 6 ? ' today' : '');
+      const label = m > 0 ? (m < 1 ? '<1' : String(Math.round(m))) : '';
+      col.innerHTML = `<em>${label}</em><div class="bar${m > 0 ? '' : ' zero'}" style="height:${m > 0 ? Math.max(6, m / max * 90) : 3}px"></div><span>${x.toLocaleDateString(undefined, { weekday: 'narrow' })}</span>`;
+      col.setAttribute('aria-label', `${x.toLocaleDateString(undefined, { weekday: 'long' })}: ${Math.round(m)} minutes`);
+      week.appendChild(col);
+    });
+    $('st-empty').hidden = log.length > 0;
+  }
+
+  // ---------- Settings UI ----------
+  const SCENES = { auto: 'Auto · follows your device', dusk: 'Dusk', tide: 'Tide', moss: 'Moss', dawn: 'Dawn' };
+  const darkPref = matchMedia('(prefers-color-scheme: dark)');
+  function applyScene() {
+    const s = set.scene === 'auto' ? (darkPref.matches ? 'dusk' : 'dawn') : set.scene;
+    root.dataset.scene = s;
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = getComputedStyle(root).getPropertyValue('--bg0').trim() || '#0e1522';
+    $('sceneName').textContent = SCENES[set.scene];
+  }
+  darkPref.addEventListener?.('change', applyScene);
+
+  function reflectSettings() {
+    document.querySelectorAll('[data-setting]').forEach((g) => {
+      const k = g.dataset.setting;
+      g.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === set[k])));
+    });
+    el.durCtl.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.min === set.minutes)));
+    $('vol').value = set.volume;
+    $('opt-voice').checked = set.voice;
+    $('opt-haptics').checked = set.haptics;
+    $('opt-counts').checked = set.counts;
+    $('row-haptics').hidden = !canVibrate;
+    document.body.classList.toggle('no-counts', !set.counts);
+    durNote();
+  }
+
+  document.querySelectorAll('[data-setting]').forEach((g) => {
+    g.addEventListener('click', (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      const k = g.dataset.setting;
+      set[k] = b.dataset.v; saveSettings(); reflectSettings();
+      if (k === 'scene') applyScene();
+      if (k === 'sound') previewSound();
+      if (k === 'ambience') { ensureAudio(); if (S.status === 'running' || S.status === 'idle') { startAmbience(); if (S.status === 'idle') setTimeout(() => S.status === 'idle' && stopAmbience(1.5), 3500); } }
+    });
+  });
+  el.durCtl.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    set.minutes = +b.dataset.min; saveSettings(); reflectSettings();
+  });
+  $('vol').addEventListener('input', (e) => {
+    set.volume = +e.target.value; saveSettings();
+    if (A.master) A.master.gain.setTargetAtTime(set.volume, A.ctx.currentTime, 0.05);
+  });
+  $('vol').addEventListener('change', previewSound);
+  $('opt-voice').addEventListener('change', (e) => { set.voice = e.target.checked; saveSettings(); if (set.voice) speak('Breathe in'); });
+  $('opt-haptics').addEventListener('change', (e) => { set.haptics = e.target.checked; saveSettings(); buzz([30]); });
+  $('opt-counts').addEventListener('change', (e) => { set.counts = e.target.checked; saveSettings(); reflectSettings(); });
+
+  // ---------- Dialogs ----------
+  function openDialog(id) {
+    const d = $(id);
+    if (id === 'dlg-stats') renderStats();
+    if (d.showModal) { if (!d.open) d.showModal(); } else d.setAttribute('open', '');
+  }
+  const closeDialog = (d) => (d.close ? d.close() : d.removeAttribute('open'));
+  document.querySelectorAll('dialog').forEach((d) => {
+    d.addEventListener('click', (e) => { if (e.target === d || e.target.closest('[data-close]')) closeDialog(d); });
+  });
+  $('btn-settings').addEventListener('click', () => openDialog('dlg-settings'));
+  $('btn-stats').addEventListener('click', () => openDialog('dlg-stats'));
+  $('btn-info').addEventListener('click', () => openDialog('dlg-info'));
+  $('btn-done').addEventListener('click', () => closeDialog($('dlg-done')));
+  $('btn-again').addEventListener('click', () => { closeDialog($('dlg-done')); begin(); });
+
+  // ---------- Controls ----------
+  el.main.addEventListener('click', toggle);
+  el.stage.addEventListener('click', toggle);
+  el.stage.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.code === 'Space') { e.preventDefault(); toggle(); } });
+  el.end.addEventListener('click', () => finish(false));
+  document.addEventListener('keydown', (e) => {
+    if (document.querySelector('dialog[open]')) return;
+    if (e.target.closest('input, button, [role="button"]') && e.key !== 'Escape' && e.key.toLowerCase() !== 's') return;
+    if (e.code === 'Space') { e.preventDefault(); toggle(); }
+    else if (e.key === 'Escape' && S.status !== 'idle') finish(false);
+    else if (e.key.toLowerCase() === 's' && !e.metaKey && !e.ctrlKey) openDialog('dlg-settings');
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      if (S.status === 'running') { holdWake(); if (A.ctx && A.ctx.state === 'suspended') A.ctx.resume().then(resyncCues).catch(() => {}); }
+    }
+  });
+
+  // ---------- Boot ----------
+  applyScene();
+  reflectSettings();
+  reflectControls();
+  requestAnimationFrame(frame);
+
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>
