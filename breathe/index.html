@@ -155,7 +155,7 @@
 
   .orb-wrap { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
   .halo, .orb {
-    position: absolute; width: 66%; aspect-ratio: 1; border-radius: 50%;
+    position: absolute; width: 80%; aspect-ratio: 1; border-radius: 50%;
     will-change: transform;
   }
   .halo {
@@ -174,13 +174,13 @@
   .readout {
     position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center; color: var(--orbInk); pointer-events: none; gap: 0;
-    /* Keep text inside the smallest orb (66% x 0.7 = 46% of the stage). */
-    width: 36cqw; margin: auto;
+    /* Keep text inside the smallest orb (80% x 0.7 = 56% of the stage). */
+    width: 44cqw; margin: auto;
   }
   .phase-word { font-family: var(--display); font-size: 5.6cqw; white-space: nowrap; line-height: 1.1; letter-spacing: 0.01em; text-wrap: balance; }
-  .count { font-weight: 300; font-size: 13cqw; line-height: 1; font-variant-numeric: tabular-nums; margin-top: 4px; min-height: 1em; }
+  .count { font-weight: 300; font-size: 12cqw; line-height: 1; font-variant-numeric: tabular-nums; margin-top: 4px; min-height: 1em; }
   .count small { font-size: 0.35em; color: var(--orbInkSoft); font-weight: 400; margin-left: 2px; }
-  .hint { font-size: 0.9rem; color: var(--muted); letter-spacing: 0.04em; min-height: 1.4em; text-align: center; margin-bottom: -10px; }
+  .hint { font-size: 3.5cqw; line-height: 1.3; color: var(--orbInkSoft); letter-spacing: 0.03em; margin-top: 1.6cqw; min-height: 2.6em; text-wrap: balance; }
   body.no-counts .count { display: none; }
 
   .meta { font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1.3em; text-align: center; }
@@ -372,10 +372,10 @@
       <div class="readout">
         <div class="phase-word" id="word">Breathe with me</div>
         <div class="count" id="count">23<small>s</small></div>
+        <div class="hint" id="hint">one full breath</div>
       </div>
     </div>
 
-    <div class="hint" id="hint">one full breath</div>
     <div class="meta" id="meta">Tap the circle or Begin</div>
 
     <ol class="legend" id="legend" aria-label="Breathing pattern">
@@ -539,7 +539,7 @@
   const PH = [
     { k: 'in',   word: 'Breathe in',  d: 4, hint: 'through the nose',       say: 'Breathe in' },
     { k: 'hold', word: 'Hold',        d: 7, hint: 'lungs full, stay soft',   say: 'Hold' },
-    { k: 'out',  word: 'Breathe out', d: 6, hint: 'slowly, through the mouth', say: 'Breathe out' },
+    { k: 'out',  word: 'Breathe out', d: 6, hint: 'slow, through the mouth', say: 'Breathe out' },
     { k: 'rest', word: 'Hold',        d: 6, hint: 'lungs empty, at ease',    say: 'Hold' },
   ];
   const OFF = [0, 4, 11, 17];
