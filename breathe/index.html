@@ -204,14 +204,15 @@
   .legend li.on { background: var(--glass); color: var(--ink); }
 
   /* Exercise switcher */
-  .exercises { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+  .exercises { display: flex; gap: 5px; justify-content: safe center; max-width: 100%; overflow-x: auto; scrollbar-width: none; padding: 2px; }
+  .exercises::-webkit-scrollbar { display: none; }
   .exercises.away { visibility: hidden; }
   .ex-btn {
     display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: transparent;
-    border-radius: 999px; padding: 6px 13px; cursor: pointer; color: var(--muted); font-size: 0.86rem;
+    border-radius: 999px; padding: 6px 11px; cursor: pointer; color: var(--muted); font-size: 0.85rem; flex: none; gap: 5px;
   }
   .ex-btn[aria-pressed="true"] { background: var(--glassHi); color: var(--ink); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
-  .ex-btn svg { width: 12px; height: 12px; opacity: .8; }
+  .ex-btn svg { width: 11px; height: 11px; opacity: .8; }
   .ex-btn:not(.locked) svg { display: none; }
 
   /* Controls */
@@ -402,6 +403,7 @@
       <button class="ex-btn" type="button" data-ex="4766">4-7-6-6</button>
       <button class="ex-btn" type="button" data-ex="valsalva"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Valsalva</button>
       <button class="ex-btn" type="button" data-ex="muller"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Müller</button>
+      <button class="ex-btn" type="button" data-ex="resisted"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Resisted</button>
     </div>
 
     <div class="stage" id="stage" role="button" tabindex="0" aria-label="Start breathing session">
@@ -428,6 +430,11 @@
 
   <footer>
     <div class="durations" id="durations">
+      <div class="seg-ctl" role="group" aria-label="Method" id="methodCtl" hidden>
+        <button type="button" data-method="pursed">Pursed lip</button>
+        <button type="button" data-method="straw">Straw</button>
+        <button type="button" data-method="trainer">Trainer</button>
+      </div>
       <div class="seg-ctl" role="group" aria-label="Session length" id="durCtl">
         <button type="button" data-min="3">3 min</button>
         <button type="button" data-min="5">5</button>
@@ -586,7 +593,7 @@
     <p><kbd>Space</kbd> start or pause · <kbd>Esc</kbd> end · <kbd>S</kbd> settings</p>
 
     <h3>Full app</h3>
-    <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times. The safety notes for both stay free to read: pick either one above and tap <b>i</b>.</p>
+    <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times, and resisted breathing (pursed-lip, straw, or with a breathing trainer). The safety notes for each stay free to read: pick one above and tap <b>i</b>.</p>
 
     <h3>Privacy</h3>
     <p>No account, no ads, no analytics. Everything runs on your device, and your session history stays in this browser. Purchases go through Google Play; the app only learns whether you own the unlock. Once opened, it works offline and can be added to your home screen. <a href="privacy.html" style="color: var(--accent)">Privacy policy</a></p>
@@ -608,6 +615,7 @@
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Valsalva maneuver</b><small>Breathe in, bear down against a closed airway, recover</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Müller maneuver</b><small>Breathe out, pull in against a closed airway, recover</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Your timings</b><small>Effort from 5 to 15 s, 1 to 5 rounds, 30 to 60 s recovery</small></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Resisted breathing</b><small>Pursed-lip, straw, or a 30-breath set with a breathing trainer</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Every exercise added later</b><small>Included, at no extra cost</small></div></li>
     </ul>
     <button class="primary" type="button" id="btn-buy">Unlock full app</button>
@@ -630,15 +638,10 @@
       <button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
     <div id="safety-body"></div>
-    <div class="warn">
-      <h3>Don't do this if you have</h3>
-      <p>Heart disease or an irregular heartbeat, a recent heart attack or stroke, high or very low blood pressure, an aneurysm, glaucoma or a retinal problem, a lung condition or a past collapsed lung, a hernia, recent eye, ear, chest or abdominal surgery, or if you are pregnant. Ask your doctor first.</p>
-      <h3>Stop right away if you feel</h3>
-      <p>Dizzy or faint, chest pain, a pounding or irregular heartbeat, a sudden headache, changes in your vision, or ear pain. Never practice standing up, while driving, or in water.</p>
-    </div>
-    <p style="font-size:.85rem;color:var(--muted)">These are physical maneuvers, not relaxation exercises. They change the pressure in your chest and your heart rate. This app guides timing only and is not medical advice.</p>
+    <div class="warn" id="safety-warn"></div>
+    <p style="font-size:.85rem;color:var(--muted)" id="safety-foot"></p>
     <div id="safety-start">
-      <label class="ack" for="ack"><input type="checkbox" id="ack"><span>I'm sitting or lying down, none of the above applies to me, and I'll use moderate effort.</span></label>
+      <label class="ack" for="ack"><input type="checkbox" id="ack"><span id="ack-text"></span></label>
       <div class="actions">
         <button class="primary" type="button" id="btn-safe-start" disabled>Start</button>
       </div>
@@ -682,7 +685,7 @@
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
   };
   const DEFAULTS = {
-    ex: '4766', minutes: 5, rounds: 3, vStrain: 10, mStrain: 8, recovery: 45,
+    ex: '4766', minutes: 5, rounds: 3, method: 'pursed', vStrain: 10, mStrain: 8, recovery: 45,
     sound: 'bowl', ambience: 'none', volume: 0.7, voice: false, haptics: true, counts: true, scene: 'auto',
   };
   const set = Object.assign({}, DEFAULTS, store.get('stillwater.settings', {}));
@@ -692,6 +695,40 @@
   // vis: how the orb moves. rise/fall ease between small and full, full/empty rest,
   // press/pull tremble under effort, free breathes loosely during recovery.
   const RECOVER = () => ({ k: 'recover', vis: 'free', word: 'Release', d: set.recovery, hint: 'breathe normally, stay seated', say: 'Release. Breathe normally.', label: 'Recover' });
+  const MANEUVER_SAFETY = {
+    warn: `<h3>Don't do this if you have</h3>
+      <p>Heart disease or an irregular heartbeat, a recent heart attack or stroke, high or very low blood pressure, an aneurysm, glaucoma or a retinal problem, a lung condition or a past collapsed lung, a hernia, recent eye, ear, chest or abdominal surgery, or if you are pregnant. Ask your doctor first.</p>
+      <h3>Stop right away if you feel</h3>
+      <p>Dizzy or faint, chest pain, a pounding or irregular heartbeat, a sudden headache, changes in your vision, or ear pain. Never practice standing up, while driving, or in water.</p>`,
+    foot: 'These are physical maneuvers, not relaxation exercises. They change the pressure in your chest and your heart rate. This app guides timing only and is not medical advice.',
+    ack: "I'm sitting or lying down, none of the above applies to me, and I'll use moderate effort.",
+  };
+  // Resisted breathing methods. Short cycles, so the voice says one word.
+  const METHODS = {
+    pursed: {
+      idle: 'in 2, out 4 through pursed lips',
+      phases: [
+        { k: 'in', vis: 'rise', word: 'Breathe in', d: 2, hint: 'through the nose, mouth closed', say: 'In', label: 'Inhale' },
+        { k: 'out', vis: 'fall', word: 'Blow out', d: 4, hint: 'through pursed lips, slowly', say: 'Out', label: 'Exhale' },
+      ],
+    },
+    straw: {
+      idle: 'in 4, out 8 through a straw',
+      phases: [
+        { k: 'in', vis: 'rise', word: 'Breathe in', d: 4, hint: 'through the nose', say: 'In', label: 'Inhale' },
+        { k: 'out', vis: 'fall', word: 'Blow out', d: 8, hint: 'through the straw, slow and steady', say: 'Out', label: 'Exhale' },
+      ],
+    },
+    trainer: {
+      idle: '30 breaths through your trainer',
+      phases: [
+        { k: 'in', vis: 'rise', word: 'Breathe in', d: 2, hint: 'hard and fast, through the trainer', say: 'In', label: 'Inhale' },
+        { k: 'out', vis: 'fall', word: 'Let it out', d: 3, hint: 'slow and relaxed', say: 'Out', label: 'Exhale' },
+      ],
+    },
+  };
+  const TRAINER_SET = 30;
+
   const EX = {
     '4766': {
       name: '4-7-6-6', tag: '4 · 7 · 6 · 6', free: true, unit: ['breath', 'breaths'],
@@ -713,6 +750,7 @@
         { k: 'strain', vis: 'press', word: 'Bear down', d: set.vStrain, hint: 'mouth shut, nose pinched, push gently', say: 'Bear down', label: 'Bear down', ticks: true },
         RECOVER(),
       ],
+      ...MANEUVER_SAFETY,
       about: `<p>You breathe out hard against a closed airway, as if blowing up a stiff balloon. Doctors use it to check how your heart and blood pressure respond, and divers and pilots use a softer version to clear their ears. Doctors sometimes teach it to slow certain fast heart rhythms. Use it that way only if your doctor has told you to.</p>
         <h3>How it goes</h3>
         <ul><li>Sit down. Take a normal breath in.</li><li>Close your mouth, pinch your nose, and bear down with moderate effort until the timer ends.</li><li>Release and breathe normally. Stay seated through the recovery.</li></ul>`,
@@ -726,9 +764,26 @@
         { k: 'strain', vis: 'pull', word: 'Pull in', d: set.mStrain, hint: 'mouth shut, nose pinched, try to inhale', say: 'Pull in', label: 'Pull in', ticks: true },
         RECOVER(),
       ],
+      ...MANEUVER_SAFETY,
       about: `<p>The reverse of Valsalva: you try to breathe in hard against a closed airway, which creates strong suction in your chest. Clinicians use it to study the heart and the upper airway, for example when assessing sleep apnea.</p>
         <h3>How it goes</h3>
         <ul><li>Sit down. Breathe out fully.</li><li>Close your mouth, pinch your nose, and try to breathe in with moderate effort until the timer ends.</li><li>Release and breathe normally. Stay seated through the recovery.</li></ul>`,
+    },
+    resisted: {
+      name: 'Resisted', title: 'resisted breathing', tag: 'Resisted', unit: ['breath', 'breaths'],
+      doneNote: 'Breathe normally for a minute and let your breathing settle.',
+      get idle() { return ['Resisted', METHODS[set.method].idle]; },
+      lead: { d: 4, word: 'Settle in', hint: 'breathe out gently', say: 'Settle in' },
+      phases: () => METHODS[set.method].phases.map((p) => ({ ...p })),
+      about: `<p>Breathing against a light resistance slows your breath out and makes your breathing muscles work. Pursed-lip breathing is a standard technique in pulmonary rehab for breathlessness. A breathing trainer is a handheld device with an adjustable valve, and the usual routine is 30 breaths, twice a day.</p>
+        <h3>How it goes</h3>
+        <ul><li><b>Pursed lip:</b> breathe in through your nose for 2, then out through lips shaped as if to whistle for 4. Don't force the air out.</li><li><b>Straw:</b> breathe in through your nose for 4, then out through an ordinary drinking straw for 8.</li><li><b>Trainer:</b> breathe in hard and fast through the device, then let the air out slowly. Set the resistance so the last few of the 30 breaths are hard but still possible, and follow the device's own instructions.</li></ul>`,
+      warn: `<h3>Check with your doctor first if you have</h3>
+      <p>A past collapsed lung, a perforated eardrum, a lung condition that is flaring up, heart failure, or recent chest, lung, eye or ear surgery.</p>
+      <h3>Stop and rest if you feel</h3>
+      <p>Dizzy, tingly or lightheaded, more out of breath than mild effort, or any chest pain.</p>`,
+      foot: 'Resisted breathing is gentle for most people, but it is still exercise for your breathing muscles. This app guides timing only and is not medical advice.',
+      ack: "I'm sitting comfortably, none of the above applies to me, and I'll stop if I feel dizzy.",
     },
   };
 
@@ -743,7 +798,7 @@
   const el = {
     stage: $('stage'), orb: $('orb'), halo: $('halo'), word: $('word'), count: $('count'), hint: $('hint'),
     meta: $('meta'), legend: $('legend'), segs: $('segs'), dot: $('dot'), dotGlow: $('dotGlow'),
-    main: $('btn-main'), end: $('btn-end'), durations: $('durations'), durCtl: $('durCtl'), roundCtl: $('roundCtl'),
+    main: $('btn-main'), end: $('btn-end'), durations: $('durations'), durCtl: $('durCtl'), roundCtl: $('roundCtl'), methodCtl: $('methodCtl'),
     durNote: $('durNote'), live: $('live'), exercises: $('exercises'), brandTag: $('brandTag'),
   };
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -811,8 +866,9 @@
     const pt = ct - P.off[i];
     return { lead: false, cyc, ct, i, pt, p: pt / P.ph[i].d };
   }
-  const isMinutes = () => P.id === '4766';
+  const isMinutes = () => P.id === '4766' || (P.id === 'resisted' && set.method !== 'trainer');
   const cyclesFor = () => {
+    if (P.id === 'resisted' && set.method === 'trainer') return TRAINER_SET;
     if (!isMinutes()) return set.rounds;
     return set.minutes > 0 ? Math.max(1, Math.round(set.minutes * 60 / P.cycle)) : Infinity;
   };
@@ -1132,8 +1188,11 @@
   // ---------- Safety check before maneuvers ----------
   const acks = store.get('stillwater.acks', {});
   function openSafety(id, withStart) {
-    $('safety-title').textContent = `Before you try ${EX[id].name}`;
+    $('safety-title').textContent = `Before you try ${EX[id].title || EX[id].name}`;
     $('safety-body').innerHTML = EX[id].about;
+    $('safety-warn').innerHTML = EX[id].warn;
+    $('safety-foot').textContent = EX[id].foot;
+    $('ack-text').textContent = EX[id].ack;
     $('safety-start').hidden = !withStart;
     $('ack').checked = false; $('btn-safe-start').disabled = true;
     openDialog('dlg-safety');
@@ -1152,8 +1211,9 @@
     P = buildPlan(id);
     drawPattern();
     el.exercises.querySelectorAll('.ex-btn').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ex === id)));
+    el.methodCtl.hidden = id !== 'resisted';
     el.durCtl.hidden = !isMinutes();
-    el.roundCtl.hidden = isMinutes();
+    el.roundCtl.hidden = isMinutes() || id === 'resisted';
     durNote();
   }
   el.exercises.addEventListener('click', (e) => {
@@ -1214,7 +1274,7 @@
       logSession(practiced, reps);
       $('done-title').textContent = P.ex.free ? 'Well breathed.' : 'Nicely done.';
       $('done-sum').textContent = `${reps} ${plural(reps)} · ${fmt(practiced)}`;
-      $('done-note').textContent = P.ex.free ? 'Stay here a moment and notice how you feel.' : 'Stay seated for a minute before you stand up.';
+      $('done-note').textContent = P.ex.doneNote || (P.ex.free ? 'Stay here a moment and notice how you feel.' : 'Stay seated for a minute before you stand up.');
       if (completed) speak('Well done');
       openDialog('dlg-done');
     }
@@ -1285,12 +1345,14 @@
   function durNote() {
     const c = cyclesFor();
     if (isMinutes()) el.durNote.textContent = isFinite(c) ? `${c} breaths · ${fmt(c * P.cycle)}` : 'Open-ended · end whenever you like';
+    else if (P.id === 'resisted') el.durNote.textContent = `${c} breaths, the standard trainer set · about ${fmt(P.lead + c * P.cycle)}`;
     else {
       const effort = P.ph.find((p) => p.ticks);
       el.durNote.textContent = `${c} ${plural(c)} · ${effort.d} s ${effort.label.toLowerCase()} · about ${fmt(P.lead + c * P.cycle)}`;
     }
     el.durCtl.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.min === set.minutes)));
     el.roundCtl.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.rounds === set.rounds)));
+    el.methodCtl.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.method === set.method)));
   }
   function phaseScale(st) {
     const p = P.ph[st.i], jitter = reduceMotion.matches ? 0 : 1;
@@ -1359,7 +1421,7 @@
   const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   function logSession(secs, reps) {
     const log = store.get('stillwater.log', []);
-    log.push({ d: dayKey(), s: Math.round(secs), b: P.id === '4766' ? reps : 0, x: P.id });
+    log.push({ d: dayKey(), s: Math.round(secs), b: P.ex.unit[0] === 'breath' ? reps : 0, x: P.id });
     store.set('stillwater.log', log.slice(-2000));
   }
   function renderStats() {
@@ -1433,6 +1495,10 @@
   el.durCtl.addEventListener('click', (e) => {
     const b = e.target.closest('button'); if (!b) return;
     set.minutes = +b.dataset.min; saveSettings(); durNote();
+  });
+  el.methodCtl.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    set.method = b.dataset.method; saveSettings(); selectExercise('resisted');
   });
   el.roundCtl.addEventListener('click', (e) => {
     const b = e.target.closest('button'); if (!b) return;

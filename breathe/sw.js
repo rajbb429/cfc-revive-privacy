@@ -1,5 +1,5 @@
 // Offline support: precache the app shell, cache Google Fonts on first use.
-const CACHE = 'stillwater-v2';
+const CACHE = 'stillwater-v3';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-180.png', './privacy.html'];
 
 self.addEventListener('install', (e) => {
