@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Ribcage &amp; Breath Training</title>
-<meta name="description" content="Ribcage and breath training with deep breathing exercises: guided 4-7-6-6 breathing with sound, voice and vibration cues, plus pursed-lip and resisted breathing, Valsalva and Müller maneuvers. Works offline, no account, no ads.">
+<title>Ribwork</title>
+<meta name="description" content="Ribwork: ribcage and breath training with deep breathing exercises: guided 4-7-6-6 breathing with sound, voice and vibration cues, plus pursed-lip and resisted breathing, Valsalva and Müller maneuvers. Works offline, no account, no ads.">
 <meta name="theme-color" content="#0e1522">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -392,7 +392,7 @@
 
 <div class="app">
   <header>
-    <div class="brand"><b>Breath Training</b><span id="brandTag">4 · 7 · 6 · 6</span></div>
+    <div class="brand"><b>Ribwork</b><span id="brandTag">4 · 7 · 6 · 6</span></div>
     <nav class="tools" aria-label="Menu">
       <button class="icon-btn" id="btn-stats" type="button" aria-label="Your practice">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 20V13M12 20V5M19 20v-9"/></svg>
@@ -1149,7 +1149,7 @@
     else { buy.textContent = 'Unlock in the Android app'; buy.disabled = true; }
     $('btn-restore').hidden = !canPay();
     $('btn-preview-unlock').hidden = !BILLING.previewUnlock || Pro.unlocked;
-    if (!canPay() && !Pro.unlocked) $('pro-status').textContent = 'Purchases work in the Ribcage & Breath Training app from Google Play.';
+    if (!canPay() && !Pro.unlocked) $('pro-status').textContent = 'Purchases work in the Ribwork app from Google Play.';
   }
   function refreshLocks() {
     el.exercises.querySelectorAll('.ex-btn').forEach((b) => {
