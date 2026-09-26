@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Stillwater Breath</title>
-<meta name="description" content="A calm 4-7-6-6 breathing guide: inhale 4, hold 7, exhale 6, hold 6. Sound, voice and vibration cues. Works offline, no account, no tracking.">
+<title>Deep Breathing Exercises</title>
+<meta name="description" content="Deep breathing exercises to relax and unwind: guided 4-7-6-6 breathing with sound, voice and vibration cues, plus pursed-lip and resisted breathing, Valsalva and Müller maneuvers. Works offline, no account, no ads.">
 <meta name="theme-color" content="#0e1522">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -116,13 +116,16 @@
     height: 100%;
     display: grid;
     grid-template-rows: auto 1fr auto;
+    grid-template-columns: minmax(0, 1fr);
     max-width: 560px; margin: 0 auto;
     padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px calc(env(safe-area-inset-bottom, 0px) + 18px);
   }
   header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
   .brand { display: flex; align-items: baseline; gap: 10px; }
   .brand b { font-family: var(--display); font-weight: 400; font-size: 1.25rem; letter-spacing: 0.02em; }
-  .brand span { font-size: 0.72rem; letter-spacing: 0.18em; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .brand { min-width: 0; }
+  .brand b { white-space: nowrap; }
+  .brand span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.72rem; letter-spacing: 0.18em; color: var(--muted); font-variant-numeric: tabular-nums; }
   .tools { display: flex; gap: 4px; }
   .icon-btn {
     width: 42px; height: 42px; border-radius: 50%; border: 0; background: transparent;
@@ -204,15 +207,15 @@
   .legend li.on { background: var(--glass); color: var(--ink); }
 
   /* Exercise switcher */
-  .exercises { display: flex; gap: 5px; justify-content: safe center; max-width: 100%; overflow-x: auto; scrollbar-width: none; padding: 2px; }
+  .exercises { display: flex; gap: 4px; justify-content: safe center; max-width: 100%; overflow-x: auto; scrollbar-width: none; padding: 2px; }
   .exercises::-webkit-scrollbar { display: none; }
   .exercises.away { visibility: hidden; }
   .ex-btn {
     display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: transparent;
-    border-radius: 999px; padding: 6px 11px; cursor: pointer; color: var(--muted); font-size: 0.85rem; flex: none; gap: 5px;
+    border-radius: 999px; padding: 6px 9px; cursor: pointer; color: var(--muted); font-size: 0.85rem; flex: none; gap: 4px;
   }
   .ex-btn[aria-pressed="true"] { background: var(--glassHi); color: var(--ink); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
-  .ex-btn svg { width: 11px; height: 11px; opacity: .8; }
+  .ex-btn svg { width: 10px; height: 10px; opacity: .8; }
   .ex-btn:not(.locked) svg { display: none; }
 
   /* Controls */
@@ -361,6 +364,11 @@
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   [hidden] { display: none !important; }
 
+  @media (max-width: 380px) {
+    .brand b { font-size: 1.1rem; }
+    .brand span { display: none; }
+    .ex-btn { padding: 6px 8px; font-size: 0.8rem; }
+  }
   @media (max-height: 640px) {
     .legend li { padding: 5px 4px; }
     .legend li i { display: none; }
@@ -384,7 +392,7 @@
 
 <div class="app">
   <header>
-    <div class="brand"><b>Stillwater</b><span id="brandTag">4 · 7 · 6 · 6</span></div>
+    <div class="brand"><b>Deep Breathing</b><span id="brandTag">4 · 7 · 6 · 6</span></div>
     <nav class="tools" aria-label="Menu">
       <button class="icon-btn" id="btn-stats" type="button" aria-label="Your practice">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 20V13M12 20V5M19 20v-9"/></svg>
@@ -1141,7 +1149,7 @@
     else { buy.textContent = 'Unlock in the Android app'; buy.disabled = true; }
     $('btn-restore').hidden = !canPay();
     $('btn-preview-unlock').hidden = !BILLING.previewUnlock || Pro.unlocked;
-    if (!canPay() && !Pro.unlocked) $('pro-status').textContent = 'Purchases work in the Stillwater app from Google Play.';
+    if (!canPay() && !Pro.unlocked) $('pro-status').textContent = 'Purchases work in the Deep Breathing Exercises app from Google Play.';
   }
   function refreshLocks() {
     el.exercises.querySelectorAll('.ex-btn').forEach((b) => {
