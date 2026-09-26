@@ -44,6 +44,8 @@ and don't list keywords or use words like "best" or "#1": Play's metadata policy
     • Müller maneuver: breathe out, pull in against a closed airway, recover
     • Bunny breathing: three quick sniffs in, one long breath out, to reset and
       refocus fast
+    • Yahweh breath prayer: breathe in "Yah", breathe out "weh", a slow,
+      contemplative Christian breath prayer taught by Richard Rohr
     • Choose your rounds and recovery time
     • Every exercise added later, at no extra cost
     Clear safety notes come with every exercise and are free to read.

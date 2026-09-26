@@ -412,6 +412,7 @@
       <button class="ex-btn" type="button" data-ex="muller"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Müller</button>
       <button class="ex-btn" type="button" data-ex="resisted"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Resisted</button>
       <button class="ex-btn" type="button" data-ex="bunny"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Bunny</button>
+      <button class="ex-btn" type="button" data-ex="yahweh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Yahweh</button>
     </div>
 
     <div class="stage" id="stage" role="button" tabindex="0" aria-label="Start breathing session">
@@ -601,7 +602,7 @@
     <p><kbd>Space</kbd> start or pause · <kbd>Esc</kbd> end · <kbd>S</kbd> settings</p>
 
     <h3>Full app</h3>
-    <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times, resisted breathing (pursed-lip, straw, or with a breathing trainer), and bunny breathing. The safety notes for each stay free to read: pick one above and tap <b>i</b>.</p>
+    <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times, resisted breathing (pursed-lip, straw, or with a breathing trainer), bunny breathing, and the Yahweh breath prayer. The safety notes for each stay free to read: pick one above and tap <b>i</b>.</p>
 
     <h3>Privacy</h3>
     <p>No account, no ads, no analytics. Everything runs on your device, and your session history stays in this browser. Purchases go through Google Play; the app only learns whether you own the unlock. Once opened, it works offline and can be added to your home screen. <a href="privacy.html" style="color: var(--accent)">Privacy policy</a></p>
@@ -625,6 +626,7 @@
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Your timings</b><small>Effort from 5 to 15 s, 1 to 5 rounds, 30 to 60 s recovery</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Resisted breathing</b><small>Pursed-lip, straw, or a 30-breath set with a breathing trainer</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Bunny breathing</b><small>Three quick sniffs in, one long breath out</small></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Yahweh breath prayer</b><small>Breathe in “Yah”, breathe out “weh”, slowly</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Every exercise added later</b><small>Included, at no extra cost</small></div></li>
     </ul>
     <button class="primary" type="button" id="btn-buy">Unlock full app</button>
@@ -811,6 +813,25 @@
       foot: 'This app guides timing only and is not medical advice.',
       ack: "I'll keep the sniffs light and stop if I feel dizzy.",
     },
+    yahweh: {
+      name: 'Yahweh', title: 'the Yahweh breath prayer', tag: 'Yahweh', unit: ['breath', 'breaths'], noAck: true,
+      idle: ['Yahweh', 'breathe in Yah, breathe out weh'],
+      lead: { d: 4, word: 'Be still', hint: 'mouth open, throat soft', say: '' },
+      doneNote: 'Rest in the quiet for a moment before you move on.',
+      // The name is breathed, not spoken, so the voice guide stays silent here.
+      phases: () => [
+        { k: 'in', vis: 'rise', word: 'Yah', d: 5, hint: 'breathe in, mouth open, throat soft', say: '', label: 'Yah' },
+        { k: 'out', vis: 'fall', word: 'weh', d: 7, hint: 'breathe out, slow and unforced', say: '', label: 'Weh' },
+      ],
+      about: `<p>A breath prayer taught by Richard Rohr. In Jewish tradition the name of God, YHWH, was not spoken aloud. Rohr describes it as breathed instead: the syllables sound like the breath itself. Breathing in is "Yah", breathing out is "weh", so every breath quietly says the name.</p>
+        <h3>How it goes</h3>
+        <ul><li>Sit comfortably. Open your mouth a little and relax your tongue and throat.</li><li>Breathe in, silently, "Yah".</li><li>Breathe out, silently, "weh".</li><li>Breathe naturally, slowly and deeply. As you settle, let your attention to the syllables soften into silence.</li></ul>
+        <p>You can also pray it anywhere without the app: in traffic, in a queue, before a meeting.</p>`,
+      warn: `<h3>Go easy</h3>
+      <p>Let the breath stay natural rather than forced. If you feel lightheaded, return to your normal breathing.</p>`,
+      foot: 'This app guides timing only and is not medical advice.',
+      ack: "I'll breathe gently and stop if I feel lightheaded.",
+    },
   };
 
   const SMIN = 0.7, SMAX = 1, SMID = 0.85;
@@ -893,7 +914,7 @@
     const pt = ct - P.off[i];
     return { lead: false, cyc, ct, i, pt, p: pt / P.ph[i].d };
   }
-  const isMinutes = () => P.id === '4766' || P.id === 'bunny' || (P.id === 'resisted' && set.method !== 'trainer');
+  const isMinutes = () => ['4766', 'bunny', 'yahweh'].includes(P.id) || (P.id === 'resisted' && set.method !== 'trainer');
   const cyclesFor = () => {
     if (P.id === 'resisted' && set.method === 'trainer') return TRAINER_SET;
     if (!isMinutes()) return set.rounds;
@@ -1099,7 +1120,7 @@
   }
   if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.addEventListener?.('voiceschanged', pickVoice); }
   function speak(text) {
-    if (!set.voice || !('speechSynthesis' in window)) return;
+    if (!text || !set.voice || !('speechSynthesis' in window)) return;
     try {
       speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
