@@ -1,7 +1,7 @@
 {
-  "name": "Deep Breathing Exercises",
+  "name": "Ribcage & Breath Training",
   "short_name": "Breathing",
-  "description": "Deep breathing exercises: 4-7-6-6 breathing, pursed-lip and resisted breathing, Valsalva and Müller maneuvers.",
+  "description": "Ribcage and breath training: 4-7-6-6 deep breathing, pursed-lip and resisted breathing, Valsalva and Müller maneuvers.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
