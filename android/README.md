@@ -13,7 +13,7 @@ live in `twa-manifest.json`, so you can regenerate later with `bubblewrap update
 | Package name | `io.github.rajbb429.ribwork` (permanent once published) |
 | App name | Ribwork: Breath Training (launcher: Ribwork) |
 | Opens | `https://rajbb429.github.io/cfc-revive-privacy/breathe/` |
-| Targets | Android 16 (API 36), runs on Android 5.0 (API 21) and up |
+| Targets | Android 16 (API 36), runs on Android 6.0 (API 23) and up (the Play Billing library needs 23) |
 | In-app product | `stillwater_full` (one-time) |
 
 ## Build

@@ -38,7 +38,7 @@
   "isChromeOSOnly": false,
   "isMetaQuest": false,
   "fullScopeUrl": "https://rajbb429.github.io/cfc-revive-privacy/breathe/",
-  "minSdkVersion": 21,
+  "minSdkVersion": 23,
   "orientation": "portrait",
   "fingerprints": [],
   "additionalTrustedOrigins": [],
