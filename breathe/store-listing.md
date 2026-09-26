@@ -42,6 +42,8 @@ and don't list keywords or use words like "best" or "#1": Play's metadata policy
     • Valsalva maneuver: breathe in, bear down, recover, with 5, 10 or 15 second
       effort and a 3-2-1 countdown
     • Müller maneuver: breathe out, pull in against a closed airway, recover
+    • Bunny breathing: three quick sniffs in, one long breath out, to reset and
+      refocus fast
     • Choose your rounds and recovery time
     • Every exercise added later, at no extra cost
     Clear safety notes come with every exercise and are free to read.

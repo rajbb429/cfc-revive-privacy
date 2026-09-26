@@ -151,7 +151,7 @@
   .stage svg.ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
   .seg { fill: none; stroke-width: 3; stroke-linecap: round; opacity: 0.32; transition: opacity .8s, stroke-width .8s; }
   .seg.on { opacity: 1; stroke-width: 4.5; }
-  [data-vis="rise"] { --c: var(--seg0); }
+  [data-vis="rise"], [data-vis="sniffs"] { --c: var(--seg0); }
   [data-vis="full"] { --c: var(--seg1); }
   [data-vis="fall"] { --c: var(--seg2); }
   [data-vis="empty"], [data-vis="free"] { --c: var(--seg3); }
@@ -207,8 +207,7 @@
   .legend li.on { background: var(--glass); color: var(--ink); }
 
   /* Exercise switcher */
-  .exercises { display: flex; gap: 4px; justify-content: safe center; max-width: 100%; overflow-x: auto; scrollbar-width: none; padding: 2px; }
-  .exercises::-webkit-scrollbar { display: none; }
+  .exercises { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; max-width: 100%; padding: 2px; }
   .exercises.away { visibility: hidden; }
   .ex-btn {
     display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: transparent;
@@ -369,11 +368,11 @@
     .brand span { display: none; }
     .ex-btn { padding: 6px 8px; font-size: 0.8rem; }
   }
-  @media (max-height: 640px) {
+  @media (max-height: 700px) {
     .legend li { padding: 5px 4px; }
     .legend li i { display: none; }
-    main { gap: 10px; }
-    .stage { width: min(86vw, 46vh, 420px); }
+    main { gap: 6px; }
+    .stage { width: min(86vw, 42vh, 420px); }
   }
   @media (prefers-reduced-motion: reduce) {
     .cloud { animation: none; }
@@ -412,6 +411,7 @@
       <button class="ex-btn" type="button" data-ex="valsalva"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Valsalva</button>
       <button class="ex-btn" type="button" data-ex="muller"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Müller</button>
       <button class="ex-btn" type="button" data-ex="resisted"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Resisted</button>
+      <button class="ex-btn" type="button" data-ex="bunny"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Bunny</button>
     </div>
 
     <div class="stage" id="stage" role="button" tabindex="0" aria-label="Start breathing session">
@@ -601,7 +601,7 @@
     <p><kbd>Space</kbd> start or pause · <kbd>Esc</kbd> end · <kbd>S</kbd> settings</p>
 
     <h3>Full app</h3>
-    <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times, and resisted breathing (pursed-lip, straw, or with a breathing trainer). The safety notes for each stay free to read: pick one above and tap <b>i</b>.</p>
+    <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times, resisted breathing (pursed-lip, straw, or with a breathing trainer), and bunny breathing. The safety notes for each stay free to read: pick one above and tap <b>i</b>.</p>
 
     <h3>Privacy</h3>
     <p>No account, no ads, no analytics. Everything runs on your device, and your session history stays in this browser. Purchases go through Google Play; the app only learns whether you own the unlock. Once opened, it works offline and can be added to your home screen. <a href="privacy.html" style="color: var(--accent)">Privacy policy</a></p>
@@ -624,6 +624,7 @@
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Müller maneuver</b><small>Breathe out, pull in against a closed airway, recover</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Your timings</b><small>Effort from 5 to 15 s, 1 to 5 rounds, 30 to 60 s recovery</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Resisted breathing</b><small>Pursed-lip, straw, or a 30-breath set with a breathing trainer</small></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Bunny breathing</b><small>Three quick sniffs in, one long breath out</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Every exercise added later</b><small>Included, at no extra cost</small></div></li>
     </ul>
     <button class="primary" type="button" id="btn-buy">Unlock full app</button>
@@ -793,12 +794,29 @@
       foot: 'Resisted breathing is gentle for most people, but it is still exercise for your breathing muscles. This app guides timing only and is not medical advice.',
       ack: "I'm sitting comfortably, none of the above applies to me, and I'll stop if I feel dizzy.",
     },
+    bunny: {
+      name: 'Bunny', title: 'bunny breathing', tag: 'Bunny', unit: ['breath', 'breaths'], noAck: true,
+      idle: ['Bunny', 'three sniffs in, one long breath out'],
+      lead: { d: 4, word: 'Settle in', hint: 'sit tall, breathe out', say: 'Settle in' },
+      doneNote: 'Breathe normally for a moment and notice how you feel.',
+      phases: () => [
+        { k: 'in', vis: 'sniffs', word: 'Sniff', d: 3, hint: 'three quick sniffs through the nose', say: 'Sniff, sniff, sniff', label: 'Sniffs', pips: 3 },
+        { k: 'out', vis: 'fall', word: 'Breathe out', d: 5, hint: 'one long, slow breath out', say: 'Breathe out', label: 'Exhale' },
+      ],
+      about: `<p>A playful breath from kids' mindfulness practice that works for adults too: three quick sniffs in through the nose, like a rabbit sniffing for carrots, then one long, slow breath out. The quick sniffs lift your energy and focus, and the long breath out settles you. It's handy when you're so upset you can't catch your breath.</p>
+        <h3>How it goes</h3>
+        <ul><li>Sit tall.</li><li>Take three short, quick sniffs in through your nose, one on each pip, filling up a little more each time.</li><li>Let it all out in one long, slow breath through your nose or mouth.</li></ul>`,
+      warn: `<h3>Go easy</h3>
+      <p>Keep the sniffs small and light. If you feel dizzy, tingly or lightheaded, stop and breathe normally until it passes. If you have a lung condition, check with your doctor before practicing.</p>`,
+      foot: 'This app guides timing only and is not medical advice.',
+      ack: "I'll keep the sniffs light and stop if I feel dizzy.",
+    },
   };
 
   const SMIN = 0.7, SMAX = 1, SMID = 0.85;
-  const START = { rise: SMIN, full: SMAX, fall: SMAX, empty: SMIN, press: 0.97, pull: 0.72, free: SMID };
-  const END = { rise: SMAX, full: SMAX, fall: SMIN, empty: SMIN, press: 0.97, pull: 0.72, free: SMID };
-  const HAPTIC = { rise: [35], full: [18], fall: [30, 90, 30], empty: [18], press: [70], pull: [70], free: [20, 60, 20] };
+  const START = { rise: SMIN, sniffs: SMIN, full: SMAX, fall: SMAX, empty: SMIN, press: 0.97, pull: 0.72, free: SMID };
+  const END = { rise: SMAX, sniffs: SMAX, full: SMAX, fall: SMIN, empty: SMIN, press: 0.97, pull: 0.72, free: SMID };
+  const HAPTIC = { sniffs: [30, 970, 30, 970, 30], rise: [35], full: [18], fall: [30, 90, 30], empty: [18], press: [70], pull: [70], free: [20, 60, 20] };
 
   // ---------- Elements ----------
   const $ = (id) => document.getElementById(id);
@@ -822,6 +840,7 @@
     ph.forEach((p, i) => {
       events.push({ t: off[i], type: 'phase', i });
       if (p.ticks) for (let k = 3; k >= 1; k--) if (p.d > k + 1) events.push({ t: off[i] + p.d - k, type: 'tick' });
+      if (p.pips) for (let k = 0; k < p.pips; k++) events.push({ t: off[i] + k * p.d / p.pips, type: 'pip', k });
     });
     events.sort((a, b) => a.t - b.t);
     return { id, ex, ph, off, cycle: t, lead: ex.lead.d, events };
@@ -874,7 +893,7 @@
     const pt = ct - P.off[i];
     return { lead: false, cyc, ct, i, pt, p: pt / P.ph[i].d };
   }
-  const isMinutes = () => P.id === '4766' || (P.id === 'resisted' && set.method !== 'trainer');
+  const isMinutes = () => P.id === '4766' || P.id === 'bunny' || (P.id === 'resisted' && set.method !== 'trainer');
   const cyclesFor = () => {
     if (P.id === 'resisted' && set.method === 'trainer') return TRAINER_SET;
     if (!isMinutes()) return set.rounds;
@@ -965,6 +984,15 @@
     if (set.sound === 'tone' && ['rise', 'full', 'fall'].includes(p.vis)) tone(p.vis, at, p.d);
     else if (BOWL[p.vis]) bowl(BOWL[p.vis][0], at, BOWL[p.vis][1]);
   }
+  // A short, bright pip for each sniff, stepping up in pitch.
+  function pip(at, k) {
+    const c = A.ctx, o = c.createOscillator(), g = c.createGain();
+    o.type = 'sine'; o.frequency.value = [659.25, 783.99, 987.77][k % 3];
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(0.12, at + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + 0.35);
+    o.connect(g).connect(A.cue); o.start(at); o.stop(at + 0.4);
+  }
   function endChime(at) {
     if (set.sound === 'off') return;
     bowl(261.63, at, 0.12, 8); bowl(392, at + 0.25, 0.08, 7); bowl(523.25, at + 0.5, 0.06, 6);
@@ -980,6 +1008,7 @@
     if (n === eventCount()) { endChime(at); return; }
     const e = P.events[n % P.events.length];
     if (e.type === 'tick') { if (set.sound !== 'off') tick(at); }
+    else if (e.type === 'pip') { if (set.sound !== 'off') pip(at, e.k); }
     else cue(P.ph[e.i], at);
   }
   function resyncCues() {
@@ -1233,7 +1262,7 @@
   // ---------- Session control ----------
   function requestBegin() {
     if (isLocked(P.id)) { openPaywall(P.id); return; }
-    if (!P.ex.free && !acks[P.id]) { openSafety(P.id, true); return; }
+    if (!P.ex.free && !P.ex.noAck && !acks[P.id]) { openSafety(P.id, true); return; }
     begin();
   }
   function begin() {
@@ -1371,6 +1400,10 @@
       case 'empty': return SMIN;
       case 'press': return lerp(SMAX, START.press, easeInOut(st.pt / 0.6)) + jitter * 0.006 * Math.sin(st.pt * 22);
       case 'pull': return lerp(SMIN, START.pull, easeInOut(st.pt / 0.6)) + jitter * 0.006 * Math.sin(st.pt * 22);
+      case 'sniffs': {
+        const k = Math.min(2, Math.floor(st.pt * 3 / p.d)), into = st.pt - k * p.d / 3;
+        return lerp(SMIN, SMAX, (k + easeInOut(into / 0.35)) / 3);
+      }
       case 'free': {
         // Loose breathing, eased out of the effort and into the next round's start.
         const from = END[P.ph[(st.i + P.ph.length - 1) % P.ph.length].vis], to = START[P.ph[0].vis];
