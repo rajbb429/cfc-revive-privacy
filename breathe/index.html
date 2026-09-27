@@ -152,6 +152,7 @@
   .seg { fill: none; stroke-width: 3; stroke-linecap: round; opacity: 0.32; transition: opacity .8s, stroke-width .8s; }
   .seg.on { opacity: 1; stroke-width: 4.5; }
   [data-vis="rise"], [data-vis="sniffs"] { --c: var(--seg0); }
+  [data-vis="puffs"] { --c: var(--seg2); }
   [data-vis="full"] { --c: var(--seg1); }
   [data-vis="fall"] { --c: var(--seg2); }
   [data-vis="empty"], [data-vis="free"] { --c: var(--seg3); }
@@ -232,14 +233,26 @@
   }
   .seg-ctl button[aria-pressed="true"] { background: var(--glassHi); color: var(--ink); }
   .durations.away { visibility: hidden; }
+  .ctrl-bar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 8px; width: 100%; }
+  .ctrl-left { justify-self: start; display: flex; }
+  .ctrl-bar .primary { min-width: 0; width: clamp(116px, 34vw, 168px); padding: 0 14px; }
+  .voice-btn {
+    justify-self: end; width: 48px; height: 48px; border-radius: 50%; cursor: pointer;
+    border: 1px solid var(--line); background: var(--glass); color: var(--muted); display: grid; place-items: center;
+  }
+  .voice-btn svg { width: 22px; height: 22px; }
+  .voice-btn .on, .voice-btn[aria-pressed="true"] .off { display: none; }
+  .voice-btn[aria-pressed="true"] .on { display: block; }
+  .voice-btn[aria-pressed="true"] { color: var(--ink); border-color: color-mix(in srgb, var(--accent) 55%, transparent); background: color-mix(in srgb, var(--accent) 18%, transparent); }
   .adv-btn {
-    height: 54px; padding: 0 18px; border-radius: 999px; cursor: pointer;
+    position: relative; height: 54px; padding: 0 14px; border-radius: 999px; cursor: pointer;
     display: inline-flex; align-items: center; gap: 6px;
     border: 1px solid var(--line); background: var(--glass); color: var(--muted); font-size: 0.9rem;
   }
   .adv-btn[aria-pressed="true"] { color: var(--ink); background: color-mix(in srgb, var(--strain) 22%, transparent); border-color: color-mix(in srgb, var(--strain) 55%, transparent); }
-  .adv-btn svg { width: 11px; height: 11px; }
-  .adv-btn:not(.locked) svg { display: none; }
+  .lock-badge { position: absolute; top: -4px; right: -2px; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: var(--sheet); border: 1px solid var(--line); }
+  .lock-badge svg { width: 10px; height: 10px; }
+  .adv-btn:not(.locked) .lock-badge { display: none; }
   .head-cue { font-size: 3.4cqw; letter-spacing: 0.04em; color: var(--orbInk); font-weight: 500; min-height: 1.3em; margin-bottom: 0.6cqw; }
   .head-cue.next { color: var(--orbInkSoft); font-weight: 400; animation: cuePulse 1.6s ease-in-out infinite; }
   .head-cue:empty { display: none; }
@@ -380,6 +393,7 @@
   /* Resisted shows two rows of controls, so give the circle a little less room. */
   body.tall-footer .stage { width: min(76vw, 48vh, 400px); }
   @media (max-width: 380px) {
+    .adv-btn { padding: 0 11px; font-size: 0.82rem; }
     .brand b { font-size: 1.1rem; }
     .brand span { display: none; }
     .ex-btn { padding: 6px 8px; font-size: 0.8rem; }
@@ -480,12 +494,18 @@
       </div>
       <div class="dur-note" id="durNote"></div>
     </div>
-    <div class="actions">
-      <button class="adv-btn" type="button" id="advBtn" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Advanced</button>
-      <button class="ghost" id="btn-end" type="button" aria-label="End session" hidden>
-        <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>
-      </button>
+    <div class="ctrl-bar">
+      <div class="ctrl-left">
+        <button class="adv-btn" type="button" id="advBtn" aria-pressed="false" hidden>Advanced<span class="lock-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></button>
+        <button class="ghost" id="btn-end" type="button" aria-label="End session" hidden>
+          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>
+        </button>
+      </div>
       <button class="primary" id="btn-main" type="button">Begin</button>
+      <button class="voice-btn" id="voiceBtn" type="button" aria-pressed="false" aria-label="Voice guide">
+        <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.7 7.7 0 0 1 0 11"/></svg>
+        <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
+      </button>
     </div>
   </footer>
 </div>
@@ -652,7 +672,7 @@
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Müller maneuver</b><small>Breathe out, pull in against a closed airway, recover</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Your timings</b><small>Effort from 5 to 15 s, 1 to 5 rounds, 30 to 60 s recovery</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Resisted breathing</b><small>Pursed-lip, straw, or a 30-breath set with a breathing trainer</small></div></li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Bunny breathing</b><small>Three quick sniffs in, one long breath out</small></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Bunny breathing</b><small>Three quick sniffs in, three quick bursts out</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Yahweh breath prayer</b><small>Breathe in “Yah”, breathe out “weh”, slowly</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Belt breaths</b><small>A belt around your upper ribcage: guided setup, then belt breaths, arm raises, twists and side reaches</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Advanced progressions</b><small>Head up, down, left and right built into 4-7-6-6, Valsalva, Müller, resisted breathing and belt breaths</small></div></li>
@@ -843,16 +863,17 @@
     },
     bunny: {
       name: 'Bunny', title: 'bunny breathing', tag: 'Bunny', unit: ['breath', 'breaths'], noAck: true,
-      idle: ['Bunny', 'three sniffs in, one long breath out'],
-      lead: { d: 4, word: 'Settle in', hint: 'sit tall, breathe out', say: 'Settle in' },
+      idle: ['Bunny', 'three sniffs in, three bursts out'],
+      lead: { d: 4, word: 'Settle in', hint: 'sit tall, breathe out', say: '' },
       doneNote: 'Breathe normally for a moment and notice how you feel.',
       phases: () => [
-        { k: 'in', vis: 'sniffs', word: 'Sniff', d: 3, hint: 'three quick sniffs through the nose', say: 'Sniff, sniff, sniff', label: 'Sniffs', pips: 3 },
-        { k: 'out', vis: 'fall', word: 'Breathe out', d: 5, hint: 'one long, slow breath out', say: 'Breathe out', label: 'Exhale' },
+        // No voice here: the pips carry the rhythm of the bursts.
+        { k: 'in', vis: 'sniffs', word: 'Sniff in', d: 3, hint: 'three quick sniffs in through the nose', say: '', label: 'Sniffs in', pips: 3 },
+        { k: 'out', vis: 'puffs', word: 'Sniff out', d: 3, hint: 'three quick bursts out through the nose', say: '', label: 'Bursts out', pips: 3 },
       ],
-      about: `<p>A playful breath from kids' mindfulness practice that works for adults too: three quick sniffs in through the nose, like a rabbit sniffing for carrots, then one long, slow breath out. The quick sniffs lift your energy and focus, and the long breath out settles you. It's handy when you're so upset you can't catch your breath.</p>
+      about: `<p>A playful breath from kids' mindfulness practice that works for adults too: three quick sniffs in through the nose, like a rabbit sniffing for carrots, then three quick bursts back out the same way. The short, even bursts give your breath a steady rhythm to follow, which lifts your energy and focus. It's handy when you're so upset you can't catch your breath.</p>
         <h3>How it goes</h3>
-        <ul><li>Sit tall.</li><li>Take three short, quick sniffs in through your nose, one on each pip, filling up a little more each time.</li><li>Let it all out in one long, slow breath through your nose or mouth.</li></ul>`,
+        <ul><li>Sit tall.</li><li>Take three short, quick sniffs in through your nose, one on each rising pip, filling up a little more each time.</li><li>Breathe out the same way: three short bursts through your nose, one on each falling pip.</li></ul>`,
       warn: `<h3>Go easy</h3>
       <p>Keep the sniffs small and light. If you feel dizzy, tingly or lightheaded, stop and breathe normally until it passes. If you have a lung condition, check with your doctor before practicing.</p>`,
       foot: 'This app guides timing only and is not medical advice.',
@@ -860,17 +881,17 @@
     },
     yahweh: {
       name: 'Yahweh', title: 'the Yahweh breath prayer', tag: 'Yahweh', unit: ['breath', 'breaths'], noAck: true,
-      idle: ['Yahweh', 'breathe in Yah, breathe out weh'],
-      lead: { d: 4, word: 'Be still', hint: 'mouth open, throat soft', say: '' },
+      idle: ['Yahweh', 'through the nose, mouth closed'],
+      lead: { d: 4, word: 'Be still', hint: 'close your mouth, breathe through your nose', say: '' },
       doneNote: 'Rest in the quiet for a moment before you move on.',
       // The name is breathed, not spoken, so the voice guide stays silent here.
       phases: () => [
-        { k: 'in', vis: 'rise', word: 'Yah', d: 5, hint: 'breathe in, mouth open, throat soft', say: '', label: 'Yah' },
-        { k: 'out', vis: 'fall', word: 'weh', d: 7, hint: 'breathe out, slow and unforced', say: '', label: 'Weh' },
+        { k: 'in', vis: 'rise', word: 'Yah', d: 5, hint: 'in through the nose, feel “Yah” in your throat', say: '', label: 'Yah' },
+        { k: 'out', vis: 'fall', word: 'weh', d: 7, hint: 'out through the nose, feel “weh” in your throat', say: '', label: 'Weh' },
       ],
       about: `<p>A breath prayer taught by Richard Rohr. In Jewish tradition the name of God, YHWH, was not spoken aloud. Rohr describes it as breathed instead: the syllables sound like the breath itself. Breathing in is "Yah", breathing out is "weh", so every breath quietly says the name.</p>
         <h3>How it goes</h3>
-        <ul><li>Sit comfortably. Open your mouth a little and relax your tongue and throat.</li><li>Breathe in, silently, "Yah".</li><li>Breathe out, silently, "weh".</li><li>Breathe naturally, slowly and deeply. As you settle, let your attention to the syllables soften into silence.</li></ul>
+        <ul><li>Sit comfortably. Close your mouth and breathe through your nose the whole time.</li><li>As you breathe in, feel the sound "Yah" in your throat, without voicing it.</li><li>As you breathe out, feel "weh" in your throat the same way.</li><li>Keep the breath slow, deep and unforced. As you settle, let your attention to the syllables soften into silence.</li></ul>
         <p>You can also pray it anywhere without the app: in traffic, in a queue, before a meeting.</p>`,
       warn: `<h3>Go easy</h3>
       <p>Let the breath stay natural rather than forced. If you feel lightheaded, return to your normal breathing.</p>`,
@@ -932,9 +953,9 @@
   };
 
   const SMIN = 0.7, SMAX = 1, SMID = 0.85;
-  const START = { rise: SMIN, sniffs: SMIN, full: SMAX, fall: SMAX, empty: SMIN, press: 0.97, pull: 0.72, free: SMID };
-  const END = { rise: SMAX, sniffs: SMAX, full: SMAX, fall: SMIN, empty: SMIN, press: 0.97, pull: 0.72, free: SMID };
-  const HAPTIC = { sniffs: [30, 970, 30, 970, 30], rise: [35], full: [18], fall: [30, 90, 30], empty: [18], press: [70], pull: [70], free: [20, 60, 20] };
+  const START = { rise: SMIN, sniffs: SMIN, puffs: SMAX, full: SMAX, fall: SMAX, empty: SMIN, press: 0.97, pull: 0.72, free: SMID };
+  const END = { rise: SMAX, sniffs: SMAX, puffs: SMIN, full: SMAX, fall: SMIN, empty: SMIN, press: 0.97, pull: 0.72, free: SMID };
+  const HAPTIC = { sniffs: [30, 970, 30, 970, 30], puffs: [30, 970, 30, 970, 30], rise: [35], full: [18], fall: [30, 90, 30], empty: [18], press: [70], pull: [70], free: [20, 60, 20] };
 
   // ---------- Elements ----------
   const $ = (id) => document.getElementById(id);
@@ -958,7 +979,7 @@
     ph.forEach((p, i) => {
       events.push({ t: off[i], type: 'phase', i });
       if (p.ticks) for (let k = 3; k >= 1; k--) if (p.d > k + 1) events.push({ t: off[i] + p.d - k, type: 'tick' });
-      if (p.pips) for (let k = 0; k < p.pips; k++) events.push({ t: off[i] + k * p.d / p.pips, type: 'pip', k });
+      if (p.pips) for (let k = 0; k < p.pips; k++) events.push({ t: off[i] + k * p.d / p.pips, type: 'pip', k, down: p.vis === 'puffs' });
     });
     events.sort((a, b) => a.t - b.t);
     return { id, ex, ph, off, cycle: t, lead: ex.lead.d, events };
@@ -1126,9 +1147,10 @@
     else if (BOWL[p.vis]) bowl(BOWL[p.vis][0], at, BOWL[p.vis][1]);
   }
   // A short, bright pip for each sniff, stepping up in pitch.
-  function pip(at, k) {
+  function pip(at, k, down) {
     const c = A.ctx, o = c.createOscillator(), g = c.createGain();
-    o.type = 'sine'; o.frequency.value = [659.25, 783.99, 987.77][k % 3];
+    const notes = [659.25, 783.99, 987.77];
+    o.type = 'sine'; o.frequency.value = down ? notes[2 - (k % 3)] : notes[k % 3];
     g.gain.setValueAtTime(0.0001, at);
     g.gain.exponentialRampToValueAtTime(0.12, at + 0.01);
     g.gain.exponentialRampToValueAtTime(0.0001, at + 0.35);
@@ -1149,7 +1171,7 @@
     if (n === eventCount()) { endChime(at); return; }
     const e = P.events[n % P.events.length];
     if (e.type === 'tick') { if (set.sound !== 'off') tick(at); }
-    else if (e.type === 'pip') { if (set.sound !== 'off') pip(at, e.k); }
+    else if (e.type === 'pip') { if (set.sound !== 'off') pip(at, e.k, e.down); }
     else cue(P.ph[e.i], at);
   }
   function resyncCues() {
@@ -1668,9 +1690,12 @@
       case 'empty': return SMIN;
       case 'press': return lerp(SMAX, START.press, easeInOut(st.pt / 0.6)) + jitter * 0.006 * Math.sin(st.pt * 22);
       case 'pull': return lerp(SMIN, START.pull, easeInOut(st.pt / 0.6)) + jitter * 0.006 * Math.sin(st.pt * 22);
-      case 'sniffs': {
+      case 'sniffs':
+      case 'puffs': {
+        // Three quick steps: up in thirds on the sniffs in, down in thirds on the bursts out.
         const k = Math.min(2, Math.floor(st.pt * 3 / p.d)), into = st.pt - k * p.d / 3;
-        return lerp(SMIN, SMAX, (k + easeInOut(into / 0.35)) / 3);
+        const f = (k + easeInOut(into / 0.35)) / 3;
+        return p.vis === 'sniffs' ? lerp(SMIN, SMAX, f) : lerp(SMAX, SMIN, f);
       }
       case 'free': {
         // Loose breathing, eased out of the effort and into the next round's start.
@@ -1801,6 +1826,8 @@
     });
     $('vol').value = set.volume;
     $('opt-voice').checked = set.voice;
+    $('voiceBtn').setAttribute('aria-pressed', String(!!set.voice));
+    $('voiceBtn').setAttribute('aria-label', set.voice ? 'Voice guide on. Tap to mute' : 'Voice guide off. Tap to turn on');
     $('opt-haptics').checked = set.haptics;
     $('opt-counts').checked = set.counts;
     $('row-haptics').hidden = !canVibrate;
@@ -1838,7 +1865,14 @@
     if (A.master) A.master.gain.setTargetAtTime(set.volume, A.ctx.currentTime, 0.05);
   });
   $('vol').addEventListener('change', previewSound);
-  $('opt-voice').addEventListener('change', (e) => { set.voice = e.target.checked; saveSettings(); if (set.voice) { ensureAudio(); preloadVoice(P.id); speak('Breathe in'); } });
+  function setVoice(on, sample) {
+    set.voice = on; saveSettings(); reflectSettings();
+    if (on) { ensureAudio(); preloadVoice(P.id); if (sample) speak('Breathe in'); }
+    else stopVoice();
+    announce(on ? 'Voice guide on' : 'Voice guide off');
+  }
+  $('opt-voice').addEventListener('change', (e) => setVoice(e.target.checked, true));
+  $('voiceBtn').addEventListener('click', () => setVoice(!set.voice, S.status === 'idle'));
   $('opt-haptics').addEventListener('change', (e) => { set.haptics = e.target.checked; saveSettings(); buzz([30]); });
   $('opt-counts').addEventListener('change', (e) => { set.counts = e.target.checked; saveSettings(); reflectSettings(); });
 
