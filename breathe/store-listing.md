@@ -40,8 +40,8 @@ brand, Ribwork, stays as the home-screen label and opens the short description.
     • Four calm color themes, including light and dark
 
     FULL APP (ONE-TIME UNLOCK)
-    • Resisted breathing: pursed-lip breathing, straw breathing, or a 30-breath set
-      with a handheld breathing trainer (inspiratory muscle training)
+    • Resisted breathing: slow 12-second breaths in and out through a pinched nose
+      or a pinhole in your fist, no equipment needed
     • Valsalva maneuver: breathe in, bear down, recover, with 5, 10 or 15 second
       effort and a 3-2-1 countdown
     • Müller maneuver: breathe out, pull in against a closed airway, recover

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Ribwork</title>
-<meta name="description" content="Ribwork breathwork for your ribcage and midline: breath training with deep breathing exercises: guided 4-7-6-6 breathing with sound, voice and vibration cues, plus pursed-lip and resisted breathing, Valsalva and Müller maneuvers. Works offline, no account, no ads.">
+<meta name="description" content="Ribwork breathwork for your ribcage and midline: breath training with deep breathing exercises: guided 4-7-6-6 breathing with sound, voice and vibration cues, plus resisted breathing, belt breaths, Valsalva and Müller maneuvers. Works offline, no account, no ads.">
 <meta name="theme-color" content="#0e1522">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -474,9 +474,8 @@
   <footer>
     <div class="durations" id="durations">
       <div class="seg-ctl" role="group" aria-label="Method" id="methodCtl" hidden>
-        <button type="button" data-method="pursed">Pursed lip</button>
-        <button type="button" data-method="straw">Straw</button>
-        <button type="button" data-method="trainer">Trainer</button>
+        <button type="button" data-method="pinched">Pinched nose</button>
+        <button type="button" data-method="fist">Fist pinhole</button>
       </div>
       <div class="seg-ctl" role="group" aria-label="Session length" id="durCtl">
         <button type="button" data-min="3">3 min</button>
@@ -646,7 +645,7 @@
     <p>Switch on <b>Advanced</b> under the controls to add a head-position progression: up, down, left, right. On 4-7-6-6 your head changes position once per breath, during the empty hold. Advanced is part of the full app.</p>
 
     <h3>Full app</h3>
-    <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times, resisted breathing (pursed-lip, straw, or with a breathing trainer), bunny breathing, the Yahweh breath prayer, and belt breaths. The safety notes for each stay free to read: pick one above and tap <b>i</b>.</p>
+    <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times, resisted breathing (through a pinched nose or a fist pinhole), bunny breathing, the Yahweh breath prayer, and belt breaths. The safety notes for each stay free to read: pick one above and tap <b>i</b>.</p>
 
     <h3>Credits</h3>
     <p>Voice guide recorded with the Kokoro text-to-speech model (Apache 2.0).</p>
@@ -671,7 +670,7 @@
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Valsalva maneuver</b><small>Breathe in, bear down against a closed airway, recover</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Müller maneuver</b><small>Breathe out, pull in against a closed airway, recover</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Your timings</b><small>Effort from 5 to 15 s, 1 to 5 rounds, 30 to 60 s recovery</small></div></li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Resisted breathing</b><small>Pursed-lip, straw, or a 30-breath set with a breathing trainer</small></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Resisted breathing</b><small>Through a pinched nose or a fist pinhole, 12 seconds in and 12 out</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Bunny breathing</b><small>Three quick sniffs in, three quick bursts out</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Yahweh breath prayer</b><small>Breathe in “Yah”, breathe out “weh”, slowly</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Belt breaths</b><small>A belt around your upper ribcage: guided setup, then belt breaths, arm raises, twists and side reaches</small></div></li>
@@ -745,7 +744,7 @@
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
   };
   const DEFAULTS = {
-    ex: '4766', minutes: 5, rounds: 3, method: 'pursed', vStrain: 10, mStrain: 8, recovery: 45,
+    ex: '4766', minutes: 5, rounds: 3, method: 'pinched', vStrain: 10, mStrain: 8, recovery: 45,
     sound: 'bowl', ambience: 'none', volume: 0.7, voice: false, haptics: true, counts: true, scene: 'auto',
   };
   const set = Object.assign({}, DEFAULTS, store.get('stillwater.settings', {}));
@@ -763,31 +762,33 @@
     foot: 'These are physical maneuvers, not relaxation exercises. They change the pressure in your chest and your heart rate. This app guides timing only and is not medical advice.',
     ack: "I'm sitting or lying down, none of the above applies to me, and I'll use moderate effort.",
   };
-  // Resisted breathing methods. Short cycles, so the voice says one word.
+  // Resisted breathing: slow breaths in and out against a small opening.
   const METHODS = {
-    pursed: {
-      idle: 'in 2, out 4 through pursed lips',
+    pinched: {
+      idle: 'in 12, out 12 through a pinched nose',
+      lead: [
+        { d: 7, word: 'Pinch gently', hint: 'thumb and finger, leave a small opening', say: 'Pinch your nose gently, leaving a small opening.' },
+        { d: 5, word: 'Mouth closed', hint: 'breathe only through your nose', say: 'Keep your mouth closed, and breathe only through your nose.' },
+      ],
       phases: [
-        { k: 'in', vis: 'rise', word: 'Breathe in', d: 2, hint: 'through the nose, mouth closed', say: 'In', label: 'Inhale' },
-        { k: 'out', vis: 'fall', word: 'Blow out', d: 4, hint: 'through pursed lips, slowly', say: 'Out', label: 'Exhale' },
+        { k: 'in', vis: 'rise', word: 'Breathe in', d: 12, hint: 'through your pinched nose, slow and steady', say: 'Breathe in, slow and steady', label: 'Inhale' },
+        { k: 'out', vis: 'fall', word: 'Breathe out', d: 12, hint: 'through your pinched nose, slow and steady', say: 'Breathe out, slow and steady', label: 'Exhale' },
       ],
     },
-    straw: {
-      idle: 'in 4, out 8 through a straw',
-      phases: [
-        { k: 'in', vis: 'rise', word: 'Breathe in', d: 4, hint: 'through the nose', say: 'In', label: 'Inhale' },
-        { k: 'out', vis: 'fall', word: 'Blow out', d: 8, hint: 'through the straw, slow and steady', say: 'Out', label: 'Exhale' },
+    fist: {
+      idle: 'in 12, out 12 through a fist pinhole',
+      lead: [
+        { d: 7, word: 'Make a fist', hint: 'loose, with a pinhole where thumb meets finger', say: 'Make a loose fist, with a small pinhole where your thumb meets your finger.' },
+        { d: 6, word: 'Fist to lips', hint: 'breathe only through the pinhole', say: 'Bring it to your lips, and breathe only through the pinhole.' },
       ],
-    },
-    trainer: {
-      idle: '30 breaths through your trainer',
       phases: [
-        { k: 'in', vis: 'rise', word: 'Breathe in', d: 2, hint: 'hard and fast, through the trainer', say: 'In', label: 'Inhale' },
-        { k: 'out', vis: 'fall', word: 'Let it out', d: 3, hint: 'slow and relaxed', say: 'Out', label: 'Exhale' },
+        { k: 'in', vis: 'rise', word: 'Breathe in', d: 12, hint: 'through the pinhole in your fist, slow and steady', say: 'Breathe in, slow and steady', label: 'Inhale' },
+        { k: 'out', vis: 'fall', word: 'Breathe out', d: 12, hint: 'through the pinhole in your fist, slow and steady', say: 'Breathe out, slow and steady', label: 'Exhale' },
       ],
     },
   };
-  const TRAINER_SET = 30;
+  const methodOf = () => (METHODS[set.method] ? set.method : 'pinched');
+  if (!METHODS[set.method]) set.method = 'pinched'; // older versions had pursed-lip, straw and trainer
 
   // ---------- Advanced: head-position progression ----------
   const HEADS = [
@@ -795,15 +796,13 @@
     { word: 'Head down', arrow: '↓', hint: 'chin toward your chest', say: 'lower your chin toward your chest' },
     { word: 'Head left', arrow: '←', hint: 'turn your head left', say: 'turn your head to the left' },
     { word: 'Head right', arrow: '→', hint: 'turn your head right', say: 'turn your head to the right' },
-    { word: 'Face forward', arrow: '•', hint: 'head back to center', say: 'bring your head back to center' }, // only used by the trainer set
   ];
   const cueLine = (h) => `Next, ${h.say}.`;
   const ADV = ['4766', 'valsalva', 'muller', 'resisted', 'belt'];
   const HEAD_ABOUT = `<h3>Advanced: head positions</h3>
     <p>The Advanced version adds a progression through four head positions: up, down, left and right. When the app says "Next", move your head in the quiet part of the breath, then hold it still while you breathe in, hold or strain.</p>
     <ul><li>Use about half of your comfortable range, especially when looking up.</li><li>Never move your head while straining in Valsalva or Müller.</li><li>Skip the head positions if you have neck problems, and stop if you feel dizzy.</li></ul>`;
-  const RESISTED_BLOCK = 5; // breaths per head position
-  const TRAINER_HEADS = [4, 0, 1, 2, 3, 4]; // forward, up, down, left, right, forward
+  const RESISTED_BLOCK = 2; // slow breaths per head position (about 48 s)
 
   const EX = {
     '4766': {
@@ -848,16 +847,16 @@
     resisted: {
       name: 'Resisted', title: 'resisted breathing', tag: 'Resisted', unit: ['breath', 'breaths'],
       doneNote: 'Breathe normally for a minute and let your breathing settle.',
-      get idle() { return ['Resisted', METHODS[set.method].idle]; },
-      lead: { d: 4, word: 'Settle in', hint: 'breathe out gently', say: 'Settle in' },
-      phases: () => METHODS[set.method].phases.map((p) => ({ ...p })),
-      about: `<p>Breathing against a light resistance slows your breath out and makes your breathing muscles work. Pursed-lip breathing is a standard technique in pulmonary rehab for breathlessness. A breathing trainer is a handheld device with an adjustable valve, and the usual routine is 30 breaths, twice a day.</p>
+      get idle() { return ['Resisted', METHODS[methodOf()].idle]; },
+      get lead() { const steps = METHODS[methodOf()].lead; return { steps, d: steps.reduce((t, x) => t + x.d, 0) }; },
+      phases: () => METHODS[methodOf()].phases.map((p) => ({ ...p })),
+      about: `<p>Breathing in and out against a small opening slows every breath right down and makes your breathing muscles work the whole way through, in and out. You need no equipment: just your fingers or your fist. Each breath takes 12 seconds in and 12 seconds out.</p>
         <h3>How it goes</h3>
-        <ul><li><b>Pursed lip:</b> breathe in through your nose for 2, then out through lips shaped as if to whistle for 4. Don't force the air out.</li><li><b>Straw:</b> breathe in through your nose for 4, then out through an ordinary drinking straw for 8.</li><li><b>Trainer:</b> breathe in hard and fast through the device, then let the air out slowly. Set the resistance so the last few of the 30 breaths are hard but still possible, and follow the device's own instructions.</li></ul>`,
+        <ul><li><b>Pinched nose:</b> pinch your nostrils gently between thumb and finger so only a little air gets through. Keep your mouth closed and breathe in and out through your nose.</li><li><b>Fist pinhole:</b> make a loose fist, leaving a small hole where your thumb meets your finger. Hold it to your lips and breathe in and out through the hole.</li><li>Keep the flow slow and even, so the breath lasts the full 12 seconds each way. If it runs out early, open the gap a little.</li></ul>`,
       warn: `<h3>Check with your doctor first if you have</h3>
       <p>A past collapsed lung, a perforated eardrum, a lung condition that is flaring up, heart failure, or recent chest, lung, eye or ear surgery.</p>
       <h3>Stop and rest if you feel</h3>
-      <p>Dizzy, tingly or lightheaded, more out of breath than mild effort, or any chest pain.</p>`,
+      <p>Dizzy, tingly or lightheaded, more out of breath than mild effort, pressure in your ears, or any chest pain.</p>`,
       foot: 'Resisted breathing is gentle for most people, but it is still exercise for your breathing muscles. This app guides timing only and is not medical advice.',
       ack: "I'm sitting comfortably, none of the above applies to me, and I'll stop if I feel dizzy.",
     },
@@ -1055,9 +1054,8 @@
     let end = 0;
     for (let i = 0; i < steps.length; i++) { end += steps[i].d; if (t < end || i === steps.length - 1) return { i, step: steps[i], left: end - t }; }
   }
-  const isMinutes = () => ['4766', 'bunny', 'yahweh'].includes(P.id) || (P.id === 'resisted' && set.method !== 'trainer');
+  const isMinutes = () => ['4766', 'bunny', 'yahweh', 'resisted'].includes(P.id);
   const cyclesFor = () => {
-    if (P.id === 'resisted' && set.method === 'trainer') return TRAINER_SET;
     if (!isMinutes()) return set.rounds;
     return set.minutes > 0 ? Math.max(1, Math.round(set.minutes * 60 / P.cycle)) : Infinity;
   };
@@ -1271,10 +1269,10 @@
     for (const method of id === 'resisted' ? Object.keys(METHODS) : [set.method]) {
       set.method = method;
       for (const adv of [false, true]) ex.phases(adv).forEach((p) => p.say && lines.add(p.say));
+      if (ex.lead.say) lines.add(ex.lead.say);
+      (ex.lead.steps || []).forEach((x) => lines.add(x.say));
     }
     set.method = savedMethod;
-    if (ex.lead.say) lines.add(ex.lead.say);
-    (ex.lead.steps || []).forEach((x) => lines.add(x.say));
     if (ADV.includes(id)) HEADS.forEach((h) => lines.add(cueLine(h)));
     return [...lines];
   }
@@ -1397,13 +1395,10 @@
   // facing forward), and next when it's time to move.
   function headState(st) {
     if (!isAdv()) return null;
-    const pos = (b) => {
-      if (P.id === 'resisted' && set.method === 'trainer') return TRAINER_HEADS[Math.min(b, TRAINER_HEADS.length - 1)];
-      return ((b % 4) + 4) % 4;
-    };
+    const pos = (b) => ((b % 4) + 4) % 4;
     if (P.id === 'belt') return st.lead ? null : { now: P.ph[st.i].head ?? null, next: null };
     if (P.id === 'resisted') {
-      if (st.lead) return { now: null, next: pos(0) === 4 ? null : pos(0), key: 'b0' };
+      if (st.lead) return { now: null, next: pos(0), key: 'b0' };
       const b = Math.floor(st.cyc / RESISTED_BLOCK), last = st.cyc % RESISTED_BLOCK === RESISTED_BLOCK - 1;
       const more = st.cyc + 1 < S.cycles;
       if (last && st.i === P.ph.length - 1 && more && pos(b + 1) !== pos(b)) return { now: pos(b), next: pos(b + 1), key: `b${b + 1}` };
@@ -1672,7 +1667,6 @@
     const c = cyclesFor();
     if (isMinutes()) el.durNote.textContent = isFinite(c) ? `${c} breaths · ${fmt(c * P.cycle)}` : 'Open-ended · end whenever you like';
     else if (P.id === 'belt') el.durNote.textContent = `Setup, then ${c} ${plural(c)} of ${new Set(P.ph.map((p) => p.group)).size} moves · about ${fmt(P.lead + c * P.cycle)}`;
-    else if (P.id === 'resisted') el.durNote.textContent = `${c} breaths, the standard trainer set · about ${fmt(P.lead + c * P.cycle)}`;
     else {
       const effort = P.ph.find((p) => p.ticks);
       el.durNote.textContent = `${c} ${plural(c)} · ${effort.d} s ${effort.label.toLowerCase()} · about ${fmt(P.lead + c * P.cycle)}`;
