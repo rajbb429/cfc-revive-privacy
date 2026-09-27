@@ -671,7 +671,7 @@
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Müller maneuver</b><small>Breathe out, pull in against a closed airway, recover</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Your timings</b><small>Effort from 5 to 15 s, 1 to 5 rounds, 30 to 60 s recovery</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Resisted breathing</b><small>Through a pinched nose or a fist pinhole, 12 seconds in and 12 out</small></div></li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Bunny breathing</b><small>Three quick sniffs in, three quick bursts out</small></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Bunny breathing</b><small>Six quick sniffs in, six quick bursts out</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Yahweh breath prayer</b><small>Breathe in “Yah”, breathe out “weh”, slowly</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Belt breaths</b><small>A belt around your upper ribcage: guided setup, then belt breaths, arm raises, twists and side reaches</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Advanced progressions</b><small>Head up, down, left and right built into 4-7-6-6, Valsalva, Müller, resisted breathing and belt breaths</small></div></li>
@@ -862,17 +862,17 @@
     },
     bunny: {
       name: 'Bunny', title: 'bunny breathing', tag: 'Bunny', unit: ['breath', 'breaths'], noAck: true, silent: true,
-      idle: ['Bunny', 'three sniffs in, three bursts out'],
+      idle: ['Bunny', 'six sniffs in, six bursts out'],
       lead: { d: 4, word: 'Settle in', hint: 'sit tall, breathe out', say: '' },
       doneNote: 'Breathe normally for a moment and notice how you feel.',
       phases: () => [
         // No voice here: the pips carry the rhythm of the bursts.
-        { k: 'in', vis: 'sniffs', word: 'Sniff in', d: 3, hint: 'three quick sniffs in through the nose', say: '', label: 'Sniffs in', pips: 3 },
-        { k: 'out', vis: 'puffs', word: 'Sniff out', d: 3, hint: 'three quick bursts out through the nose', say: '', label: 'Bursts out', pips: 3 },
+        { k: 'in', vis: 'sniffs', word: 'Sniff in', d: 3, hint: 'six quick sniffs in through the nose', say: '', label: 'Sniffs in', pips: 6 },
+        { k: 'out', vis: 'puffs', word: 'Sniff out', d: 3, hint: 'six quick bursts out through the nose', say: '', label: 'Bursts out', pips: 6 },
       ],
-      about: `<p>A playful breath from kids' mindfulness practice that works for adults too: three quick sniffs in through the nose, like a rabbit sniffing for carrots, then three quick bursts back out the same way. The short, even bursts give your breath a steady rhythm to follow, which lifts your energy and focus. It's handy when you're so upset you can't catch your breath.</p>
+      about: `<p>A playful breath from kids' mindfulness practice that works for adults too: six quick sniffs in through the nose, like a rabbit sniffing for carrots, then six quick bursts back out the same way. The short, even bursts give your breath a steady rhythm to follow, which lifts your energy and focus. It's handy when you're so upset you can't catch your breath.</p>
         <h3>How it goes</h3>
-        <ul><li>Sit tall.</li><li>Take three short, quick sniffs in through your nose, one on each rising pip, filling up a little more each time.</li><li>Breathe out the same way: three short bursts through your nose, one on each falling pip.</li></ul>`,
+        <ul><li>Sit tall.</li><li>Take six short, quick sniffs in through your nose, one on each rising pip, filling up a little more each time.</li><li>Breathe out the same way: six short bursts through your nose, one on each falling pip.</li></ul>`,
       warn: `<h3>Go easy</h3>
       <p>Keep the sniffs small and light. If you feel dizzy, tingly or lightheaded, stop and breathe normally until it passes. If you have a lung condition, check with your doctor before practicing.</p>`,
       foot: 'This app guides timing only and is not medical advice.',
@@ -954,7 +954,7 @@
   const SMIN = 0.7, SMAX = 1, SMID = 0.85;
   const START = { rise: SMIN, sniffs: SMIN, puffs: SMAX, full: SMAX, fall: SMAX, empty: SMIN, press: 0.97, pull: 0.72, free: SMID };
   const END = { rise: SMAX, sniffs: SMAX, puffs: SMIN, full: SMAX, fall: SMIN, empty: SMIN, press: 0.97, pull: 0.72, free: SMID };
-  const HAPTIC = { sniffs: [30, 970, 30, 970, 30], puffs: [30, 970, 30, 970, 30], rise: [35], full: [18], fall: [30, 90, 30], empty: [18], press: [70], pull: [70], free: [20, 60, 20] };
+  const HAPTIC = { sniffs: [25, 475, 25, 475, 25, 475, 25, 475, 25, 475, 25], puffs: [25, 475, 25, 475, 25, 475, 25, 475, 25, 475, 25], rise: [35], full: [18], fall: [30, 90, 30], empty: [18], press: [70], pull: [70], free: [20, 60, 20] };
 
   // ---------- Elements ----------
   const $ = (id) => document.getElementById(id);
@@ -1016,7 +1016,7 @@
       P.ph.forEach((p) => {
         const li = document.createElement('li');
         li.dataset.vis = p.vis;
-        li.innerHTML = `<i></i><b>${p.d}</b><span>${p.label}</span>`;
+        li.innerHTML = `<i></i><b>${p.pips ? p.pips + '×' : p.d}</b><span>${p.label}</span>`;
         el.legend.appendChild(li);
       });
     }
@@ -1147,8 +1147,9 @@
   // A short, bright pip for each sniff, stepping up in pitch.
   function pip(at, k, down) {
     const c = A.ctx, o = c.createOscillator(), g = c.createGain();
-    const notes = [659.25, 783.99, 987.77];
-    o.type = 'sine'; o.frequency.value = down ? notes[2 - (k % 3)] : notes[k % 3];
+    const notes = [523.25, 587.33, 659.25, 783.99, 880, 987.77];
+    const i = k % notes.length;
+    o.type = 'sine'; o.frequency.value = down ? notes[notes.length - 1 - i] : notes[i];
     g.gain.setValueAtTime(0.0001, at);
     g.gain.exponentialRampToValueAtTime(0.12, at + 0.01);
     g.gain.exponentialRampToValueAtTime(0.0001, at + 0.35);
@@ -1687,9 +1688,10 @@
       case 'pull': return lerp(SMIN, START.pull, easeInOut(st.pt / 0.6)) + jitter * 0.006 * Math.sin(st.pt * 22);
       case 'sniffs':
       case 'puffs': {
-        // Three quick steps: up in thirds on the sniffs in, down in thirds on the bursts out.
-        const k = Math.min(2, Math.floor(st.pt * 3 / p.d)), into = st.pt - k * p.d / 3;
-        const f = (k + easeInOut(into / 0.35)) / 3;
+        // One quick step per sniff: up on the sniffs in, down on the bursts out.
+        const n = p.pips, step = p.d / n;
+        const k = Math.min(n - 1, Math.floor(st.pt / step)), into = st.pt - k * step;
+        const f = (k + easeInOut(into / (step * 0.6))) / n;
         return p.vis === 'sniffs' ? lerp(SMIN, SMAX, f) : lerp(SMAX, SMIN, f);
       }
       case 'free': {
@@ -1740,7 +1742,8 @@
       scale = phaseScale(st);
       word = p.word;
       // Efforts and recovery count down; breathing counts up, the way people count breaths.
-      count = (p.ticks || p.vis === 'free') ? String(Math.ceil(p.d - st.pt)) : String(Math.min(p.d, Math.floor(st.pt) + 1));
+      count = p.pips ? String(Math.min(p.pips, Math.floor(st.pt / (p.d / p.pips)) + 1))
+        : (p.ticks || p.vis === 'free') ? String(Math.ceil(p.d - st.pt)) : String(Math.min(p.d, Math.floor(st.pt) + 1));
       hint = p.hint;
       if (p.vis === 'free' && st.pt > 3) word = 'Recover';
       placeDot(st.ct / P.cycle);

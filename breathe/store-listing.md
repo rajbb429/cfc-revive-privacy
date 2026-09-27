@@ -45,7 +45,7 @@ brand, Ribwork, stays as the home-screen label and opens the short description.
     • Valsalva maneuver: breathe in, bear down, recover, with 5, 10 or 15 second
       effort and a 3-2-1 countdown
     • Müller maneuver: breathe out, pull in against a closed airway, recover
-    • Bunny breathing: three quick sniffs in and three quick bursts out through
+    • Bunny breathing: six quick sniffs in and six quick bursts out through
       the nose, to reset and refocus fast
     • Yahweh breath prayer: breathe in "Yah", breathe out "weh", a slow,
       contemplative Christian breath prayer taught by Richard Rohr
