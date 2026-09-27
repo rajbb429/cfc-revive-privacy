@@ -861,7 +861,7 @@
       ack: "I'm sitting comfortably, none of the above applies to me, and I'll stop if I feel dizzy.",
     },
     bunny: {
-      name: 'Bunny', title: 'bunny breathing', tag: 'Bunny', unit: ['breath', 'breaths'], noAck: true,
+      name: 'Bunny', title: 'bunny breathing', tag: 'Bunny', unit: ['breath', 'breaths'], noAck: true, silent: true,
       idle: ['Bunny', 'three sniffs in, three bursts out'],
       lead: { d: 4, word: 'Settle in', hint: 'sit tall, breathe out', say: '' },
       doneNote: 'Breathe normally for a moment and notice how you feel.',
@@ -879,7 +879,7 @@
       ack: "I'll keep the sniffs light and stop if I feel dizzy.",
     },
     yahweh: {
-      name: 'Yahweh', title: 'the Yahweh breath prayer', tag: 'Yahweh', unit: ['breath', 'breaths'], noAck: true,
+      name: 'Yahweh', title: 'the Yahweh breath prayer', tag: 'Yahweh', unit: ['breath', 'breaths'], noAck: true, silent: true,
       idle: ['Yahweh', 'through the nose, mouth closed'],
       lead: { d: 4, word: 'Be still', hint: 'close your mouth, breathe through your nose', say: '' },
       doneNote: 'Rest in the quiet for a moment before you move on.',
@@ -1264,7 +1264,7 @@
   const VO = { data: new Map(), buf: new Map(), src: null, endsAt: 0, token: 0 };
   // Every line an exercise can say, across its methods and Advanced on and off.
   function voiceLinesFor(id) {
-    const ex = EX[id], lines = new Set(['Well done', 'Breathe in']);
+    const ex = EX[id], lines = new Set(ex.silent ? [] : ['Well done', 'Breathe in']);
     const savedMethod = set.method;
     for (const method of id === 'resisted' ? Object.keys(METHODS) : [set.method]) {
       set.method = method;
@@ -1299,7 +1299,7 @@
     if ('speechSynthesis' in window) speechSynthesis.cancel();
   }
   async function speak(text, queue) {
-    if (!text || !set.voice) return;
+    if (!text || !set.voice || (P && P.ex.silent)) return;
     if (!queue) stopVoice();
     const token = VO.token, asked = now();
     const buf = await clipFor(text);
@@ -1499,6 +1499,7 @@
     drawPattern();
     el.exercises.querySelectorAll('.ex-btn').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ex === id)));
     el.methodCtl.hidden = id !== 'resisted';
+    $('voiceBtn').hidden = !!EX[id].silent; // bunny and Yahweh have no voiceover
     reflectAdv();
     preloadVoice(id);
     el.durCtl.hidden = !isMinutes();
