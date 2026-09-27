@@ -201,7 +201,8 @@
     color: var(--muted);
   }
   .legend li b { font-weight: 500; font-size: 1.2rem; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.1; }
-  .legend li span { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; }
+  .legend li span { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; text-align: center; line-height: 1.3; }
+  .legend[style*="--n: 4"] li span { letter-spacing: 0.08em; }
   .legend li i { width: 18px; height: 3px; border-radius: 2px; opacity: .8; }
   .legend li i { background: var(--c); }
   .legend li.on { background: var(--glass); color: var(--ink); }
@@ -369,10 +370,11 @@
     .ex-btn { padding: 6px 8px; font-size: 0.8rem; }
   }
   @media (max-height: 700px) {
-    .legend li { padding: 5px 4px; }
+    .legend li { padding: 3px 4px; }
+    .legend li span { line-height: 1.15; }
     .legend li i { display: none; }
     main { gap: 6px; }
-    .stage { width: min(86vw, 42vh, 420px); }
+    .stage { width: min(86vw, 41vh, 420px); }
   }
   @media (prefers-reduced-motion: reduce) {
     .cloud { animation: none; }
@@ -413,6 +415,7 @@
       <button class="ex-btn" type="button" data-ex="resisted"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Resisted</button>
       <button class="ex-btn" type="button" data-ex="bunny"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Bunny</button>
       <button class="ex-btn" type="button" data-ex="yahweh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Yahweh</button>
+      <button class="ex-btn" type="button" data-ex="belt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Belt</button>
     </div>
 
     <div class="stage" id="stage" role="button" tabindex="0" aria-label="Start breathing session">
@@ -602,7 +605,7 @@
     <p><kbd>Space</kbd> start or pause · <kbd>Esc</kbd> end · <kbd>S</kbd> settings</p>
 
     <h3>Full app</h3>
-    <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times, resisted breathing (pursed-lip, straw, or with a breathing trainer), bunny breathing, and the Yahweh breath prayer. The safety notes for each stay free to read: pick one above and tap <b>i</b>.</p>
+    <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times, resisted breathing (pursed-lip, straw, or with a breathing trainer), bunny breathing, the Yahweh breath prayer, and breath belt training. The safety notes for each stay free to read: pick one above and tap <b>i</b>.</p>
 
     <h3>Privacy</h3>
     <p>No account, no ads, no analytics. Everything runs on your device, and your session history stays in this browser. Purchases go through Google Play; the app only learns whether you own the unlock. Once opened, it works offline and can be added to your home screen. <a href="privacy.html" style="color: var(--accent)">Privacy policy</a></p>
@@ -627,6 +630,7 @@
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Resisted breathing</b><small>Pursed-lip, straw, or a 30-breath set with a breathing trainer</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Bunny breathing</b><small>Three quick sniffs in, one long breath out</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Yahweh breath prayer</b><small>Breathe in “Yah”, breathe out “weh”, slowly</small></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Breath belt</b><small>A belt around your ribs, with arm raises, twists and side reaches</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Every exercise added later</b><small>Included, at no extra cost</small></div></li>
     </ul>
     <button class="primary" type="button" id="btn-buy">Unlock full app</button>
@@ -832,6 +836,46 @@
       foot: 'This app guides timing only and is not medical advice.',
       ack: "I'll breathe gently and stop if I feel lightheaded.",
     },
+    belt: {
+      name: 'Belt', title: 'breath belt training', tag: 'Belt', unit: ['round', 'rounds'], noAck: true,
+      idle: ['Belt', 'four moves, three breaths each'],
+      lead: { d: 10, word: 'Belt on', hint: 'snug around your lower ribs', say: 'Wrap the belt snugly around your lower ribs.' },
+      doneNote: 'Loosen the belt and take a few easy breaths.',
+      phases: () => {
+        const moves = [
+          { group: 'Belt breaths', breaths: (n) => [
+            { word: 'Breathe in', hint: 'push the sides and back into the belt', say: 'Breathe into the belt' },
+            { word: 'Breathe out', hint: 'keep a little tension in the belt', say: 'Breathe out' }] },
+          { group: 'Arm raises', breaths: (n) => [
+            { word: 'Raise arms', hint: 'breathe into the belt as they rise', say: 'Raise your arms' },
+            { word: 'Lower', hint: 'ribs soften down, belt stays snug', say: 'Lower' }] },
+          { group: 'Twists', breaths: (n) => [
+            { word: 'Breathe in', hint: 'face forward, widen into the belt', say: 'Breathe in' },
+            { word: n % 2 ? 'Twist left' : 'Twist right', hint: 'rotate as you breathe out', say: n % 2 ? 'Twist left' : 'Twist right' }] },
+          { group: 'Side reaches', breaths: (n) => [
+            { word: n % 2 ? 'Reach left' : 'Reach right', hint: `${n % 2 ? 'left' : 'right'} arm up, breathe into those ribs`, say: n % 2 ? 'Reach left' : 'Reach right' },
+            { word: 'Return', hint: 'arm down, back to center', say: 'Return' }] },
+        ];
+        const out = [];
+        moves.forEach((m, g) => {
+          for (let n = 0; n < 3; n++) {
+            const [a, b] = m.breaths(n);
+            out.push({ k: 'in', vis: 'rise', d: 4, label: m.group, group: g, ...a });
+            out.push({ k: 'out', vis: 'fall', d: 6, label: m.group, group: g, ...b });
+          }
+        });
+        return out;
+      },
+      about: `<p>A belt around your lower ribs gives your breath something to push against, so you can feel whether your ribs widen to the sides and back, not just the chest and belly. Moving your arms and trunk while you keep breathing into the belt teaches your ribcage to expand in every position, and keeping gentle tension on the belt as you breathe out trains your midline.</p>
+        <h3>Set up</h3>
+        <ul><li>Use a soft belt, a yoga strap or a resistance band.</li><li>Wrap it around your lower ribs, just below the chest, snug but not tight. You should be able to slide a flat hand under it.</li><li>Stand, or sit tall on a chair without leaning back.</li></ul>
+        <h3>The moves, three breaths each</h3>
+        <ul><li><b>Belt breaths:</b> breathe in and push the sides and back of your ribs into the belt. Breathe out and keep a little tension in it.</li><li><b>Arm raises:</b> raise both arms overhead as you breathe in, lower them as you breathe out.</li><li><b>Twists:</b> breathe in facing forward, breathe out as you rotate, alternating right and left.</li><li><b>Side reaches:</b> reach one arm up and breathe into those ribs, return as you breathe out. Alternate sides.</li></ul>`,
+      warn: `<h3>Go easy</h3>
+      <p>Keep the belt snug, never tight enough to restrict your breathing. Move slowly and only as far as feels comfortable. Skip the twists and side reaches if you have back pain or a recent back, rib or abdominal injury or surgery, and stop if you feel pain or dizziness.</p>`,
+      foot: 'This app guides timing only and is not medical advice.',
+      ack: "I'll keep the belt comfortable and stop if anything hurts.",
+    },
   };
 
   const SMIN = 0.7, SMAX = 1, SMID = 0.85;
@@ -879,22 +923,38 @@
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('d', `M${x0.toFixed(2)} ${y0.toFixed(2)} A${R} ${R} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`);
       path.setAttribute('class', 'seg'); path.dataset.vis = p.vis;
+      if (p.group != null) path.style.setProperty('--c', GROUP_COLORS[p.group % 4]);
       el.segs.appendChild(path);
     });
     el.legend.innerHTML = '';
-    el.legend.style.setProperty('--n', P.ph.length);
-    P.ph.forEach((p) => {
-      const li = document.createElement('li');
-      li.dataset.vis = p.vis;
-      li.innerHTML = `<i></i><b>${p.d}</b><span>${p.label}</span>`;
-      el.legend.appendChild(li);
-    });
+    if (P.ph[0].group != null) {
+      // One legend item per move, showing its breath count.
+      const groups = [];
+      P.ph.forEach((p) => { groups[p.group] = groups[p.group] || { label: p.label, n: 0 }; if (p.k === 'in') groups[p.group].n++; });
+      el.legend.style.setProperty('--n', groups.length);
+      groups.forEach((g, i) => {
+        const li = document.createElement('li');
+        li.style.setProperty('--c', GROUP_COLORS[i % 4]);
+        li.innerHTML = `<i></i><b>${g.n}×</b><span>${g.label}</span>`;
+        el.legend.appendChild(li);
+      });
+    } else {
+      el.legend.style.setProperty('--n', P.ph.length);
+      P.ph.forEach((p) => {
+        const li = document.createElement('li');
+        li.dataset.vis = p.vis;
+        li.innerHTML = `<i></i><b>${p.d}</b><span>${p.label}</span>`;
+        el.legend.appendChild(li);
+      });
+    }
     el.brandTag.textContent = P.ex.tag;
   }
   function lightPhase(i) {
     [...el.segs.children].forEach((s, j) => s.classList.toggle('on', j === i));
-    [...el.legend.children].forEach((s, j) => s.classList.toggle('on', j === i));
+    const li = i >= 0 && P.ph[i].group != null ? P.ph[i].group : i;
+    [...el.legend.children].forEach((s, j) => s.classList.toggle('on', j === li));
   }
+  const GROUP_COLORS = ['var(--seg0)', 'var(--seg1)', 'var(--seg2)', 'var(--strain)'];
 
   // ---------- Session state ----------
   const S = { status: 'idle', startPerf: 0, pausedAt: 0, pausedTotal: 0, cycles: Infinity, lastKey: null, leadFrom: 0.8, idleScale: 0.8 };
@@ -1403,6 +1463,7 @@
   function durNote() {
     const c = cyclesFor();
     if (isMinutes()) el.durNote.textContent = isFinite(c) ? `${c} breaths · ${fmt(c * P.cycle)}` : 'Open-ended · end whenever you like';
+    else if (P.id === 'belt') el.durNote.textContent = `${c} ${plural(c)} of 4 moves · about ${fmt(P.lead + c * P.cycle)}`;
     else if (P.id === 'resisted') el.durNote.textContent = `${c} breaths, the standard trainer set · about ${fmt(P.lead + c * P.cycle)}`;
     else {
       const effort = P.ph.find((p) => p.ticks);
@@ -1472,6 +1533,7 @@
     const unit = P.ex.unit[0].replace(/^./, (c) => c.toUpperCase());
     let meta;
     if (st.lead) meta = isFinite(S.cycles) ? `${S.cycles} ${plural(S.cycles)} ahead` : 'Open-ended';
+    else if (P.ph[st.i].group != null) meta = `${P.ph[st.i].label} · ${unit.toLowerCase()} ${st.cyc + 1} of ${S.cycles} · ${fmt(totalSec() - sec)} left`;
     else if (isFinite(S.cycles)) meta = `${unit} ${st.cyc + 1} of ${S.cycles} · ${fmt(totalSec() - sec)} left`;
     else meta = `${unit} ${st.cyc + 1} · ${fmt(sec - P.lead)}`;
     setText(word, count, hint, meta);
