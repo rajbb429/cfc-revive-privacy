@@ -7,9 +7,9 @@ and don't list keywords or use words like "best" or "#1": Play's metadata policy
 
 ## App name (max 30 characters)
 
-    Ribwork: Breath Training
+    Ribwork: Ribcage Breathing
 
-24 characters. "Ribcage" is carried by the short description.
+26 characters.
 
 ## Short description (max 80 characters)
 

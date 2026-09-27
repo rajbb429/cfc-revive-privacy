@@ -24,7 +24,7 @@ def twaManifest = [
     applicationId: 'io.github.rajbb429.ribwork',
     hostName: 'rajbb429.github.io', // The domain being opened in the TWA.
     launchUrl: '/cfc-revive-privacy/breathe/', // The start path for the TWA. Must be relative to the domain.
-    name: 'Ribwork: Breath Training', // The application name.
+    name: 'Ribwork: Ribcage Breathing', // The application name.
     launcherName: 'Ribwork', // The name shown on the Android Launcher.
     themeColor: '#0E1522', // The color used for the status bar.
     themeColorDark: '#0E1522', // The color used for the dark status bar.
