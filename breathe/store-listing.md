@@ -1,26 +1,29 @@
 # Google Play store listing
 
 Google Play search weighs the **title** most, then the **short description**, then the
-**full description**. Use the phrases people actually type ("breath training",
-"ribcage", "deep breathing", "breathing exercises", "breathwork", "relax") naturally,
+**full description**. Use the phrases people actually type ("breathwork",
+"breathing exercises", "breath training", "ribcage", "midline", "deep breathing") naturally,
 and don't list keywords or use words like "best" or "#1": Play's metadata policy rejects both.
 
 ## App name (max 30 characters)
 
-    Ribwork: Ribcage Breathing
+    Breathwork: Ribcage & Midline
 
-26 characters.
+29 characters. Leads with "breathwork", the most-searched of these terms; the
+brand, Ribwork, stays as the home-screen label and opens the short description.
 
 ## Short description (max 80 characters)
 
-    Deep breathing exercises to train your ribcage: 4-7-6-6, Valsalva & more
+    Ribwork breath training: breathing exercises for your ribcage, midline and calm
 
-72 characters.
+79 characters.
 
 ## Full description (max 4000 characters)
 
-    Train your breath and the muscles around your ribcage with guided deep breathing
-    exercises. Follow a glowing circle that grows as you breathe in and shrinks as you
+    Train your breath, your ribcage and your midline with guided deep breathing
+    exercises. Ribwork builds the breathing muscles around your ribs and the
+    pressure control of your core through slow breathing, resisted breathing and
+    Valsalva bracing. Follow a glowing circle that grows as you breathe in and shrinks as you
     breathe out, or close your eyes and let soft sounds, a calm voice, or gentle
     vibration keep the rhythm for you.
 

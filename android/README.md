@@ -11,7 +11,7 @@ live in `twa-manifest.json`, so you can regenerate later with `bubblewrap update
 | | |
 |---|---|
 | Package name | `io.github.rajbb429.ribwork` (permanent once published) |
-| App name | Ribwork: Ribcage Breathing (launcher: Ribwork) |
+| App name | Breathwork: Ribcage & Midline (launcher: Ribwork) |
 | Opens | `https://rajbb429.github.io/cfc-revive-privacy/breathe/` |
 | Targets | Android 16 (API 36), runs on Android 6.0 (API 23) and up (the Play Billing library needs 23) |
 | In-app product | `stillwater_full` (one-time) |
@@ -88,7 +88,7 @@ A custom domain works as well: point it at the Pages site and serve
 
 ### 4. Publish on Google Play
 
-1. Play Console → **Create app**, name "Ribwork: Ribcage Breathing".
+1. Play Console → **Create app**, name "Breathwork: Ribcage & Midline".
 2. Upload the `.aab` from step 2 to an internal testing track first.
 3. **Monetize → Products → In-app products**: create `stillwater_full` as a
    one-time product and set its price. The app shows Play's price.
