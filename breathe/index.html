@@ -415,7 +415,7 @@
       <button class="ex-btn" type="button" data-ex="resisted"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Resisted</button>
       <button class="ex-btn" type="button" data-ex="bunny"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Bunny</button>
       <button class="ex-btn" type="button" data-ex="yahweh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Yahweh</button>
-      <button class="ex-btn" type="button" data-ex="belt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Belt</button>
+      <button class="ex-btn" type="button" data-ex="belt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Belt breaths</button>
     </div>
 
     <div class="stage" id="stage" role="button" tabindex="0" aria-label="Start breathing session">
@@ -605,7 +605,7 @@
     <p><kbd>Space</kbd> start or pause · <kbd>Esc</kbd> end · <kbd>S</kbd> settings</p>
 
     <h3>Full app</h3>
-    <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times, resisted breathing (pursed-lip, straw, or with a breathing trainer), bunny breathing, the Yahweh breath prayer, and breath belt training. The safety notes for each stay free to read: pick one above and tap <b>i</b>.</p>
+    <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times, resisted breathing (pursed-lip, straw, or with a breathing trainer), bunny breathing, the Yahweh breath prayer, and belt breaths. The safety notes for each stay free to read: pick one above and tap <b>i</b>.</p>
 
     <h3>Privacy</h3>
     <p>No account, no ads, no analytics. Everything runs on your device, and your session history stays in this browser. Purchases go through Google Play; the app only learns whether you own the unlock. Once opened, it works offline and can be added to your home screen. <a href="privacy.html" style="color: var(--accent)">Privacy policy</a></p>
@@ -630,7 +630,7 @@
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Resisted breathing</b><small>Pursed-lip, straw, or a 30-breath set with a breathing trainer</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Bunny breathing</b><small>Three quick sniffs in, one long breath out</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Yahweh breath prayer</b><small>Breathe in “Yah”, breathe out “weh”, slowly</small></div></li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Breath belt</b><small>A belt around your ribs, with arm raises, twists and side reaches</small></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Belt breaths</b><small>A belt around your upper ribcage: guided setup, then belt breaths, arm raises, twists and side reaches</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Every exercise added later</b><small>Included, at no extra cost</small></div></li>
     </ul>
     <button class="primary" type="button" id="btn-buy">Unlock full app</button>
@@ -837,9 +837,18 @@
       ack: "I'll breathe gently and stop if I feel lightheaded.",
     },
     belt: {
-      name: 'Belt', title: 'breath belt training', tag: 'Belt', unit: ['round', 'rounds'], noAck: true,
-      idle: ['Belt', 'four moves, three breaths each'],
-      lead: { d: 10, word: 'Belt on', hint: 'snug around your lower ribs', say: 'Wrap the belt snugly around your lower ribs.' },
+      name: 'Belt breaths', title: 'belt breaths', tag: 'Belt breaths', unit: ['round', 'rounds'], noAck: true,
+      idle: ['Belt breaths', 'set up, then four moves'],
+      lead: {
+        // Guided setup before the first move, one instruction at a time.
+        steps: [
+          { d: 9, word: 'Belt on', hint: 'around your upper ribcage, just below the armpits', say: 'Wrap the belt around your upper ribcage, just below your armpits.' },
+          { d: 7, word: 'Snug, not loose', hint: 'you should feel it as you breathe', say: 'Make it snug, not loose. You should feel it as you breathe.' },
+          { d: 7, word: 'Relax', hint: 'drop your shoulders, soften your jaw', say: 'Relax. Drop your shoulders and soften your jaw.' },
+          { d: 7, word: 'Let go', hint: 'let your breath find its own pace', say: 'Let go. Let your breath find its own pace.' },
+        ],
+        get d() { return this.steps.reduce((t, x) => t + x.d, 0); },
+      },
       doneNote: 'Loosen the belt and take a few easy breaths.',
       phases: () => {
         const moves = [
@@ -847,14 +856,14 @@
             { word: 'Breathe in', hint: 'push the sides and back into the belt', say: 'Breathe into the belt' },
             { word: 'Breathe out', hint: 'keep a little tension in the belt', say: 'Breathe out' }] },
           { group: 'Arm raises', breaths: (n) => [
-            { word: 'Raise arms', hint: 'breathe into the belt as they rise', say: 'Raise your arms' },
-            { word: 'Lower', hint: 'ribs soften down, belt stays snug', say: 'Lower' }] },
+            { word: 'Raise arms', hint: 'breathe into the belt as they rise', say: 'Breathe into the belt and raise your arms' },
+            { word: 'Lower', hint: 'breathe out, ribs soften under the belt', say: 'Breathe out and lower' }] },
           { group: 'Twists', breaths: (n) => [
-            { word: 'Breathe in', hint: 'face forward, widen into the belt', say: 'Breathe in' },
-            { word: n % 2 ? 'Twist left' : 'Twist right', hint: 'rotate as you breathe out', say: n % 2 ? 'Twist left' : 'Twist right' }] },
+            { word: 'Breathe in', hint: 'face forward, widen into the belt', say: 'Breathe into the belt' },
+            { word: n % 2 ? 'Twist left' : 'Twist right', hint: 'breathe out as you rotate, belt stays snug', say: n % 2 ? 'Breathe out, twist left' : 'Breathe out, twist right' }] },
           { group: 'Side reaches', breaths: (n) => [
-            { word: n % 2 ? 'Reach left' : 'Reach right', hint: `${n % 2 ? 'left' : 'right'} arm up, breathe into those ribs`, say: n % 2 ? 'Reach left' : 'Reach right' },
-            { word: 'Return', hint: 'arm down, back to center', say: 'Return' }] },
+            { word: n % 2 ? 'Reach left' : 'Reach right', hint: `${n % 2 ? 'left' : 'right'} arm up, breathe into the belt on that side`, say: n % 2 ? 'Reach left, breathe into the belt' : 'Reach right, breathe into the belt' },
+            { word: 'Return', hint: 'breathe out, arm down, back to center', say: 'Breathe out and return' }] },
         ];
         const out = [];
         moves.forEach((m, g) => {
@@ -866,10 +875,10 @@
         });
         return out;
       },
-      about: `<p>A belt around your lower ribs gives your breath something to push against, so you can feel whether your ribs widen to the sides and back, not just the chest and belly. Moving your arms and trunk while you keep breathing into the belt teaches your ribcage to expand in every position, and keeping gentle tension on the belt as you breathe out trains your midline.</p>
+      about: `<p>A belt around your upper ribcage gives your breath something to push against, so you can feel whether your ribs widen to the sides and back, not just the belly. Moving your arms and trunk while you keep breathing into the belt teaches your ribcage to expand in every position, and keeping gentle tension on the belt as you breathe out trains your midline.</p>
         <h3>Set up</h3>
-        <ul><li>Use a soft belt, a yoga strap or a resistance band.</li><li>Wrap it around your lower ribs, just below the chest, snug but not tight. You should be able to slide a flat hand under it.</li><li>Stand, or sit tall on a chair without leaning back.</li></ul>
-        <h3>The moves, three breaths each</h3>
+        <ul><li>Use a soft belt, a yoga strap or a resistance band.</li><li>Wrap it around your upper ribcage, just below the armpits.</li><li>Make it snug, not loose: you should feel it with every breath, and still be able to slide a flat hand under it.</li><li>Stand, or sit tall on a chair without leaning back.</li><li>Relax your shoulders and jaw, and let go of any effort before you start.</li></ul>
+        <h3>Then the moves, breathing into the belt throughout</h3>
         <ul><li><b>Belt breaths:</b> breathe in and push the sides and back of your ribs into the belt. Breathe out and keep a little tension in it.</li><li><b>Arm raises:</b> raise both arms overhead as you breathe in, lower them as you breathe out.</li><li><b>Twists:</b> breathe in facing forward, breathe out as you rotate, alternating right and left.</li><li><b>Side reaches:</b> reach one arm up and breathe into those ribs, return as you breathe out. Alternate sides.</li></ul>`,
       warn: `<h3>Go easy</h3>
       <p>Keep the belt snug, never tight enough to restrict your breathing. Move slowly and only as far as feels comfortable. Skip the twists and side reaches if you have back pain or a recent back, rib or abdominal injury or surgery, and stop if you feel pain or dizziness.</p>`,
@@ -973,6 +982,13 @@
     for (let j = 0; j < P.ph.length; j++) if (ct < P.off[j] + P.ph[j].d) { i = j; break; }
     const pt = ct - P.off[i];
     return { lead: false, cyc, ct, i, pt, p: pt / P.ph[i].d };
+  }
+  // Which setup step is showing at t seconds into the lead-in.
+  function leadStep(t) {
+    const steps = P.ex.lead.steps;
+    if (!steps) return null;
+    let end = 0;
+    for (let i = 0; i < steps.length; i++) { end += steps[i].d; if (t < end || i === steps.length - 1) return { i, step: steps[i], left: end - t }; }
   }
   const isMinutes = () => ['4766', 'bunny', 'yahweh'].includes(P.id) || (P.id === 'resisted' && set.method !== 'trainer');
   const cyclesFor = () => {
@@ -1356,7 +1372,7 @@
     if (A.ctx) { A.next = 0; freshCueBus(); startAmbience(); scheduleAhead(); }
     holdWake();
     reflectControls();
-    speak(P.ex.lead.say);
+    if (!P.ex.lead.steps) speak(P.ex.lead.say);
   }
   function pause() {
     if (S.status !== 'running') return;
@@ -1423,11 +1439,15 @@
     const sec = elapsedSec();
     if (isFinite(S.cycles) && sec >= totalSec()) { finish(true); return; }
     const st = stateAt(sec);
-    const key = st.lead ? 'lead' : `${st.cyc}-${st.i}`;
+    const ls = st.lead ? leadStep(st.t) : null;
+    const key = st.lead ? `lead-${ls ? ls.i : 0}` : `${st.cyc}-${st.i}`;
     if (key !== S.lastKey) {
       const first = S.lastKey === null;
       S.lastKey = key;
-      if (st.lead) { root.dataset.phase = 'lead'; lightPhase(-1); }
+      if (st.lead) {
+        root.dataset.phase = 'lead'; lightPhase(-1);
+        if (ls) { announce(`${ls.step.word}. ${ls.step.hint}`); speak(ls.step.say); buzz([20]); }
+      }
       else {
         const p = P.ph[st.i];
         root.dataset.phase = p.k;
@@ -1463,7 +1483,7 @@
   function durNote() {
     const c = cyclesFor();
     if (isMinutes()) el.durNote.textContent = isFinite(c) ? `${c} breaths · ${fmt(c * P.cycle)}` : 'Open-ended · end whenever you like';
-    else if (P.id === 'belt') el.durNote.textContent = `${c} ${plural(c)} of 4 moves · about ${fmt(P.lead + c * P.cycle)}`;
+    else if (P.id === 'belt') el.durNote.textContent = `Setup, then ${c} ${plural(c)} of 4 moves · about ${fmt(P.lead + c * P.cycle)}`;
     else if (P.id === 'resisted') el.durNote.textContent = `${c} breaths, the standard trainer set · about ${fmt(P.lead + c * P.cycle)}`;
     else {
       const effort = P.ph.find((p) => p.ticks);
@@ -1516,7 +1536,9 @@
     let scale, word, count, hint;
     if (st.lead) {
       scale = lerp(S.leadFrom, START[P.ph[0].vis], easeInOut(st.t / P.lead));
-      word = P.ex.lead.word; count = String(Math.ceil(P.lead - st.t)); hint = P.ex.lead.hint;
+      const ls = leadStep(st.t);
+      if (ls) { word = ls.step.word; count = String(Math.ceil(ls.left)); hint = ls.step.hint; }
+      else { word = P.ex.lead.word; count = String(Math.ceil(P.lead - st.t)); hint = P.ex.lead.hint; }
       placeDot(0);
     } else {
       const p = P.ph[st.i];
@@ -1532,7 +1554,7 @@
     placeOrb(scale);
     const unit = P.ex.unit[0].replace(/^./, (c) => c.toUpperCase());
     let meta;
-    if (st.lead) meta = isFinite(S.cycles) ? `${S.cycles} ${plural(S.cycles)} ahead` : 'Open-ended';
+    if (st.lead) meta = (P.ex.lead.steps ? `Setup ${leadStep(st.t).i + 1} of ${P.ex.lead.steps.length} · ` : '') + (isFinite(S.cycles) ? `${S.cycles} ${plural(S.cycles)} ahead` : 'Open-ended');
     else if (P.ph[st.i].group != null) meta = `${P.ph[st.i].label} · ${unit.toLowerCase()} ${st.cyc + 1} of ${S.cycles} · ${fmt(totalSec() - sec)} left`;
     else if (isFinite(S.cycles)) meta = `${unit} ${st.cyc + 1} of ${S.cycles} · ${fmt(totalSec() - sec)} left`;
     else meta = `${unit} ${st.cyc + 1} · ${fmt(sec - P.lead)}`;
