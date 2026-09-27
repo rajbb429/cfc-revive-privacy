@@ -179,16 +179,6 @@
       0 0 60px -6px color-mix(in srgb, var(--accent) 55%, transparent),
       inset -14px -18px 40px -10px color-mix(in srgb, var(--orb2) 80%, transparent);
   }
-  /* Advanced: a 3D bust takes the orb's place, framed by the ring. */
-  .bust { position: absolute; left: 7%; top: 7%; width: 86%; height: 86%; border-radius: 50%; display: none; pointer-events: none; }
-  .stage.bust-mode .bust { display: block; }
-  .stage.bust-mode .orb { opacity: 0; }
-  .stage.bust-mode .halo { opacity: 0.35 !important; }
-  .stage.bust-mode .readout { justify-content: flex-end; padding-bottom: 10cqw; }
-  .stage.bust-mode .phase-word { font-size: 4.8cqw; }
-  .stage.bust-mode .count { font-size: 9cqw; }
-  .stage.bust-mode .hint { display: none; }
-  .stage.bust-mode .head-cue { font-size: 3.6cqw; }
   .readout {
     position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center; color: var(--orbInk); pointer-events: none; gap: 0;
@@ -454,7 +444,6 @@
         <div class="halo" id="halo"></div>
         <div class="orb" id="orb"></div>
       </div>
-      <canvas class="bust" id="bust" aria-hidden="true"></canvas>
       <div class="readout">
         <div class="head-cue" id="headCue"></div>
         <div class="phase-word" id="word">Breathe with me</div>
@@ -640,7 +629,7 @@
     <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times, resisted breathing (pursed-lip, straw, or with a breathing trainer), bunny breathing, the Yahweh breath prayer, and belt breaths. The safety notes for each stay free to read: pick one above and tap <b>i</b>.</p>
 
     <h3>Credits</h3>
-    <p>Voice guide recorded with the Kokoro text-to-speech model (Apache 2.0). 3D guide drawn with three.js (MIT).</p>
+    <p>Voice guide recorded with the Kokoro text-to-speech model (Apache 2.0).</p>
 
     <h3>Privacy</h3>
     <p>No account, no ads, no analytics. Everything runs on your device, and your session history stays in this browser. Purchases go through Google Play; the app only learns whether you own the unlock. Once opened, it works offline and can be added to your home screen. <a href="privacy.html" style="color: var(--accent)">Privacy policy</a></p>
@@ -1495,7 +1484,6 @@
     el.methodCtl.hidden = id !== 'resisted';
     reflectAdv();
     preloadVoice(id);
-    syncBust();
     el.durCtl.hidden = !isMinutes();
     el.roundCtl.hidden = isMinutes() || id === 'resisted';
     document.body.classList.toggle('tall-footer', !el.methodCtl.hidden && !el.durCtl.hidden);
@@ -1637,113 +1625,6 @@
     scheduleAhead();
   }
 
-  // ---------- Advanced: 3D bust (three.js, loaded only when needed) ----------
-  const THREE_URL = 'vendor/three.min.js';
-  // Head poses as [yaw, pitch] in radians. Mirrored like an instructor facing you:
-  // "head left" turns toward the left of the screen.
-  const HEAD_POSE = { 0: [0, -0.42], 1: [0, 0.5], 2: [-0.75, 0], 3: [0.75, 0], 4: [0, 0] };
-  const BUST = { state: 'off', api: null, last: 0 };
-
-  function createBust(THREE, canvas) {
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
-    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
-    if (THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 50);
-    camera.position.set(1.5, 1.5, 7.0);
-    camera.lookAt(0, 0.85, 0);
-    const hemi = new THREE.HemisphereLight(0xffffff, 0x404060, 1.3);
-    const key = new THREE.DirectionalLight(0xffffff, 1.7); key.position.set(2.5, 4, 4);
-    const rim = new THREE.DirectionalLight(0xffffff, 1.1); rim.position.set(-3, 2.5, -3);
-    scene.add(hemi, key, rim);
-
-    const skin = new THREE.MeshStandardMaterial({ roughness: 0.62, metalness: 0 });
-    const lidMat = new THREE.MeshStandardMaterial({ roughness: 0.9 });
-    const bandMat = new THREE.MeshStandardMaterial({ roughness: 0.35, emissiveIntensity: 0.55 });
-    const ball = (r, w = 48, h = 32) => new THREE.SphereGeometry(r, w, h);
-
-    const body = new THREE.Group(); scene.add(body);
-    const torso = new THREE.Mesh(ball(1), skin); torso.position.y = -0.15; body.add(torso);
-    // One smooth shoulder line rather than two blobs.
-    const shoulders = new THREE.Mesh(new THREE.CapsuleGeometry(0.34, 2.0, 12, 32), skin);
-    shoulders.rotation.z = Math.PI / 2; shoulders.scale.set(0.95, 1, 0.85); shoulders.position.y = 0.52; body.add(shoulders);
-    // The ribcage band sits on the upper ribcage, where the belt goes, and widens with each breath in.
-    const ribs = new THREE.Mesh(new THREE.TorusGeometry(1, 0.04, 12, 96), bandMat);
-    ribs.rotation.x = Math.PI / 2; ribs.position.y = 0.3; body.add(ribs);
-    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.32, 0.7, 32), skin); neck.position.y = 1.0; body.add(neck);
-    const pivot = new THREE.Group(); pivot.rotation.order = 'YXZ'; pivot.position.y = 1.15; body.add(pivot);
-    const head = new THREE.Mesh(ball(0.62), skin); head.scale.set(0.9, 1.1, 1); head.position.set(0, 0.62, 0.02); pivot.add(head);
-    const nose = new THREE.Mesh(ball(0.1, 24, 16), skin); nose.scale.set(0.7, 1.15, 1.5); nose.position.set(0, 0.6, 0.63); pivot.add(nose);
-    [-1, 1].forEach((sx) => {
-      const ear = new THREE.Mesh(ball(0.13, 24, 16), skin);
-      ear.scale.set(0.5, 1.2, 0.9); ear.position.set(sx * 0.55, 0.62, -0.02); pivot.add(ear);
-      // Closed, resting eyes: a small downward arc on the face.
-      const lid = new THREE.Mesh(new THREE.TorusGeometry(0.075, 0.016, 8, 24, Math.PI), lidMat);
-      lid.position.set(sx * 0.2, 0.76, 0.6); lid.rotation.set(-0.3, sx * 0.3, Math.PI); pivot.add(lid);
-    });
-    // A soft, closed mouth.
-    const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.013, 8, 24, Math.PI), lidMat);
-    mouth.position.set(0, 0.4, 0.6); mouth.rotation.set(-0.45, 0, Math.PI); pivot.add(mouth);
-
-    const cBand = new THREE.Color(), cAccent = new THREE.Color(), cStrain = new THREE.Color();
-    let yaw = 0, pitch = 0, size = 0;
-    function setColors() {
-      const cs = getComputedStyle(document.documentElement), v = (n) => cs.getPropertyValue(n).trim() || '#ffffff';
-      skin.color.set(v('--orb1'));
-      lidMat.color.set(v('--orbInkSoft'));
-      cAccent.set(v('--accent')); cStrain.set(v('--strain'));
-      hemi.groundColor.set(v('--bg1'));
-      rim.color.set(v('--accent'));
-    }
-    setColors();
-    return {
-      setColors,
-      update(breath, pose, effort, dt) {
-        const w = canvas.clientWidth;
-        if (w && w !== size) { size = w; renderer.setSize(w, w, false); }
-        const k = 1 - Math.exp(-dt / 0.35);
-        yaw += (pose[0] - yaw) * k; pitch += (pose[1] - pitch) * k;
-        pivot.rotation.x = pitch; pivot.rotation.y = yaw;
-        const b = Math.max(0, Math.min(1, breath));
-        torso.scale.set(1.3 * (1 + 0.06 * b), 0.95 + 0.03 * b, 0.72 * (1 + 0.1 * b));
-        // Band hugs the torso at y 0.3 (torso centre -0.15, so 0.45 up a 0.95 radius).
-        const at = Math.sqrt(1 - Math.pow(0.45 / (0.95 + 0.03 * b), 2));
-        ribs.scale.set(1.3 * (1 + 0.06 * b) * at * 1.02 * (1 + 0.03 * b), 0.72 * (1 + 0.1 * b) * at * 1.06 * (1 + 0.04 * b), 1);
-        shoulders.position.y = 0.05 * b;
-        neck.position.y = 1.0 + 0.05 * b;
-        pivot.position.y = 1.15 + 0.05 * b;
-        cBand.copy(cAccent).lerp(cStrain, effort);
-        bandMat.color.copy(cBand); bandMat.emissive.copy(cBand);
-        renderer.render(scene, camera);
-      },
-    };
-  }
-  function ensureBust() {
-    if (BUST.state !== 'off') return;
-    BUST.state = 'loading';
-    const go = () => {
-      try { BUST.api = createBust(window.THREE, $('bust')); BUST.state = 'ready'; }
-      catch { BUST.state = 'failed'; } // no WebGL: keep the orb
-      syncBust();
-    };
-    if (window.THREE) { go(); return; }
-    const sc = document.createElement('script');
-    sc.src = THREE_URL; sc.onload = go;
-    sc.onerror = () => { BUST.state = 'failed'; syncBust(); };
-    document.head.appendChild(sc);
-  }
-  function syncBust() {
-    if (isAdv()) ensureBust();
-    el.stage.classList.toggle('bust-mode', isAdv() && BUST.state === 'ready');
-  }
-  function drawBust(scale, hs, effort) {
-    if (!BUST.api || !el.stage.classList.contains('bust-mode')) return;
-    const t = now(), dt = BUST.last ? Math.min(0.1, (t - BUST.last) / 1000) : 0.016;
-    BUST.last = t;
-    const target = hs ? (hs.next != null ? hs.next : hs.now) : null;
-    BUST.api.update((scale - SMIN) / (SMAX - SMIN), HEAD_POSE[target] || [0, 0], effort, dt);
-  }
-
   // ---------- Rendering ----------
   const easeInOut = (x) => 0.5 - 0.5 * Math.cos(Math.PI * Math.min(1, Math.max(0, x)));
   const lerp = (a, b, t) => a + (b - a) * t;
@@ -1814,7 +1695,6 @@
     const t = now() / 1000;
     if (S.status === 'idle') {
       setHead(isAdv() ? '↑ ↓ ← →  Advanced' : '', false);
-      drawBust(S.idleScale, null, 0);
       const s = reduceMotion.matches ? 0.8 : 0.8 + 0.05 * Math.sin(t * 2 * Math.PI / 9);
       S.idleScale = s;
       placeOrb(s);
@@ -1855,7 +1735,6 @@
     }
     setHead(head, headNext);
     placeOrb(scale);
-    drawBust(scale, hs, !st.lead && ['press', 'pull'].includes(P.ph[st.i].vis) ? 1 : 0);
     const unit = P.ex.unit[0].replace(/^./, (c) => c.toUpperCase());
     let meta;
     if (st.lead) meta = (P.ex.lead.steps ? `Setup ${leadStep(st.t).i + 1} of ${P.ex.lead.steps.length} · ` : '') + (isFinite(S.cycles) ? `${S.cycles} ${plural(S.cycles)} ahead` : 'Open-ended');
@@ -1912,7 +1791,6 @@
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.content = getComputedStyle(root).getPropertyValue('--bg0').trim() || '#0e1522';
     $('sceneName').textContent = SCENES[set.scene];
-    if (BUST.api) BUST.api.setColors();
   }
   darkPref.addEventListener?.('change', applyScene);
 
