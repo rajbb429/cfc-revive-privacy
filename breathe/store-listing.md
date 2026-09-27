@@ -54,6 +54,8 @@ brand, Ribwork, stays as the home-screen label and opens the short description.
       for ribcage expansion and midline control
     • Advanced progressions: head up, down, left and right built into 4-7-6-6,
       Valsalva, Müller, resisted breathing and belt breaths
+    • A calm recorded voice talks you through every step, and a 3D guide shows
+      each head position and breath, so you never need to look at the screen
     • Choose your rounds and recovery time
     • Every exercise added later, at no extra cost
     Clear safety notes come with every exercise and are free to read.

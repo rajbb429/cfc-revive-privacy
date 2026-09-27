@@ -1,9 +1,20 @@
 // Offline support: precache the app shell, cache Google Fonts on first use.
-const CACHE = 'stillwater-v11';
+const CACHE = 'stillwater-v12';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-180.png', './privacy.html'];
 
+// Voice clips are listed in voice/index.json; the 3D head's library is fetched too,
+// so guided sessions work offline.
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  e.waitUntil((async () => {
+    const c = await caches.open(CACHE);
+    await c.addAll(SHELL);
+    try {
+      const files = await (await fetch('./voice/index.json')).json();
+      await c.addAll(['./voice/index.json', ...files.map((f) => './voice/' + f)]);
+      await c.add('./vendor/three.min.js');
+    } catch {}
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', (e) => {
