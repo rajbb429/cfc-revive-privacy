@@ -35,7 +35,7 @@ def to_mp3(samples, rate, path, kbps=48):
 
 def main():
     model, lines_path, out = sys.argv[1:4]
-    sid = int(sys.argv[4]) if len(sys.argv) > 4 else 1
+    sid = int(sys.argv[4]) if len(sys.argv) > 4 else 4  # af_sky
     speed = float(sys.argv[5]) if len(sys.argv) > 5 else 0.88
     cfg = sherpa_onnx.OfflineTtsConfig(model=sherpa_onnx.OfflineTtsModelConfig(
         kokoro=sherpa_onnx.OfflineTtsKokoroModelConfig(

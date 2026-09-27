@@ -1,4 +1,4 @@
 Voice clips in this folder were generated with the Kokoro-82M text-to-speech model
-(voice "af_bella"), run through sherpa-onnx's kokoro-int8-en-v0_19 package.
+(voice "af_sky"), run through sherpa-onnx's kokoro-int8-en-v0_19 package.
 Kokoro is licensed under the Apache License 2.0: https://huggingface.co/hexgrad/Kokoro-82M
 To re-record, see ../tools/make_voice.py.
