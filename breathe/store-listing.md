@@ -52,6 +52,8 @@ brand, Ribwork, stays as the home-screen label and opens the short description.
     • Belt breaths: a guided setup puts a belt snug around your upper ribcage, then
       you breathe into it through belt breaths, arm raises, twists and side reaches,
       for ribcage expansion and midline control
+    • Advanced progressions: head up, down, left and right built into 4-7-6-6,
+      Valsalva, Müller, resisted breathing and belt breaths
     • Choose your rounds and recovery time
     • Every exercise added later, at no extra cost
     Clear safety notes come with every exercise and are free to read.

@@ -202,7 +202,8 @@
   }
   .legend li b { font-weight: 500; font-size: 1.2rem; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.1; }
   .legend li span { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; text-align: center; line-height: 1.3; }
-  .legend[style*="--n: 4"] li span { letter-spacing: 0.08em; }
+  .legend[style*="--n: 4"] li span, .legend[style*="--n: 5"] li span { letter-spacing: 0.08em; }
+  .legend[style*="--n: 5"] li span { font-size: 0.62rem; }
   .legend li i { width: 18px; height: 3px; border-radius: 2px; opacity: .8; }
   .legend li i { background: var(--c); }
   .legend li.on { background: var(--glass); color: var(--ink); }
@@ -231,6 +232,18 @@
   }
   .seg-ctl button[aria-pressed="true"] { background: var(--glassHi); color: var(--ink); }
   .durations.away { visibility: hidden; }
+  .adv-btn {
+    height: 54px; padding: 0 18px; border-radius: 999px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid var(--line); background: var(--glass); color: var(--muted); font-size: 0.9rem;
+  }
+  .adv-btn[aria-pressed="true"] { color: var(--ink); background: color-mix(in srgb, var(--strain) 22%, transparent); border-color: color-mix(in srgb, var(--strain) 55%, transparent); }
+  .adv-btn svg { width: 11px; height: 11px; }
+  .adv-btn:not(.locked) svg { display: none; }
+  .head-cue { font-size: 3.4cqw; letter-spacing: 0.04em; color: var(--orbInk); font-weight: 500; min-height: 1.3em; margin-bottom: 0.6cqw; }
+  .head-cue.next { color: var(--orbInkSoft); font-weight: 400; animation: cuePulse 1.6s ease-in-out infinite; }
+  .head-cue:empty { display: none; }
+  @keyframes cuePulse { 50% { opacity: 0.45; } }
   .dur-note { font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 
   .actions { display: flex; align-items: center; gap: 12px; }
@@ -364,6 +377,8 @@
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   [hidden] { display: none !important; }
 
+  /* Resisted shows two rows of controls, so give the circle a little less room. */
+  body.tall-footer .stage { width: min(76vw, 48vh, 400px); }
   @media (max-width: 380px) {
     .brand b { font-size: 1.1rem; }
     .brand span { display: none; }
@@ -375,11 +390,12 @@
     .legend li i { display: none; }
     main { gap: 6px; }
     .stage { width: min(86vw, 41vh, 420px); }
+    body.tall-footer .stage { width: min(76vw, 35vh, 400px); }
   }
   @media (prefers-reduced-motion: reduce) {
     .cloud { animation: none; }
     .tint { transition: none; }
-    dialog[open], dialog.center[open], .done .mini-orb { animation: none; }
+    dialog[open], dialog.center[open], .done .mini-orb, .head-cue.next { animation: none; }
   }
 </style>
 </head>
@@ -429,6 +445,7 @@
         <div class="orb" id="orb"></div>
       </div>
       <div class="readout">
+        <div class="head-cue" id="headCue"></div>
         <div class="phase-word" id="word">Breathe with me</div>
         <div class="count" id="count">23<small>s</small></div>
         <div class="hint" id="hint">one full breath</div>
@@ -464,6 +481,7 @@
       <div class="dur-note" id="durNote"></div>
     </div>
     <div class="actions">
+      <button class="adv-btn" type="button" id="advBtn" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Advanced</button>
       <button class="ghost" id="btn-end" type="button" aria-label="End session" hidden>
         <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>
       </button>
@@ -604,6 +622,9 @@
     <h3>Shortcuts</h3>
     <p><kbd>Space</kbd> start or pause · <kbd>Esc</kbd> end · <kbd>S</kbd> settings</p>
 
+    <h3>Advanced: head positions</h3>
+    <p>Switch on <b>Advanced</b> under the controls to add a head-position progression: up, down, left, right. On 4-7-6-6 your head changes position once per breath, during the empty hold. Advanced is part of the full app.</p>
+
     <h3>Full app</h3>
     <p>A one-time unlock adds guided Valsalva and Müller maneuvers, with adjustable effort and recovery times, resisted breathing (pursed-lip, straw, or with a breathing trainer), bunny breathing, the Yahweh breath prayer, and belt breaths. The safety notes for each stay free to read: pick one above and tap <b>i</b>.</p>
 
@@ -631,6 +652,7 @@
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Bunny breathing</b><small>Three quick sniffs in, one long breath out</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Yahweh breath prayer</b><small>Breathe in “Yah”, breathe out “weh”, slowly</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Belt breaths</b><small>A belt around your upper ribcage: guided setup, then belt breaths, arm raises, twists and side reaches</small></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Advanced progressions</b><small>Head up, down, left and right built into 4-7-6-6, Valsalva, Müller, resisted breathing and belt breaths</small></div></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Every exercise added later</b><small>Included, at no extra cost</small></div></li>
     </ul>
     <button class="primary" type="button" id="btn-buy">Unlock full app</button>
@@ -743,6 +765,21 @@
     },
   };
   const TRAINER_SET = 30;
+
+  // ---------- Advanced: head-position progression ----------
+  const HEADS = [
+    { word: 'Head up', arrow: '↑', hint: 'look up a little' },
+    { word: 'Head down', arrow: '↓', hint: 'chin toward your chest' },
+    { word: 'Head left', arrow: '←', hint: 'turn your head left' },
+    { word: 'Head right', arrow: '→', hint: 'turn your head right' },
+    { word: 'Face forward', arrow: '•', hint: 'head back to center' }, // only used by the trainer set
+  ];
+  const ADV = ['4766', 'valsalva', 'muller', 'resisted', 'belt'];
+  const HEAD_ABOUT = `<h3>Advanced: head positions</h3>
+    <p>The Advanced version adds a progression through four head positions: up, down, left and right. When the app says "Next", move your head in the quiet part of the breath, then hold it still while you breathe in, hold or strain.</p>
+    <ul><li>Use about half of your comfortable range, especially when looking up.</li><li>Never move your head while straining in Valsalva or Müller.</li><li>Skip the head positions if you have neck problems, and stop if you feel dizzy.</li></ul>`;
+  const RESISTED_BLOCK = 5; // breaths per head position
+  const TRAINER_HEADS = [4, 0, 1, 2, 3, 4]; // forward, up, down, left, right, forward
 
   const EX = {
     '4766': {
@@ -865,9 +902,12 @@
             { word: n % 2 ? 'Reach left' : 'Reach right', hint: `${n % 2 ? 'left' : 'right'} arm up, breathe into the belt on that side`, say: n % 2 ? 'Reach left, breathe into the belt' : 'Reach right, breathe into the belt' },
             { word: 'Return', hint: 'breathe out, arm down, back to center', say: 'Breathe out and return' }] },
         ];
+        if (isAdv('belt')) moves.push({ group: 'Head positions', count: 4, breaths: (n) => [
+          { word: HEADS[n].word, hint: `${HEADS[n].hint}, breathe into the belt`, say: `${HEADS[n].word}, breathe into the belt`, head: n },
+          { word: 'Breathe out', hint: 'head back to center', say: 'Breathe out, back to center' }] });
         const out = [];
         moves.forEach((m, g) => {
-          for (let n = 0; n < 3; n++) {
+          for (let n = 0; n < (m.count || 3); n++) {
             const [a, b] = m.breaths(n);
             out.push({ k: 'in', vis: 'rise', d: 4, label: m.group, group: g, ...a });
             out.push({ k: 'out', vis: 'fall', d: 6, label: m.group, group: g, ...b });
@@ -932,7 +972,7 @@
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('d', `M${x0.toFixed(2)} ${y0.toFixed(2)} A${R} ${R} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`);
       path.setAttribute('class', 'seg'); path.dataset.vis = p.vis;
-      if (p.group != null) path.style.setProperty('--c', GROUP_COLORS[p.group % 4]);
+      if (p.group != null) path.style.setProperty('--c', GROUP_COLORS[p.group % 5]);
       el.segs.appendChild(path);
     });
     el.legend.innerHTML = '';
@@ -943,7 +983,7 @@
       el.legend.style.setProperty('--n', groups.length);
       groups.forEach((g, i) => {
         const li = document.createElement('li');
-        li.style.setProperty('--c', GROUP_COLORS[i % 4]);
+        li.style.setProperty('--c', GROUP_COLORS[i % 5]);
         li.innerHTML = `<i></i><b>${g.n}×</b><span>${g.label}</span>`;
         el.legend.appendChild(li);
       });
@@ -963,7 +1003,7 @@
     const li = i >= 0 && P.ph[i].group != null ? P.ph[i].group : i;
     [...el.legend.children].forEach((s, j) => s.classList.toggle('on', j === li));
   }
-  const GROUP_COLORS = ['var(--seg0)', 'var(--seg1)', 'var(--seg2)', 'var(--strain)'];
+  const GROUP_COLORS = ['var(--seg0)', 'var(--seg1)', 'var(--seg2)', 'var(--strain)', 'var(--seg3)'];
 
   // ---------- Session state ----------
   const S = { status: 'idle', startPerf: 0, pausedAt: 0, pausedTotal: 0, cycles: Infinity, lastKey: null, leadFrom: 0.8, idleScale: 0.8 };
@@ -1195,10 +1235,10 @@
     voice = pref.map((p) => vs.find((v) => v.name.includes(p))).find(Boolean) || vs[0] || null;
   }
   if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.addEventListener?.('voiceschanged', pickVoice); }
-  function speak(text) {
+  function speak(text, queue) {
     if (!text || !set.voice || !('speechSynthesis' in window)) return;
     try {
-      speechSynthesis.cancel();
+      if (!queue) speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
       u.rate = 0.82; u.pitch = 0.92; u.volume = Math.min(1, set.volume + 0.15);
       if (voice) u.voice = voice;
@@ -1267,6 +1307,40 @@
   };
   const canPay = () => !!Pro.service && 'PaymentRequest' in window;
   const isLocked = (id) => !EX[id].free && !Pro.unlocked;
+  // Advanced is a full-app feature, so it only takes effect once unlocked.
+  function isAdv(id = P && P.id) { return ADV.includes(id) && !!(set.adv || {})[id] && Pro.unlocked; }
+
+  // Where the head should be at a moment in the session: now (index or null for
+  // facing forward), and next when it's time to move.
+  function headState(st) {
+    if (!isAdv()) return null;
+    const pos = (b) => {
+      if (P.id === 'resisted' && set.method === 'trainer') return TRAINER_HEADS[Math.min(b, TRAINER_HEADS.length - 1)];
+      return ((b % 4) + 4) % 4;
+    };
+    if (P.id === 'belt') return st.lead ? null : { now: P.ph[st.i].head ?? null, next: null };
+    if (P.id === 'resisted') {
+      if (st.lead) return { now: null, next: pos(0) === 4 ? null : pos(0), key: 'b0' };
+      const b = Math.floor(st.cyc / RESISTED_BLOCK), last = st.cyc % RESISTED_BLOCK === RESISTED_BLOCK - 1;
+      const more = st.cyc + 1 < S.cycles;
+      if (last && st.i === P.ph.length - 1 && more && pos(b + 1) !== pos(b)) return { now: pos(b), next: pos(b + 1), key: `b${b + 1}` };
+      return { now: pos(b), next: null };
+    }
+    if (P.id === '4766') {
+      if (st.lead) return { now: null, next: pos(0), key: 'c0' };
+      if (st.i === 3 && st.cyc + 1 < S.cycles) return { now: pos(st.cyc), next: pos(st.cyc + 1), key: `c${st.cyc + 1}` };
+      return { now: pos(st.cyc), next: null };
+    }
+    // Valsalva and Müller: set the head before the round, hold it through the
+    // effort, face forward to recover.
+    const CUE = 8;
+    if (st.lead) return { now: null, next: st.t > P.lead - CUE ? pos(0) : null, key: 'r0' };
+    const rec = st.i === P.ph.length - 1;
+    if (!rec) return { now: pos(st.cyc), next: null };
+    const left = P.ph[st.i].d - st.pt;
+    if (left <= CUE && st.cyc + 1 < S.cycles) return { now: null, next: pos(st.cyc + 1), key: `r${st.cyc + 1}` };
+    return { now: null, next: null };
+  }
 
   function refreshPaywall() {
     const buy = $('btn-buy');
@@ -1284,6 +1358,7 @@
       b.setAttribute('aria-label', locked ? `${EX[b.dataset.ex].name} (locked)` : EX[b.dataset.ex].name);
     });
     if (isLocked(set.ex) && S.status === 'idle') selectExercise('4766');
+    else if (P && S.status === 'idle') selectExercise(P.id);
     refreshPaywall();
   }
   let pendingEx = null;
@@ -1323,7 +1398,7 @@
   const acks = store.get('stillwater.acks', {});
   function openSafety(id, withStart) {
     $('safety-title').textContent = `Before you try ${EX[id].title || EX[id].name}`;
-    $('safety-body').innerHTML = EX[id].about;
+    $('safety-body').innerHTML = EX[id].about + (ADV.includes(id) ? HEAD_ABOUT : '');
     $('safety-warn').innerHTML = EX[id].warn;
     $('safety-foot').textContent = EX[id].foot;
     $('ack-text').textContent = EX[id].ack;
@@ -1346,10 +1421,29 @@
     drawPattern();
     el.exercises.querySelectorAll('.ex-btn').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ex === id)));
     el.methodCtl.hidden = id !== 'resisted';
+    reflectAdv();
     el.durCtl.hidden = !isMinutes();
     el.roundCtl.hidden = isMinutes() || id === 'resisted';
+    document.body.classList.toggle('tall-footer', !el.methodCtl.hidden && !el.durCtl.hidden);
     durNote();
   }
+  function reflectAdv() {
+    const b = $('advBtn'), can = ADV.includes(set.ex);
+    b.hidden = !can || S.status !== 'idle';
+    if (!can) return;
+    b.classList.toggle('locked', !Pro.unlocked);
+    b.setAttribute('aria-pressed', String(isAdv(set.ex)));
+    b.setAttribute('aria-label', Pro.unlocked ? 'Advanced: head positions' : 'Advanced: head positions (locked)');
+  }
+  $('advBtn').addEventListener('click', () => {
+    if (S.status !== 'idle') return;
+    if (!Pro.unlocked) { openPaywall(null); return; }
+    set.adv = Object.assign({}, set.adv, { [P.id]: !isAdv(P.id) });
+    // One round per head position for the maneuvers.
+    if (set.adv[P.id] && ['valsalva', 'muller'].includes(P.id) && set.rounds < 4) set.rounds = 4;
+    saveSettings();
+    selectExercise(P.id);
+  });
   el.exercises.addEventListener('click', (e) => {
     const b = e.target.closest('.ex-btn'); if (!b || S.status !== 'idle') return;
     if (isLocked(b.dataset.ex)) openPaywall(b.dataset.ex);
@@ -1367,7 +1461,7 @@
     P = buildPlan(P.id);
     S.cycles = cyclesFor();
     S.leadFrom = S.idleScale;
-    S.startPerf = now(); S.pausedTotal = 0; S.lastKey = null;
+    S.startPerf = now(); S.pausedTotal = 0; S.lastKey = null; S.lastHead = null;
     S.status = 'running';
     if (A.ctx) { A.next = 0; freshCueBus(); startAmbience(); scheduleAhead(); }
     holdWake();
@@ -1423,6 +1517,7 @@
     const idle = S.status === 'idle';
     el.main.textContent = idle ? (isLocked(P.id) ? 'Unlock' : 'Begin') : S.status === 'running' ? 'Pause' : 'Resume';
     el.end.hidden = idle;
+    $('advBtn').hidden = !idle || !ADV.includes(set.ex);
     el.durations.classList.toggle('away', !idle);
     el.durations.inert = !idle;
     el.exercises.classList.toggle('away', !idle);
@@ -1456,6 +1551,14 @@
         if (!first || st.pt < 0.5) { speak(p.say); buzz(HAPTIC[p.vis]); }
       }
     }
+    const hs = headState(st);
+    if (hs && hs.next != null && hs.key !== S.lastHead) {
+      S.lastHead = hs.key;
+      const h = HEADS[hs.next];
+      announce(`Next, ${h.word.toLowerCase()}. ${h.hint}`);
+      speak(`Next, ${h.word.toLowerCase()}`, true);
+      setTimeout(() => buzz([30, 80, 30]), 350);
+    }
     scheduleAhead();
   }
 
@@ -1483,7 +1586,7 @@
   function durNote() {
     const c = cyclesFor();
     if (isMinutes()) el.durNote.textContent = isFinite(c) ? `${c} breaths · ${fmt(c * P.cycle)}` : 'Open-ended · end whenever you like';
-    else if (P.id === 'belt') el.durNote.textContent = `Setup, then ${c} ${plural(c)} of 4 moves · about ${fmt(P.lead + c * P.cycle)}`;
+    else if (P.id === 'belt') el.durNote.textContent = `Setup, then ${c} ${plural(c)} of ${new Set(P.ph.map((p) => p.group)).size} moves · about ${fmt(P.lead + c * P.cycle)}`;
     else if (P.id === 'resisted') el.durNote.textContent = `${c} breaths, the standard trainer set · about ${fmt(P.lead + c * P.cycle)}`;
     else {
       const effort = P.ph.find((p) => p.ticks);
@@ -1517,9 +1620,18 @@
     return SMID;
   }
 
+  let lastHead = null;
+  function setHead(text, next) {
+    const k = text + (next ? '1' : '0');
+    if (k === lastHead) return;
+    lastHead = k;
+    $('headCue').textContent = text;
+    $('headCue').classList.toggle('next', !!next);
+  }
   function render() {
     const t = now() / 1000;
     if (S.status === 'idle') {
+      setHead(isAdv() ? '↑ ↓ ← →  Advanced' : '', false);
       const s = reduceMotion.matches ? 0.8 : 0.8 + 0.05 * Math.sin(t * 2 * Math.PI / 9);
       S.idleScale = s;
       placeOrb(s);
@@ -1551,6 +1663,14 @@
       placeDot(st.ct / P.cycle);
     }
     if (paused) { word = 'Paused'; hint = 'tap to continue'; }
+    const hs = paused ? null : headState(st);
+    let head = '', headNext = false;
+    if (hs) {
+      if (hs.next != null) { head = `Next ${HEADS[hs.next].arrow} ${HEADS[hs.next].word.toLowerCase()}`; headNext = true; }
+      else if (hs.now != null && P.id !== 'belt') head = `${HEADS[hs.now].arrow} ${HEADS[hs.now].word}`;
+      else if (hs.now == null && !st.lead && P.ph[st.i].vis === 'free') hint = 'head forward, breathe normally';
+    }
+    setHead(head, headNext);
     placeOrb(scale);
     const unit = P.ex.unit[0].replace(/^./, (c) => c.toUpperCase());
     let meta;
