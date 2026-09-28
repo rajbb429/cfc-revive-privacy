@@ -377,6 +377,18 @@
   .link-btn { border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 8px 4px; font-size: .9rem; text-decoration: underline; text-underline-offset: 3px; }
   .link-btn:hover { color: var(--ink); }
   .pro-note { font-size: .8rem; color: var(--muted); text-align: center; margin: 0; }
+  .promo { border-top: 1px solid var(--line); padding-top: 10px; }
+  .promo summary { cursor: pointer; color: var(--muted); font-size: .9rem; text-align: center; list-style: none; }
+  .promo summary::-webkit-details-marker { display: none; }
+  .promo summary:hover, .promo[open] summary { color: var(--ink); }
+  .promo-form { display: flex; gap: 8px; margin-top: 10px; }
+  .promo-form input {
+    flex: 1; min-width: 0; height: 44px; padding: 0 14px; border-radius: 12px; font: inherit; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink); background: var(--glass); border: 1px solid var(--line);
+  }
+  .promo-form input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .promo-go { height: 44px; padding: 0 16px; border-radius: 12px; cursor: pointer; font: inherit; color: var(--ink); background: var(--glassHi); border: 1px solid var(--line); }
+  .promo-note { margin: 8px 0 0; font-size: .78rem; color: var(--muted); text-align: center; }
   .pro-status { font-size: .88rem; text-align: center; min-height: 1.2em; margin: 0; color: var(--ink); }
   .preview-unlock { border: 1px dashed var(--line); background: transparent; color: var(--muted); border-radius: 12px; padding: 10px; cursor: pointer; font-size: .85rem; }
 
@@ -683,6 +695,15 @@
       <button class="link-btn" type="button" id="btn-restore">Restore purchase</button>
       <button class="link-btn" type="button" data-close>Not now</button>
     </div>
+    <details class="promo" id="promo">
+      <summary>Have a promo code?</summary>
+      <form class="promo-form" id="promo-form">
+        <label class="sr" for="promo-code">Promo code</label>
+        <input id="promo-code" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter code" maxlength="40">
+        <button class="promo-go" type="submit">Redeem</button>
+      </form>
+      <p class="promo-note">Opens Google Play to redeem it. Come back here afterwards and the full app unlocks.</p>
+    </details>
     <button class="preview-unlock" type="button" id="btn-preview-unlock" hidden>Preview build: unlock without paying</button>
     <p class="pro-note">4-7-6-6 breathing stays free, with every sound and setting.</p>
   </div>
@@ -1427,6 +1448,7 @@
     else if (canPay()) { buy.textContent = Pro.price ? `Unlock for ${Pro.price}` : 'Unlock full app'; buy.disabled = false; }
     else { buy.textContent = 'Unlock in the Android app'; buy.disabled = true; }
     $('btn-restore').hidden = !canPay();
+    $('promo').hidden = Pro.unlocked;
     $('btn-preview-unlock').hidden = !BILLING.previewUnlock || Pro.unlocked;
     if (!canPay() && !Pro.unlocked) $('pro-status').textContent = 'Purchases work in the Ribwork app from Google Play.';
   }
@@ -1472,6 +1494,30 @@
     catch { status.textContent = "Couldn't reach Google Play. Check your connection and try again."; }
   });
   $('btn-preview-unlock').addEventListener('click', () => { Pro.grant(true); afterUnlock(); });
+
+  // Promo codes are redeemed in Google Play; the unlock then shows up as a purchase.
+  let awaitingCode = false;
+  $('promo-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const code = $('promo-code').value.trim().replace(/\s+/g, '').toUpperCase();
+    const url = 'https://play.google.com/redeem' + (code ? '?code=' + encodeURIComponent(code) : '');
+    awaitingCode = true;
+    $('pro-status').textContent = 'Redeem the code in Google Play, then come back here.';
+    const w = window.open(url, '_blank', 'noopener');
+    if (!w) location.href = url; // some app views block new windows
+  });
+  async function recheckPurchase() {
+    if (Pro.unlocked || !Pro.service) return;
+    try {
+      if (await Pro.restore(true)) {
+        announce('Full app unlocked');
+        if ($('dlg-pro').open) afterUnlock();
+      } else if (awaitingCode) {
+        $('pro-status').textContent = "Google Play hasn't confirmed the code yet. Tap Restore purchase in a moment.";
+      }
+    } catch {}
+    awaitingCode = false;
+  }
 
   // ---------- Safety check before maneuvers ----------
   const acks = store.get('ribwork.acks', {});
@@ -1904,6 +1950,7 @@
   });
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
+      recheckPurchase();
       if (S.status === 'running') { holdWake(); if (A.ctx && A.ctx.state === 'suspended') A.ctx.resume().then(resyncCues).catch(() => {}); }
     }
   });
