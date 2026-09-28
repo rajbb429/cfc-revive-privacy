@@ -73,5 +73,5 @@ brand, Ribwork, stays as the home-screen label and opens the short description.
 - **Category:** Health & Fitness
 - **Tags:** pick the closest to breathing, meditation, relaxation and sleep
 - **Privacy policy URL:** `<your GitHub Pages URL>/breathe/privacy.html`
-- **In-app product:** one-time product with ID `stillwater_full` (the ID is internal and
-  never shown to users; keep it as is, or change `BILLING.sku` in `index.html` to match)
+- **In-app product:** one-time product with ID `ribwork_full`. The ID can't be changed
+  after you create it; it must match `BILLING.sku` in `index.html`.
