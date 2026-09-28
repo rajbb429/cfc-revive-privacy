@@ -1510,7 +1510,10 @@
     if (!w) location.href = url; // some app views block new windows
   });
   async function recheckPurchase() {
-    if (Pro.unlocked || !Pro.service) return;
+    if (!Pro.service) return;
+    // Every resume asks Play for purchases, which makes the Android app acknowledge any
+    // purchase still unacknowledged (Play refunds those after 3 days), even once unlocked.
+    if (Pro.unlocked) { Pro.service.listPurchases().catch(() => {}); return; }
     try {
       if (await Pro.restore(true)) {
         announce('Full app unlocked');
