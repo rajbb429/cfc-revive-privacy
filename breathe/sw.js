@@ -1,5 +1,5 @@
 // Offline support: precache the app shell, cache Google Fonts on first use.
-const CACHE = 'stillwater-v16';
+const CACHE = 'ribwork-v1';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-180.png', './privacy.html'];
 
 // Voice clips are listed in voice/index.json and precached so guided sessions work offline.

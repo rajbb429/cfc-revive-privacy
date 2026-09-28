@@ -747,8 +747,8 @@
     ex: '4766', minutes: 5, rounds: 3, method: 'pinched', vStrain: 10, mStrain: 8, recovery: 45,
     sound: 'bowl', ambience: 'none', volume: 0.7, voice: false, haptics: true, counts: true, scene: 'auto',
   };
-  const set = Object.assign({}, DEFAULTS, store.get('stillwater.settings', {}));
-  const saveSettings = () => store.set('stillwater.settings', set);
+  const set = Object.assign({}, DEFAULTS, store.get('ribwork.settings', {}));
+  const saveSettings = () => store.set('ribwork.settings', set);
 
   // ---------- Exercises ----------
   // vis: how the orb moves. rise/fall ease between small and full, full/empty rest,
@@ -1339,11 +1339,11 @@
 
   // ---------- Full app unlock ----------
   const Pro = {
-    unlocked: !!store.get('stillwater.pro', false),
+    unlocked: !!store.get('ribwork.pro', false),
     service: null,
     price: '',
     grant(on = true) {
-      this.unlocked = on; store.set('stillwater.pro', on);
+      this.unlocked = on; store.set('ribwork.pro', on);
       refreshLocks();
     },
     async init() {
@@ -1474,7 +1474,7 @@
   $('btn-preview-unlock').addEventListener('click', () => { Pro.grant(true); afterUnlock(); });
 
   // ---------- Safety check before maneuvers ----------
-  const acks = store.get('stillwater.acks', {});
+  const acks = store.get('ribwork.acks', {});
   function openSafety(id, withStart) {
     $('safety-title').textContent = `Before you try ${EX[id].title || EX[id].name}`;
     $('safety-body').innerHTML = EX[id].about + (ADV.includes(id) ? HEAD_ABOUT : '');
@@ -1487,7 +1487,7 @@
   }
   $('ack').addEventListener('change', (e) => { $('btn-safe-start').disabled = !e.target.checked; });
   $('btn-safe-start').addEventListener('click', () => {
-    acks[P.id] = true; store.set('stillwater.acks', acks);
+    acks[P.id] = true; store.set('ribwork.acks', acks);
     closeDialog($('dlg-safety'));
     begin();
   });
@@ -1772,12 +1772,12 @@
   // ---------- Stats ----------
   const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   function logSession(secs, reps) {
-    const log = store.get('stillwater.log', []);
+    const log = store.get('ribwork.log', []);
     log.push({ d: dayKey(), s: Math.round(secs), b: P.ex.unit[0] === 'breath' ? reps : 0, x: P.id });
-    store.set('stillwater.log', log.slice(-2000));
+    store.set('ribwork.log', log.slice(-2000));
   }
   function renderStats() {
-    const log = store.get('stillwater.log', []);
+    const log = store.get('ribwork.log', []);
     const byDay = {};
     let secs = 0, breaths = 0;
     log.forEach((e) => { byDay[e.d] = (byDay[e.d] || 0) + e.s; secs += e.s; breaths += e.b; });
