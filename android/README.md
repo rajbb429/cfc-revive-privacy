@@ -94,6 +94,20 @@ A custom domain works as well: point it at the Pages site and serve
    one-time product and set its price. The app shows Play's price.
 4. Fill in the listing from `breathe/store-listing.md`, and set the privacy policy
    URL to `https://rajbb429.github.io/cfc-revive-privacy/breathe/privacy.html`.
-5. Purchases must be acknowledged within 3 days or Google refunds them. Point
-   `BILLING.verifyUrl` in `breathe/index.html` at a small server that checks the
-   token with the Google Play Developer API and acknowledges it.
+5. Promo codes: **Monetize → Promotions → Promo codes → Create promotion**, one-time
+   use codes for `ribwork_full`. Users redeem them from "Have a promo code?" on the
+   unlock screen (or in the Play Store app).
+
+## Purchase acknowledgement (no server needed)
+
+Google Play refunds and revokes any purchase that isn't acknowledged within 3 days,
+including redeemed promo codes. The app acknowledges on the device:
+`PurchaseAcknowledger.java` sits in front of the Digital Goods handler in
+`DelegationService` and, whenever the web app asks Play about purchases (at launch,
+when it comes back into view, right after a purchase or code redemption), it
+acknowledges anything still unacknowledged using the Play Billing Library.
+`LauncherActivity` also runs it once at each launch.
+
+A server is optional. Google recommends verifying purchase tokens on a server to
+catch fraudulent purchases; if you add one, point `BILLING.verifyUrl` in
+`breathe/index.html` at it.

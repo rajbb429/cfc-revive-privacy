@@ -220,6 +220,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     
         implementation 'com.google.androidbrowserhelper:billing:1.2.0'
+        // Used directly by PurchaseAcknowledger; the billing helper only uses it internally.
+        implementation 'com.android.billingclient:billing:7.1.1'
     
         implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.6.2'
     

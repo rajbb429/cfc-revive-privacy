@@ -750,8 +750,9 @@
   // ---------- Purchase setup ----------
   // Google Play Billing through the Digital Goods API (app installed from Play as a
   // Trusted Web Activity). Play refunds a purchase that isn't acknowledged within
-  // 3 days, so set verifyUrl to a server that checks the token with the Play
-  // Developer API and acknowledges it, answering {"ok": true}.
+  // 3 days; the Android app does that on the device (PurchaseAcknowledger.java)
+  // whenever this page asks Play about purchases. verifyUrl is optional: point it at
+  // a server that checks tokens with the Play Developer API, answering {"ok": true}.
   const BILLING = {
     sku: 'ribwork_full',
     method: 'https://play.google.com/billing',
@@ -1397,6 +1398,8 @@
       await res.complete(ok ? 'success' : 'fail');
       if (!ok) throw new Error('verify');
       this.grant(true);
+      // Asking Play for purchases prompts the Android app to acknowledge this one now.
+      this.service.listPurchases().catch(() => {});
     },
     async restore(silent) {
       if (!this.service) return false;

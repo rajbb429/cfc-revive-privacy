@@ -10,9 +10,9 @@ public class DelegationService extends
     public void onCreate() {
         super.onCreate();
 
-        
-            registerExtraCommandHandler(new DigitalGoodsRequestHandler(getApplicationContext()));
-        
+        // Acknowledge purchases first (it passes every request on), then answer the web app.
+        registerExtraCommandHandler(new PurchaseAcknowledger(getApplicationContext()));
+        registerExtraCommandHandler(new DigitalGoodsRequestHandler(getApplicationContext()));
     }
 }
 
