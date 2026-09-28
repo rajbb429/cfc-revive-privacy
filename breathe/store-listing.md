@@ -1,5 +1,7 @@
 # Google Play store listing
 
+Paste-ready text and images are in `play-store/` at the repository root.
+
 Google Play search weighs the **title** most, then the **short description**, then the
 **full description**. Use the phrases people actually type ("breathwork",
 "breathing exercises", "breath training", "ribcage", "midline", "deep breathing") naturally,
@@ -47,8 +49,9 @@ brand, Ribwork, stays as the home-screen label and opens the short description.
     • Müller maneuver: breathe out, pull in against a closed airway, recover
     • Bunny breathing: six quick sniffs in and six quick bursts out through
       the nose, to reset and refocus fast
-    • Yahweh breath prayer: breathe in "Yah", breathe out "weh", a slow,
-      contemplative Christian breath prayer taught by Richard Rohr
+    • Yahweh breath prayer: breathe through your nose with your mouth closed,
+      feeling "Yah" as you breathe in and "weh" as you breathe out, a slow,
+      contemplative breath prayer taught by Richard Rohr
     • Belt breaths: a guided setup puts a belt snug around your upper ribcage, then
       you breathe into it through belt breaths, arm raises, twists and side reaches,
       for ribcage expansion and midline control
