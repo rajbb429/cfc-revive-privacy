@@ -3,6 +3,11 @@ on:
   push:
     paths:
       - 'android/**'
+      - 'breathe/**'
+      - 'scripts/**'
+      - 'capacitor.config.json'
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/android.yml'
   workflow_dispatch:
 permissions:
@@ -10,20 +15,26 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: android
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
 
-      # A debug APK you can install on a phone to try the app. It is signed with
-      # a throwaway debug key, so it opens with a browser address bar.
+      # Packs breathe/ into the app and wires up the Capacitor plugins.
+      - run: npm ci
+      - run: npm run sync
+
+      # A debug APK you can install on a phone to try the app. Purchases only work in
+      # a copy installed from Google Play (any testing track).
       - name: Build debug APK
+        working-directory: android
         run: ./gradlew --no-daemon assembleDebug
 
       # The Play Store bundle, signed with your upload key when the secrets exist.
@@ -40,6 +51,7 @@ jobs:
           fi
       - name: Build signed Play Store bundle
         if: steps.key.outputs.path != ''
+        working-directory: android
         env:
           RIBWORK_KEYSTORE: ${{ steps.key.outputs.path }}
           RIBWORK_KEYSTORE_PASSWORD: ${{ secrets.RIBWORK_KEYSTORE_PASSWORD }}

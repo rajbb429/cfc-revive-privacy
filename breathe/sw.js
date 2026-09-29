@@ -1,6 +1,6 @@
-// Offline support: precache the app shell, cache Google Fonts on first use.
-const CACHE = 'ribwork-v1';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-180.png', './privacy.html'];
+// Offline support for the web version: precache the app shell, fonts and voice clips.
+const CACHE = 'ribwork-v2';
+const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-180.png', './privacy.html', './fonts/figtree-latin.woff2', './fonts/marcellus-latin.woff2'];
 
 // Voice clips are listed in voice/index.json and precached so guided sessions work offline.
 self.addEventListener('install', (e) => {
@@ -27,17 +27,6 @@ self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-
-  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
-    e.respondWith(
-      caches.match(req).then((hit) => hit || fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(req, copy));
-        return res;
-      }))
-    );
-    return;
-  }
 
   if (url.origin !== location.origin) return;
 
