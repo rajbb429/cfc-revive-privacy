@@ -1,0 +1,20 @@
+{
+  "name": "ribwork",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Ribwork breathing app for Android, built with Capacitor from the web app in breathe/",
+  "scripts": {
+    "build": "node scripts/build-web.mjs",
+    "sync": "npm run build && cap sync android"
+  },
+  "dependencies": {
+    "@capacitor-community/keep-awake": "^8.0.1",
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/app": "^8.1.1",
+    "@capacitor/core": "^8.5.2",
+    "@capgo/native-purchases": "^8.8.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.2"
+  }
+}

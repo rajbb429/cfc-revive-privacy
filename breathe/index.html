@@ -11,10 +11,11 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Figtree:wght@300;400;500;600&display=swap">
+<link rel="preload" href="fonts/figtree-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+  /* Fonts ship with the app (SIL Open Font License, see fonts/OFL.txt). */
+  @font-face { font-family: 'Figtree'; font-style: normal; font-weight: 300 600; font-display: swap; src: url(fonts/figtree-latin.woff2) format('woff2'); }
+  @font-face { font-family: 'Marcellus'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/marcellus-latin.woff2) format('woff2'); }
   /* Scene tokens. Dusk is the default; other scenes override the same set. */
   :root {
     color-scheme: dark;
@@ -748,16 +749,23 @@
   'use strict';
 
   // ---------- Purchase setup ----------
-  // Google Play Billing through the Digital Goods API (app installed from Play as a
-  // Trusted Web Activity). Play refunds a purchase that isn't acknowledged within
-  // 3 days; the Android app does that on the device (PurchaseAcknowledger.java)
-  // whenever this page asks Play about purchases. verifyUrl is optional: point it at
-  // a server that checks tokens with the Play Developer API, answering {"ok": true}.
+  // In the Android app (Capacitor), Google Play Billing runs through the
+  // @capgo/native-purchases plugin; native.js, added by the app build, provides it.
+  // Play refunds a purchase that isn't acknowledged within 3 days. The plugin
+  // acknowledges a purchase as it completes, and Pro.restore acknowledges any it
+  // still finds (a redeemed promo code, say) at launch and whenever the app returns.
+  // On the web there's no billing: the unlock button links to the Play listing.
   const BILLING = {
     sku: 'ribwork_full',
-    method: 'https://play.google.com/billing',
-    verifyUrl: '',
+    playUrl: 'https://play.google.com/store/apps/details?id=io.github.rajbb429.ribwork',
     previewUnlock: false, // shows a no-payment unlock button; keep false in release builds
+  };
+  const isNative = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+  const Native = {
+    purchases: isNative && window.capacitorNativePurchases ? window.capacitorNativePurchases.NativePurchases : null,
+    app: isNative && window.capacitorApp ? window.capacitorApp.App : null,
+    keepAwake: isNative && window.capacitorKeepAwake ? window.capacitorKeepAwake.KeepAwake : null,
+    bars: isNative && window.capacitorExports ? window.capacitorExports.SystemBars : null,
   };
 
   // ---------- Storage (best effort) ----------
@@ -1353,65 +1361,73 @@
   const buzz = (p) => { if (set.haptics && canVibrate) try { navigator.vibrate(p); } catch {} };
 
   // ---------- Wake lock ----------
+  // The Android app's web view has no Wake Lock API, so it uses the keep-awake plugin.
   let wake = null;
   async function holdWake() {
+    if (Native.keepAwake) { Native.keepAwake.keepAwake().catch(() => {}); return; }
     try { if ('wakeLock' in navigator && !wake) { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); } } catch {}
   }
-  function dropWake() { try { wake && wake.release(); } catch {} wake = null; }
+  function dropWake() {
+    if (Native.keepAwake) { Native.keepAwake.allowSleep().catch(() => {}); return; }
+    try { wake && wake.release(); } catch {} wake = null;
+  }
 
   // ---------- Full app unlock ----------
   const Pro = {
     unlocked: !!store.get('ribwork.pro', false),
-    service: null,
+    ready: false,
+    checked: !isNative, // false until the app has first heard back from Play
     price: '',
     grant(on = true) {
       this.unlocked = on; store.set('ribwork.pro', on);
       refreshLocks();
     },
     async init() {
-      if (typeof window.getDigitalGoodsService !== 'function') { refreshPaywall(); return; }
-      try {
-        this.service = await window.getDigitalGoodsService(BILLING.method);
-        const [item] = await this.service.getDetails([BILLING.sku]);
-        if (item && item.price) {
-          try { this.price = new Intl.NumberFormat(undefined, { style: 'currency', currency: item.price.currency }).format(+item.price.value); } catch {}
+      const np = Native.purchases;
+      if (np) {
+        try {
+          const { isBillingSupported } = await np.isBillingSupported();
+          this.ready = !!isBillingSupported;
+        } catch { this.ready = false; }
+        if (this.ready) {
+          try {
+            const { products } = await np.getProducts({ productIdentifiers: [BILLING.sku], productType: 'inapp' });
+            const item = products && products.find((p) => p.identifier === BILLING.sku);
+            if (item && item.priceString) this.price = item.priceString;
+          } catch {}
+          try { await this.restore(); } catch {}
         }
-        await this.restore(true);
-      } catch { this.service = null; }
+      }
+      this.checked = true;
       refreshPaywall();
     },
-    async verify(token) {
-      if (BILLING.verifyUrl) {
-        const r = await fetch(BILLING.verifyUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sku: BILLING.sku, purchaseToken: token }) });
-        return r.ok && !!(await r.json()).ok;
-      }
-      if (this.service && typeof this.service.acknowledge === 'function') { try { await this.service.acknowledge(token, 'onetime'); } catch {} }
-      return true;
-    },
     async buy() {
-      const req = new PaymentRequest(
-        [{ supportedMethods: BILLING.method, data: { sku: BILLING.sku } }],
-        { total: { label: 'Total', amount: { currency: 'USD', value: '0' } } },
-      );
-      const res = await req.show();
-      const ok = await this.verify(res.details.purchaseToken).catch(() => false);
-      await res.complete(ok ? 'success' : 'fail');
-      if (!ok) throw new Error('verify');
+      const t = await Native.purchases.purchaseProduct({ productIdentifier: BILLING.sku, productType: 'inapp', autoAcknowledgePurchases: true });
+      if (t && t.purchaseState && t.purchaseState !== '1') throw new Error('pending');
       this.grant(true);
-      // Asking Play for purchases prompts the Android app to acknowledge this one now.
-      this.service.listPurchases().catch(() => {});
     },
-    async restore(silent) {
-      if (!this.service) return false;
-      const purchases = await this.service.listPurchases();
-      const mine = purchases.find((p) => p.itemId === BILLING.sku);
-      if (mine && await this.verify(mine.purchaseToken).catch(() => false)) { this.grant(true); return true; }
-      // Play is the source of truth where it's available: a refunded purchase locks again.
-      if (!mine && this.unlocked) this.grant(false);
+    // Asks Play what this account owns. Throws when Play can't be reached, so a
+    // network hiccup never locks a paying user out.
+    async restore() {
+      const np = Native.purchases;
+      if (!np || !this.ready) return false;
+      const { purchases } = await np.getPurchases({ productType: 'inapp' });
+      const mine = (purchases || []).filter((p) => p.productIdentifier === BILLING.sku);
+      const owned = mine.find((p) => p.purchaseState === '1');
+      if (owned) {
+        if (!owned.isAcknowledged && owned.purchaseToken) {
+          await np.acknowledgePurchase({ purchaseToken: owned.purchaseToken }).catch(() => np.restorePurchases().catch(() => {}));
+        }
+        if (!this.unlocked) this.grant(true);
+        return true;
+      }
+      this.pending = mine.some((p) => p.purchaseState === '0');
+      // Play is the source of truth: a refunded purchase locks again.
+      if (this.unlocked) this.grant(false);
       return false;
     },
   };
-  const canPay = () => !!Pro.service && 'PaymentRequest' in window;
+  const canPay = () => Pro.ready;
   const isLocked = (id) => !EX[id].free && !Pro.unlocked;
   // Advanced is a full-app feature, so it only takes effect once unlocked.
   function isAdv(id = P && P.id) { return ADV.includes(id) && !!(set.adv || {})[id] && Pro.unlocked; }
@@ -1449,11 +1465,18 @@
     const buy = $('btn-buy');
     if (Pro.unlocked) { buy.textContent = 'Unlocked'; buy.disabled = true; }
     else if (canPay()) { buy.textContent = Pro.price ? `Unlock for ${Pro.price}` : 'Unlock full app'; buy.disabled = false; }
-    else { buy.textContent = 'Unlock in the Android app'; buy.disabled = true; }
-    $('btn-restore').hidden = !canPay();
-    $('promo').hidden = Pro.unlocked;
+    else if (!Pro.checked) { buy.textContent = 'Unlock full app'; buy.disabled = true; }
+    else if (isNative) { buy.textContent = 'Try again'; buy.disabled = false; }
+    else { buy.textContent = 'Get the Android app'; buy.disabled = false; }
+    $('btn-restore').hidden = !canPay() || Pro.unlocked;
+    $('promo').hidden = Pro.unlocked || !canPay();
     $('btn-preview-unlock').hidden = !BILLING.previewUnlock || Pro.unlocked;
-    if (!canPay() && !Pro.unlocked) $('pro-status').textContent = 'Purchases work in the Ribwork app from Google Play.';
+    const status = $('pro-status');
+    if (Pro.unlocked || status.dataset.busy) return;
+    if (!Pro.checked) status.textContent = 'Connecting to Google Play…';
+    else if (canPay()) status.textContent = Pro.pending ? 'Your payment is pending in Google Play. The full app unlocks once it goes through.' : '';
+    else if (isNative) status.textContent = "Couldn't connect to Google Play. Check that you're signed in to the Play Store and online.";
+    else status.textContent = 'The full app unlocks in Ribwork for Android, from Google Play.';
   }
   function refreshLocks() {
     el.exercises.querySelectorAll('.ex-btn').forEach((b) => {
@@ -1479,23 +1502,39 @@
       if (pendingEx) { selectExercise(pendingEx); pendingEx = null; }
     }, 900);
   }
-  $('btn-buy').addEventListener('click', async () => {
-    const status = $('pro-status');
-    status.textContent = '';
-    try { await Pro.buy(); afterUnlock(); }
-    catch (e) {
-      if (e && e.name === 'AbortError') return; // closed the Play sheet
-      status.textContent = e && e.message === 'verify'
-        ? "Payment went through but couldn't be confirmed. Try Restore purchase in a moment."
-        : "The purchase didn't complete. Nothing was charged.";
+  // Keeps refreshPaywall from overwriting a message while a purchase call runs.
+  async function busy(fn) {
+    const status = $('pro-status'), buy = $('btn-buy');
+    status.dataset.busy = '1'; buy.disabled = true;
+    try { await fn(status); } finally { delete status.dataset.busy; if (!Pro.unlocked) buy.disabled = false; }
+  }
+  $('btn-buy').addEventListener('click', () => {
+    if (!isNative) { window.open(BILLING.playUrl, '_blank', 'noopener'); return; }
+    if (!canPay()) {
+      busy(async (status) => { status.textContent = 'Connecting to Google Play…'; await Pro.init(); }).then(refreshPaywall);
+      return;
     }
+    busy(async (status) => {
+      status.textContent = '';
+      try { await Pro.buy(); afterUnlock(); }
+      catch (e) {
+        const msg = String((e && (e.message || e.code)) || '').toLowerCase();
+        if (msg === 'pending') status.textContent = 'Your payment is pending in Google Play. The full app unlocks once it goes through.';
+        else if (/cancel/.test(msg)) status.textContent = '';
+        else if (/already own|already_owned|item_already/.test(msg)) {
+          try { (await Pro.restore()) ? afterUnlock() : (status.textContent = 'Tap Restore purchase to unlock.'); }
+          catch { status.textContent = 'Tap Restore purchase to unlock.'; }
+        } else status.textContent = "The purchase didn't complete. Nothing was charged.";
+      }
+    });
   });
-  $('btn-restore').addEventListener('click', async () => {
-    const status = $('pro-status');
+  $('btn-restore').addEventListener('click', () => busy(async (status) => {
     status.textContent = 'Checking Google Play…';
-    try { (await Pro.restore(false)) ? afterUnlock() : (status.textContent = 'No purchase found for this Google account.'); }
-    catch { status.textContent = "Couldn't reach Google Play. Check your connection and try again."; }
-  });
+    try {
+      if (await Pro.restore()) afterUnlock();
+      else status.textContent = Pro.pending ? 'Your payment is still pending in Google Play.' : 'No purchase found for this Google account.';
+    } catch { status.textContent = "Couldn't reach Google Play. Check your connection and try again."; }
+  }));
   $('btn-preview-unlock').addEventListener('click', () => { Pro.grant(true); afterUnlock(); });
 
   // Promo codes are redeemed in Google Play; the unlock then shows up as a purchase.
@@ -1509,16 +1548,19 @@
     const w = window.open(url, '_blank', 'noopener');
     if (!w) location.href = url; // some app views block new windows
   });
+  // Every return to the app asks Play again, which also acknowledges any purchase still
+  // unacknowledged (Play refunds those after 3 days), even once unlocked.
   async function recheckPurchase() {
-    if (!Pro.service) return;
-    // Every resume asks Play for purchases, which makes the Android app acknowledge any
-    // purchase still unacknowledged (Play refunds those after 3 days), even once unlocked.
-    if (Pro.unlocked) { Pro.service.listPurchases().catch(() => {}); return; }
+    if (isNative && Pro.checked && !Pro.ready) { await Pro.init(); return; } // Play was unreachable at launch
+    if (!canPay()) return;
+    const was = Pro.unlocked;
     try {
-      if (await Pro.restore(true)) {
+      const owned = await Pro.restore();
+      refreshPaywall();
+      if (owned && !was) {
         announce('Full app unlocked');
         if ($('dlg-pro').open) afterUnlock();
-      } else if (awaitingCode) {
+      } else if (!owned && awaitingCode) {
         $('pro-status').textContent = "Google Play hasn't confirmed the code yet. Tap Restore purchase in a moment.";
       }
     } catch {}
@@ -1865,6 +1907,8 @@
     root.dataset.scene = s;
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.content = getComputedStyle(root).getPropertyValue('--bg0').trim() || '#0e1522';
+    // Android status and navigation bar icons: dark on the light scene, light otherwise.
+    if (Native.bars) Native.bars.setStyle({ style: s === 'dawn' ? 'LIGHT' : 'DARK' }).catch(() => {});
     $('sceneName').textContent = SCENES[set.scene];
   }
   darkPref.addEventListener?.('change', applyScene);
@@ -1970,8 +2014,19 @@
   requestAnimationFrame(frame);
   Pro.init();
 
-  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  // The Android app ships its files inside the app, so only the web version caches offline.
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && !isNative) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+
+  // Android back button: close an open sheet, then end a session, then leave the app.
+  if (Native.app) {
+    Native.app.addListener('backButton', () => {
+      const open = document.querySelector('dialog[open]');
+      if (open) closeDialog(open);
+      else if (S.status !== 'idle') finish(false);
+      else Native.app.minimizeApp().catch(() => Native.app.exitApp());
+    });
   }
 })();
 </script>

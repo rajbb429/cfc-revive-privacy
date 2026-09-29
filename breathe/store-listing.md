@@ -75,6 +75,6 @@ brand, Ribwork, stays as the home-screen label and opens the short description.
 
 - **Category:** Health & Fitness
 - **Tags:** pick the closest to breathing, meditation, relaxation and sleep
-- **Privacy policy URL:** `<your GitHub Pages URL>/breathe/privacy.html`
+- **Privacy policy URL:** `https://rajbb429.github.io/cfc-revive-privacy/breathe/privacy.html`
 - **In-app product:** one-time product with ID `ribwork_full`. The ID can't be changed
   after you create it; it must match `BILLING.sku` in `index.html`.
