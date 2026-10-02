@@ -138,12 +138,12 @@
   body.focus .tools, body.focus .brand span { opacity: 0.25; transition: opacity 1.5s; }
   body.focus .tools:hover { opacity: 1; }
 
-  main { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; min-height: 0; }
+  main { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; min-height: 0; padding: 8px 0; }
 
   /* The breath stage: ring of the 23-second cycle with the orb inside it. */
   .stage {
     position: relative;
-    width: min(86vw, 52vh, 420px);
+    width: min(86vw, 52vh, 420px, var(--fit, 100vh));
     aspect-ratio: 1; max-width: 100%;
     cursor: pointer; user-select: none; -webkit-user-select: none;
     border-radius: 50%;
@@ -250,6 +250,10 @@
     display: inline-flex; align-items: center; gap: 6px;
     border: 1px solid var(--line); background: var(--glass); color: var(--muted); font-size: 0.9rem;
   }
+  /* With a large system font, the label shortens instead of running into Begin. */
+  .ctrl-left { min-width: 0; max-width: 100%; }
+  .adv-btn { min-width: 0; max-width: 100%; }
+  .adv-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .adv-btn[aria-pressed="true"] { color: var(--ink); background: color-mix(in srgb, var(--strain) 22%, transparent); border-color: color-mix(in srgb, var(--strain) 55%, transparent); }
   .lock-badge { position: absolute; top: -4px; right: -2px; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: var(--sheet); border: 1px solid var(--line); }
   .lock-badge svg { width: 10px; height: 10px; }
@@ -404,7 +408,7 @@
   [hidden] { display: none !important; }
 
   /* Resisted shows two rows of controls, so give the circle a little less room. */
-  body.tall-footer .stage { width: min(76vw, 48vh, 400px); }
+  body.tall-footer .stage { width: min(76vw, 48vh, 400px, var(--fit, 100vh)); }
   @media (max-width: 380px) {
     .adv-btn { padding: 0 11px; font-size: 0.82rem; }
     .brand b { font-size: 1.1rem; }
@@ -416,8 +420,8 @@
     .legend li span { line-height: 1.15; }
     .legend li i { display: none; }
     main { gap: 6px; }
-    .stage { width: min(86vw, 41vh, 420px); }
-    body.tall-footer .stage { width: min(76vw, 35vh, 400px); }
+    .stage { width: min(86vw, 41vh, 420px, var(--fit, 100vh)); }
+    body.tall-footer .stage { width: min(76vw, 35vh, 400px, var(--fit, 100vh)); }
   }
   @media (prefers-reduced-motion: reduce) {
     .cloud { animation: none; }
@@ -508,7 +512,7 @@
     </div>
     <div class="ctrl-bar">
       <div class="ctrl-left">
-        <button class="adv-btn" type="button" id="advBtn" aria-pressed="false" hidden>Advanced<span class="lock-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></button>
+        <button class="adv-btn" type="button" id="advBtn" aria-pressed="false" hidden><span class="adv-label">Advanced</span><span class="lock-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></button>
         <button class="ghost" id="btn-end" type="button" aria-label="End session" hidden>
           <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>
         </button>
@@ -2012,6 +2016,22 @@
   refreshLocks();
   reflectControls();
   requestAnimationFrame(frame);
+
+  // The circle takes whatever height <main> has left after the tabs, summary and legend,
+  // so on short screens, large system fonts or two-row controls nothing overlaps.
+  const mainEl = el.stage.parentElement;
+  function fitStage() {
+    const cs = getComputedStyle(mainEl);
+    const others = [...mainEl.children].filter((c) => c !== el.stage && c.offsetParent !== null);
+    const used = others.reduce((sum, c) => sum + c.offsetHeight, 0) + (parseFloat(cs.rowGap) || 0) * others.length;
+    const room = mainEl.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - used;
+    root.style.setProperty('--fit', `${Math.max(150, Math.floor(room))}px`);
+  }
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(() => requestAnimationFrame(fitStage));
+    [mainEl, ...[...mainEl.children].filter((c) => c !== el.stage)].forEach((n) => ro.observe(n));
+  }
+  fitStage();
   Pro.init();
 
   // The Android app ships its files inside the app, so only the web version caches offline.
