@@ -9,7 +9,7 @@ Purchases go through Google Play Billing with the
 |---|---|
 | Package name | `io.github.rajbb429.ribwork` (permanent) |
 | App name | Breathwork: Ribcage & Midline (launcher: Ribwork) |
-| Version | 2.0.0 (versionCode 2) in `app/build.gradle` |
+| Version | `versionCode` and `versionName` in `app/build.gradle` |
 | Targets | Android 16 (API 36), runs on Android 7.0 (API 24) and up |
 | In-app product | `ribwork_full` (one-time) |
 
