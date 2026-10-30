@@ -64,7 +64,9 @@ def main():
         target = words(text)
         best = None
         for take in range(TAKES):
-            wav = tts.generate(text, audio_prompt_path=ref, exaggeration=EXAGGERATION, cfg_weight=CFG_WEIGHT)
+            # A closing full stop keeps very short lines ("Breathe in") from being misread.
+            said = text if text.endswith(('.', '?', '!')) else text + '.'
+            wav = tts.generate(said, audio_prompt_path=ref, exaggeration=EXAGGERATION, cfg_weight=CFG_WEIGHT)
             x = trim(wav.squeeze(0).numpy().astype(np.float32), tts.sr)
             segs, _ = asr.transcribe(x if tts.sr == 16000 else np.interp(
                 np.linspace(0, len(x), int(len(x) * 16000 / tts.sr), endpoint=False), np.arange(len(x)), x).astype(np.float32),
