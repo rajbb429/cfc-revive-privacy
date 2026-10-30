@@ -210,16 +210,30 @@
   .legend li i { background: var(--c); }
   .legend li.on { background: var(--glass); color: var(--ink); }
 
-  /* Exercise switcher */
-  .exercises { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; max-width: 100%; padding: 2px; }
-  .exercises.away { visibility: hidden; }
-  .ex-btn {
-    display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: transparent;
-    border-radius: 999px; padding: 6px 9px; cursor: pointer; color: var(--muted); font-size: 0.85rem; flex: none; gap: 4px;
+  /* Exercise: one button on the home screen, a sheet to choose. */
+  .ex-pick {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 44px; max-width: 100%; padding: 0 16px 0 20px;
+    border-radius: 999px; border: 1px solid var(--line); background: var(--glass); color: var(--ink);
+    font: inherit; font-size: 1rem; font-weight: 500; cursor: pointer; flex: none;
   }
-  .ex-btn[aria-pressed="true"] { background: var(--glassHi); color: var(--ink); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
-  .ex-btn svg { width: 10px; height: 10px; opacity: .8; }
-  .ex-btn:not(.locked) svg { display: none; }
+  .ex-pick span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ex-pick svg { width: 16px; height: 16px; color: var(--muted); flex: none; }
+  .ex-group { margin: 14px 4px 6px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .ex-row {
+    width: 100%; min-height: 60px; display: grid; grid-template-columns: minmax(0, 1fr) 84px 22px; align-items: center; gap: 14px;
+    padding: 8px 12px; border: 0; border-radius: 16px; background: transparent; color: var(--ink); text-align: left; cursor: pointer; font: inherit;
+  }
+  .ex-row:hover { background: var(--glass); }
+  .ex-row[aria-pressed="true"] { background: var(--glassHi); }
+  .ex-txt b { display: block; font-weight: 500; font-size: 1rem; }
+  .ex-txt small { display: block; margin-top: 2px; font-size: 0.8rem; color: var(--muted); }
+  .ex-bar { display: flex; gap: 2px; height: 6px; border-radius: 4px; overflow: hidden; }
+  .ex-bar i { background: var(--c); }
+  .ex-mark { display: grid; place-items: center; color: var(--accent); }
+  .ex-mark svg { width: 20px; height: 20px; display: none; }
+  .ex-mark .lk { width: 15px; height: 15px; color: var(--muted); }
+  .ex-row[aria-pressed="true"] .ck, .ex-row.locked .lk { display: block; }
+  .ex-row.locked .ck { display: none; }
 
   /* Controls */
   footer { display: flex; flex-direction: column; align-items: center; gap: 14px; }
@@ -236,6 +250,62 @@
   .durations.away { visibility: hidden; }
   .ctrl-bar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 8px; width: 100%; }
   .ctrl-left { justify-self: start; display: flex; }
+  .opt-btn {
+    position: relative; min-height: 48px; max-width: 100%; padding: 0 14px; border-radius: 999px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--glass);
+    color: var(--ink); font: inherit; font-size: 0.95rem; font-variant-numeric: tabular-nums;
+  }
+  .opt-btn svg { width: 17px; height: 17px; color: var(--muted); flex: none; }
+  .opt-btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .opt-btn.adv-on::after { content: ''; position: absolute; top: 4px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--strain); }
+  .opt-group { margin: 6px 0 14px; }
+  .opt-group:has(> .seg-ctl[hidden]) { display: none; }
+  .opt-label { margin: 0 2px 8px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  #dlg-session .durations { align-items: stretch; gap: 0; }
+  #dlg-session .seg-ctl { display: flex; width: 100%; box-sizing: border-box; }
+  #dlg-session .seg-ctl button { flex: 1; min-height: 44px; padding: 7px 6px; }
+  #dlg-session .dur-note { margin: -4px 2px 16px; }
+  #dlg-session .adv-btn {
+    width: 100%; height: auto; min-height: 64px; border-radius: 18px; justify-content: space-between; gap: 14px;
+    padding: 10px 16px; text-align: left; color: var(--ink);
+  }
+  #dlg-session .adv-label { white-space: normal; }
+  #dlg-session .adv-label b { display: block; font-weight: 500; font-size: 0.98rem; }
+  #dlg-session .adv-label small { display: block; margin-top: 2px; font-size: 0.8rem; color: var(--muted); }
+  .switch { flex: none; width: 44px; height: 26px; border-radius: 999px; background: var(--line); position: relative; transition: background-color .2s; }
+  .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); transition: transform .2s; }
+  .adv-btn[aria-pressed="true"] .switch { background: var(--strain); }
+  .adv-btn[aria-pressed="true"] .switch::after { transform: translateX(18px); }
+  #dlg-session .adv-btn .lock-badge { position: static; flex: none; }
+
+  /* Home: only the exercise, the orb and its pattern. The brand tag, count line and options move away. */
+  .brand span { display: none; }
+  body:not(.in-session) .meta { display: none; }
+  .legend { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 14px; width: auto; }
+  .legend li { flex-direction: row-reverse; align-items: baseline; gap: 5px; padding: 0; background: none; }
+  .legend li i { display: none; }
+  .legend li b { font-size: 1rem; }
+  .legend li span, .legend[style*="--n: 4"] li span, .legend[style*="--n: 5"] li span { font-size: 0.72rem; letter-spacing: 0.12em; }
+
+  /* During a session: the phase word above the orb, the hint below, time left at the bottom. */
+  .sess-word, .sess-hint, .sess-prog { display: none; }
+  body.in-session .sess-word {
+    display: block; font-family: var(--display); font-size: clamp(1.9rem, 9vw, 2.6rem); line-height: 1.15;
+    text-align: center; min-height: 1.15em; white-space: nowrap;
+  }
+  body.in-session .sess-hint { display: block; min-height: 2.6em; max-width: 30ch; text-align: center; color: var(--muted); font-size: 0.95rem; line-height: 1.3; text-wrap: balance; }
+  body.in-session .readout .phase-word, body.in-session .readout .hint { display: none; }
+  body.in-session .count { font-size: 15cqw; }
+  body.in-session .legend { display: none; }
+  body.in-session .meta { order: -1; font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; }
+  body.in-session .sess-prog {
+    display: flex; align-items: center; gap: 12px; width: min(100%, 360px);
+    font-size: 0.8rem; color: var(--muted); font-variant-numeric: tabular-nums;
+  }
+  .prog-track { flex: 1; height: 3px; border-radius: 2px; background: var(--line); overflow: hidden; }
+  .prog-fill { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); }
+  body.focus footer { opacity: 0.6; transition: opacity 1.5s; }
+  body.focus footer:hover, body.focus footer:focus-within { opacity: 1; transition-duration: .2s; }
   .ctrl-bar .primary { min-width: 0; width: clamp(116px, 34vw, 168px); padding: 0 14px; }
   .voice-btn {
     justify-self: end; width: 48px; height: 48px; border-radius: 50%; cursor: pointer;
@@ -346,13 +416,8 @@
   .empty { color: var(--muted); font-size: 0.9rem; }
 
   .pattern-fig { display: flex; height: 10px; border-radius: 6px; overflow: hidden; gap: 2px; margin: 8px 0 6px; }
-  .pattern-fig i:nth-child(1) { flex: 4; background: var(--seg0); }
-  .pattern-fig i:nth-child(2) { flex: 7; background: var(--seg1); }
-  .pattern-fig i:nth-child(3) { flex: 6; background: var(--seg2); }
-  .pattern-fig i:nth-child(4) { flex: 6; background: var(--seg3); }
+  .pattern-fig i { background: var(--c); }
   .pattern-cap { display: flex; font-size: 0.72rem; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .pattern-cap span:nth-child(1) { flex: 4; } .pattern-cap span:nth-child(2) { flex: 7; }
-  .pattern-cap span:nth-child(3) { flex: 6; } .pattern-cap span:nth-child(4) { flex: 6; }
   kbd { font-family: var(--body); font-size: .8rem; padding: 1px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--glass); }
 
   /* Completion */
@@ -455,15 +520,11 @@
   </header>
 
   <main>
-    <div class="exercises" id="exercises" role="group" aria-label="Exercise">
-      <button class="ex-btn" type="button" data-ex="4766">4-7-6-6</button>
-      <button class="ex-btn" type="button" data-ex="valsalva"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Valsalva</button>
-      <button class="ex-btn" type="button" data-ex="muller"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Müller</button>
-      <button class="ex-btn" type="button" data-ex="resisted"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Resisted</button>
-      <button class="ex-btn" type="button" data-ex="bunny"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Bunny</button>
-      <button class="ex-btn" type="button" data-ex="yahweh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Yahweh</button>
-      <button class="ex-btn" type="button" data-ex="belt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Belt breaths</button>
-    </div>
+    <button class="ex-pick" id="exPick" type="button" aria-haspopup="dialog">
+      <span id="exPickName">4-7-6-6 breathing</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="sess-word" id="sessWord" aria-hidden="true"></div>
 
     <div class="stage" id="stage" role="button" tabindex="0" aria-label="Start breathing session">
       <svg class="ring" viewBox="0 0 400 400" aria-hidden="true">
@@ -483,36 +544,22 @@
       </div>
     </div>
 
+    <div class="sess-hint" id="sessHint" aria-hidden="true"></div>
     <div class="meta" id="meta">Tap the circle or Begin</div>
 
     <ol class="legend" id="legend" aria-label="Pattern"></ol>
+    <div class="sess-prog" id="sessProg" aria-hidden="true">
+      <span id="progA">0:00</span><span class="prog-track"><span class="prog-fill" id="progFill"></span></span><span id="progB"></span>
+    </div>
   </main>
 
   <footer>
-    <div class="durations" id="durations">
-      <div class="seg-ctl" role="group" aria-label="Method" id="methodCtl" hidden>
-        <button type="button" data-method="pinched">Pinched nose</button>
-        <button type="button" data-method="fist">Fist pinhole</button>
-      </div>
-      <div class="seg-ctl" role="group" aria-label="Session length" id="durCtl">
-        <button type="button" data-min="3">3 min</button>
-        <button type="button" data-min="5">5</button>
-        <button type="button" data-min="10">10</button>
-        <button type="button" data-min="15">15</button>
-        <button type="button" data-min="0" aria-label="Open-ended">∞</button>
-      </div>
-      <div class="seg-ctl" role="group" aria-label="Rounds" id="roundCtl" hidden>
-        <button type="button" data-rounds="1">1 round</button>
-        <button type="button" data-rounds="2">2</button>
-        <button type="button" data-rounds="3">3</button>
-        <button type="button" data-rounds="4">4</button>
-        <button type="button" data-rounds="5">5</button>
-      </div>
-      <div class="dur-note" id="durNote"></div>
-    </div>
     <div class="ctrl-bar">
       <div class="ctrl-left">
-        <button class="adv-btn" type="button" id="advBtn" aria-pressed="false" hidden><span class="adv-label">Advanced</span><span class="lock-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></button>
+        <button class="opt-btn" id="optBtn" type="button" aria-haspopup="dialog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>
+          <span id="optLabel">5 min</span>
+        </button>
         <button class="ghost" id="btn-end" type="button" aria-label="End session" hidden>
           <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>
         </button>
@@ -527,6 +574,54 @@
 </div>
 
 <div class="sr" aria-live="polite" id="live"></div>
+
+<!-- Choose an exercise -->
+<dialog id="dlg-ex" aria-labelledby="ex-title">
+  <div class="sheet">
+    <div class="grabber"></div>
+    <div class="sheet-head">
+      <h2 id="ex-title">Choose a breath</h2>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div id="exercises" role="group" aria-label="Exercise"></div>
+  </div>
+</dialog>
+
+<!-- Session options -->
+<dialog id="dlg-session" aria-labelledby="session-title">
+  <div class="sheet">
+    <div class="grabber"></div>
+    <div class="sheet-head">
+      <h2 id="session-title">This session</h2>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="durations" id="durations">
+      <div class="opt-group"><p class="opt-label">Method</p>
+      <div class="seg-ctl" role="group" aria-label="Method" id="methodCtl" hidden>
+        <button type="button" data-method="pinched">Pinched nose</button>
+        <button type="button" data-method="fist">Fist pinhole</button>
+      </div></div>
+      <div class="opt-group"><p class="opt-label">Length</p>
+      <div class="seg-ctl" role="group" aria-label="Session length" id="durCtl">
+        <button type="button" data-min="3">3 min</button>
+        <button type="button" data-min="5">5</button>
+        <button type="button" data-min="10">10</button>
+        <button type="button" data-min="15">15</button>
+        <button type="button" data-min="0" aria-label="Open-ended">∞</button>
+      </div></div>
+      <div class="opt-group"><p class="opt-label">Rounds</p>
+      <div class="seg-ctl" role="group" aria-label="Rounds" id="roundCtl" hidden>
+        <button type="button" data-rounds="1">1 round</button>
+        <button type="button" data-rounds="2">2</button>
+        <button type="button" data-rounds="3">3</button>
+        <button type="button" data-rounds="4">4</button>
+        <button type="button" data-rounds="5">5</button>
+      </div></div>
+      <div class="dur-note" id="durNote"></div>
+    </div>
+    <button class="adv-btn" type="button" id="advBtn" aria-pressed="false" hidden><span class="adv-label"><b>Advanced: head positions</b><small>Up, down, left and right, cued by voice</small></span><span class="switch" aria-hidden="true"></span><span class="lock-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></button>
+  </div>
+</dialog>
 
 <!-- Settings -->
 <dialog id="dlg-settings" aria-labelledby="settings-title">
@@ -638,22 +733,7 @@
       <h2 id="info-title">About 4-7-6-6</h2>
       <button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
-    <p>Each breath takes 23 seconds: breathe in for 4, hold for 7, breathe out for 6, and rest empty for 6. That slows you to about 2.6 breaths a minute, well below the usual 12 to 20.</p>
-    <div class="pattern-fig" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-    <div class="pattern-cap" aria-hidden="true"><span>in 4</span><span>hold 7</span><span>out 6</span><span>hold 6</span></div>
-
-    <h3>How to do it</h3>
-    <ul>
-      <li>Sit or lie comfortably. Let your shoulders drop.</li>
-      <li>Breathe in quietly through your nose, into your belly.</li>
-      <li>Hold softly. Keep your throat relaxed rather than clamped.</li>
-      <li>Breathe out slowly through your mouth, as if through a straw.</li>
-      <li>Rest with empty lungs until the next breath begins.</li>
-      <li>Close your eyes if you like. The bowl or tone marks each change, so you don't need to watch.</li>
-    </ul>
-
-    <h3>Go gently</h3>
-    <p>The holds can feel long at first. If you feel dizzy, lightheaded or short of breath, return to normal breathing. Talk to a doctor before breath-holding practice if you are pregnant or have a heart or lung condition. This app is for relaxation and is not medical advice.</p>
+    <div id="info-body"></div>
 
     <h3>Shortcuts</h3>
     <p><kbd>Space</kbd> start or pause · <kbd>Esc</kbd> end · <kbd>S</kbd> settings</p>
@@ -833,6 +913,17 @@
   ];
   const cueLine = (h) => `Next, ${h.say}.`;
   const ADV = ['4766', 'valsalva', 'muller', 'resisted', 'belt'];
+  // The exercise sheet: free breaths first, then the full app.
+  const EX_GROUPS = [
+    { label: 'Calm · free', ids: ['4766', '478', 'box'] },
+    { label: 'Full app', ids: ['yahweh', 'bunny', 'resisted', 'belt', 'valsalva', 'muller'] },
+  ];
+  const BLURB = {
+    '4766': 'Slow everything down', '478': 'Wind down for sleep', box: 'Steady under pressure',
+    yahweh: 'A silent breath prayer', bunny: 'Quick sniffs to reset', resisted: 'Pinched nose or fist pinhole',
+    belt: 'Ribs, arms and twists', valsalva: 'Bear down, then recover', muller: 'Pull in, then recover',
+  };
+  const PICK_NAME = { '4766': '4-7-6-6 breathing', '478': '4-7-8 breathing', box: 'Box breathing' };
   const HEAD_ABOUT = `<h3>Advanced: head positions</h3>
     <p>The Advanced version adds a progression through four head positions: up, down, left and right. When the app says "Next", move your head in the quiet part of the breath, then hold it still while you breathe in, hold or strain.</p>
     <ul><li>Use about half of your comfortable range, especially when looking up.</li><li>Never move your head while straining in Valsalva or Müller.</li><li>Skip the head positions if you have neck problems, and stop if you feel dizzy.</li></ul>`;
@@ -849,6 +940,37 @@
         { k: 'out', vis: 'fall', word: 'Breathe out', d: 6, hint: 'slow, through the mouth', say: 'Breathe out', label: 'Exhale' },
         { k: 'rest', vis: 'empty', word: 'Hold', d: 6, hint: 'lungs empty, at ease', say: 'Hold', label: 'Hold' },
       ],
+    },
+    '478': {
+      name: '4-7-8', title: '4-7-8 breathing', tag: '4 · 7 · 8', free: true, unit: ['breath', 'breaths'],
+      idle: ['Breathe with me', 'one full breath'],
+      lead: { d: 4, word: 'Settle in', hint: 'breathe out fully through the mouth', say: 'Settle in' },
+      phases: () => [
+        { k: 'in', vis: 'rise', word: 'Breathe in', d: 4, hint: 'quietly, through the nose', say: 'Breathe in', label: 'Inhale' },
+        { k: 'hold', vis: 'full', word: 'Hold', d: 7, hint: 'tongue resting behind your top teeth', say: 'Hold', label: 'Hold' },
+        { k: 'out', vis: 'fall', word: 'Breathe out', d: 8, hint: 'whoosh out through the mouth', say: 'Breathe out', label: 'Exhale' },
+      ],
+      info: {
+        lead: 'Each breath takes 19 seconds: breathe in for 4, hold for 7, and breathe out for 8. The long breath out is what calms you. Dr. Andrew Weil popularised it as a "relaxing breath", especially for falling asleep.',
+        how: ['Sit with your back straight, or lie down if you are going to sleep.', 'Rest the tip of your tongue on the ridge just behind your top front teeth, and keep it there.', 'Breathe out fully through your mouth with a whoosh.', 'Close your mouth and breathe in quietly through your nose for 4.', 'Hold for 7, then whoosh out through your mouth for 8.', 'Start with about four breaths at a time. Once that feels easy, go for longer.'],
+        care: 'The long hold can make you lightheaded at first. If it does, stop and breathe normally; it gets easier with practice. Talk to a doctor before breath-holding practice if you are pregnant or have a heart or lung condition. This app is for relaxation and is not medical advice.',
+      },
+    },
+    box: {
+      name: 'Box', title: 'box breathing', tag: '4 · 4 · 4 · 4', free: true, unit: ['breath', 'breaths'],
+      idle: ['Breathe with me', 'one full breath'],
+      lead: { d: 4, word: 'Settle in', hint: 'breathe out fully', say: 'Settle in' },
+      phases: () => [
+        { k: 'in', vis: 'rise', word: 'Breathe in', d: 4, hint: 'through the nose', say: 'Breathe in', label: 'Inhale' },
+        { k: 'hold', vis: 'full', word: 'Hold', d: 4, hint: 'lungs full, stay soft', say: 'Hold', label: 'Hold' },
+        { k: 'out', vis: 'fall', word: 'Breathe out', d: 4, hint: 'slow and even', say: 'Breathe out', label: 'Exhale' },
+        { k: 'rest', vis: 'empty', word: 'Hold', d: 4, hint: 'lungs empty, at ease', say: 'Hold', label: 'Hold' },
+      ],
+      info: {
+        lead: 'Four equal sides of 4 seconds: breathe in, hold, breathe out, hold. Also called square breathing, it is used by athletes, first responders and the military to stay calm and focused under pressure.',
+        how: ['Sit upright with your feet on the floor and your shoulders loose.', 'Breathe in through your nose for 4, filling your belly and then your ribs.', 'Hold softly for 4, without clamping your throat.', 'Breathe out slowly for 4, then rest empty for 4.', 'Picture tracing the four sides of a square as you go.'],
+        care: 'If 4 seconds feels too long, it is fine to breathe normally between rounds. If you feel dizzy or lightheaded, return to normal breathing. This app is for relaxation and is not medical advice.',
+      },
     },
     valsalva: {
       name: 'Valsalva', tag: 'Valsalva', unit: ['round', 'rounds'],
@@ -998,6 +1120,7 @@
     meta: $('meta'), legend: $('legend'), segs: $('segs'), dot: $('dot'), dotGlow: $('dotGlow'),
     main: $('btn-main'), end: $('btn-end'), durations: $('durations'), durCtl: $('durCtl'), roundCtl: $('roundCtl'), methodCtl: $('methodCtl'),
     durNote: $('durNote'), live: $('live'), exercises: $('exercises'), brandTag: $('brandTag'),
+    sessWord: $('sessWord'), sessHint: $('sessHint'), progA: $('progA'), progB: $('progB'), progFill: $('progFill'),
   };
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -1088,7 +1211,7 @@
     let end = 0;
     for (let i = 0; i < steps.length; i++) { end += steps[i].d; if (t < end || i === steps.length - 1) return { i, step: steps[i], left: end - t }; }
   }
-  const isMinutes = () => ['4766', 'bunny', 'yahweh', 'resisted'].includes(P.id);
+  const isMinutes = () => ['4766', '478', 'box', 'bunny', 'yahweh', 'resisted'].includes(P.id);
   const cyclesFor = () => {
     if (!isMinutes()) return set.rounds;
     return set.minutes > 0 ? Math.max(1, Math.round(set.minutes * 60 / P.cycle)) : Infinity;
@@ -1571,6 +1694,25 @@
     awaitingCode = false;
   }
 
+  // ---------- About sheet for the free exercises ----------
+  const INFO_4766 = {
+    lead: 'Each breath takes 23 seconds: breathe in for 4, hold for 7, breathe out for 6, and rest empty for 6. That slows you to about 2.6 breaths a minute, well below the usual 12 to 20.',
+    how: ['Sit or lie comfortably. Let your shoulders drop.', 'Breathe in quietly through your nose, into your belly.', 'Hold softly. Keep your throat relaxed rather than clamped.', 'Breathe out slowly through your mouth, as if through a straw.', 'Rest with empty lungs until the next breath begins.', "Close your eyes if you like. The bowl or tone marks each change, so you don't need to watch."],
+    care: 'The holds can feel long at first. If you feel dizzy, lightheaded or short of breath, return to normal breathing. Talk to a doctor before breath-holding practice if you are pregnant or have a heart or lung condition. This app is for relaxation and is not medical advice.',
+  };
+  const SHORT = { in: 'in', hold: 'hold', out: 'out', rest: 'hold' };
+  function openInfo(id) {
+    const ex = EX[id], info = ex.info || INFO_4766, ph = ex.phases(false);
+    $('info-title').textContent = `About ${ex.name === 'Box' ? 'box breathing' : ex.name}`;
+    const fig = ph.map((p) => `<i data-vis="${p.vis}" style="flex:${p.d}"></i>`).join('');
+    const cap = ph.map((p) => `<span style="flex:${p.d}">${SHORT[p.k] || p.k} ${p.d}</span>`).join('');
+    $('info-body').innerHTML = `<p>${info.lead}</p>
+      <div class="pattern-fig" aria-hidden="true">${fig}</div><div class="pattern-cap" aria-hidden="true">${cap}</div>
+      <h3>How to do it</h3><ul>${info.how.map((h) => `<li>${h}</li>`).join('')}</ul>
+      <h3>Go gently</h3><p>${info.care}</p>`;
+    openDialog('dlg-info');
+  }
+
   // ---------- Safety check before maneuvers ----------
   const acks = store.get('ribwork.acks', {});
   function openSafety(id, withStart) {
@@ -1597,18 +1739,18 @@
     P = buildPlan(id);
     drawPattern();
     el.exercises.querySelectorAll('.ex-btn').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ex === id)));
+    $('exPickName').textContent = PICK_NAME[id] || EX[id].name;
     el.methodCtl.hidden = id !== 'resisted';
     $('voiceBtn').hidden = !!EX[id].silent; // bunny and Yahweh have no voiceover
     reflectAdv();
     preloadVoice(id);
     el.durCtl.hidden = !isMinutes();
     el.roundCtl.hidden = isMinutes() || id === 'resisted';
-    document.body.classList.toggle('tall-footer', !el.methodCtl.hidden && !el.durCtl.hidden);
     durNote();
   }
   function reflectAdv() {
     const b = $('advBtn'), can = ADV.includes(set.ex);
-    b.hidden = !can || S.status !== 'idle';
+    b.hidden = !can;
     if (!can) return;
     b.classList.toggle('locked', !Pro.unlocked);
     b.setAttribute('aria-pressed', String(isAdv(set.ex)));
@@ -1626,9 +1768,25 @@
   });
   el.exercises.addEventListener('click', (e) => {
     const b = e.target.closest('.ex-btn'); if (!b || S.status !== 'idle') return;
+    closeDialog($('dlg-ex'));
     if (isLocked(b.dataset.ex)) openPaywall(b.dataset.ex);
     else selectExercise(b.dataset.ex);
   });
+  // One row per exercise: name, what it's for, its pattern, and a check or lock.
+  function buildExerciseList() {
+    const check = '<svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+    const lock = '<svg class="lk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" role="img" aria-label="Locked"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+    el.exercises.innerHTML = EX_GROUPS.map((g) => `<p class="ex-group">${g.label}</p>` + g.ids.map((id) => {
+      const ex = EX[id], ph = ex.phases(false);
+      const bar = ph.map((p) => `<i data-vis="${p.vis}" style="flex:${p.d}${p.group != null ? `;--c:${GROUP_COLORS[p.group % 5]}` : ''}"></i>`).join('');
+      const cyc = ph.reduce((t, p) => t + p.d, 0);
+      const sub = ['4766', '478', 'box'].includes(id) ? `${BLURB[id]} · ${cyc} s` : BLURB[id];
+      return `<button class="ex-btn ex-row" type="button" data-ex="${id}"><span class="ex-txt"><b>${ex.name}</b><small>${sub}</small></span><span class="ex-bar" aria-hidden="true">${bar}</span><span class="ex-mark">${check}${lock}</span></button>`;
+    }).join('')).join('');
+  }
+  buildExerciseList();
+  $('exPick').addEventListener('click', () => { if (S.status === 'idle') openDialog('dlg-ex'); });
+  $('optBtn').addEventListener('click', () => { if (S.status === 'idle') openDialog('dlg-session'); });
 
   // ---------- Session control ----------
   function requestBegin() {
@@ -1697,11 +1855,9 @@
     const idle = S.status === 'idle';
     el.main.textContent = idle ? (isLocked(P.id) ? 'Unlock' : 'Begin') : S.status === 'running' ? 'Pause' : 'Resume';
     el.end.hidden = idle;
-    $('advBtn').hidden = !idle || !ADV.includes(set.ex);
-    el.durations.classList.toggle('away', !idle);
-    el.durations.inert = !idle;
-    el.exercises.classList.toggle('away', !idle);
-    el.exercises.inert = !idle;
+    $('optBtn').hidden = !idle;
+    $('exPick').hidden = !idle;
+    document.body.classList.toggle('in-session', !idle);
     el.stage.setAttribute('aria-label', idle ? 'Start session' : S.status === 'running' ? 'Pause session' : 'Resume session');
     document.body.classList.toggle('focus', S.status === 'running');
   }
@@ -1747,9 +1903,9 @@
   const lerp = (a, b, t) => a + (b - a) * t;
   let lastWord = '', lastCount = '', lastHint = '', lastMeta = '';
   function setText(word, count, hint, meta) {
-    if (word !== lastWord) { el.word.textContent = word; lastWord = word; }
+    if (word !== lastWord) { el.word.textContent = word; el.sessWord.textContent = word; lastWord = word; }
     if (count !== lastCount) { el.count.innerHTML = count; lastCount = count; }
-    if (hint !== lastHint) { el.hint.textContent = hint; lastHint = hint; }
+    if (hint !== lastHint) { el.hint.textContent = hint; el.sessHint.textContent = hint; lastHint = hint; }
     if (meta !== lastMeta) { el.meta.textContent = meta; lastMeta = meta; }
   }
   function placeOrb(scale) {
@@ -1771,6 +1927,9 @@
       const effort = P.ph.find((p) => p.ticks);
       el.durNote.textContent = `${c} ${plural(c)} · ${effort.d} s ${effort.label.toLowerCase()} · about ${fmt(P.lead + c * P.cycle)}`;
     }
+    $('optLabel').textContent = isMinutes() ? (set.minutes ? `${set.minutes} min` : 'No limit') : `${c} ${plural(c)}`;
+    $('optBtn').setAttribute('aria-label', `Session options: ${$('optLabel').textContent}${isAdv() ? ', advanced on' : ''}`);
+    $('optBtn').classList.toggle('adv-on', isAdv());
     el.durCtl.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.min === set.minutes)));
     el.roundCtl.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.rounds === set.rounds)));
     el.methodCtl.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.method === set.method)));
@@ -1859,10 +2018,23 @@
     const unit = P.ex.unit[0].replace(/^./, (c) => c.toUpperCase());
     let meta;
     if (st.lead) meta = (P.ex.lead.steps ? `Setup ${leadStep(st.t).i + 1} of ${P.ex.lead.steps.length} · ` : '') + (isFinite(S.cycles) ? `${S.cycles} ${plural(S.cycles)} ahead` : 'Open-ended');
-    else if (P.ph[st.i].group != null) meta = `${P.ph[st.i].label} · ${unit.toLowerCase()} ${st.cyc + 1} of ${S.cycles} · ${fmt(totalSec() - sec)} left`;
-    else if (isFinite(S.cycles)) meta = `${unit} ${st.cyc + 1} of ${S.cycles} · ${fmt(totalSec() - sec)} left`;
-    else meta = `${unit} ${st.cyc + 1} · ${fmt(sec - P.lead)}`;
+    else if (P.ph[st.i].group != null) meta = `${P.ph[st.i].label} · ${unit.toLowerCase()} ${st.cyc + 1} of ${S.cycles}`;
+    else if (isFinite(S.cycles)) meta = `${P.ex.name} · ${unit.toLowerCase()} ${st.cyc + 1} of ${S.cycles}`;
+    else meta = `${P.ex.name} · ${unit.toLowerCase()} ${st.cyc + 1}`;
     setText(word, count, hint, meta);
+    setProgress(sec);
+  }
+  // Time-left bar under the orb during a session.
+  let lastProg = '';
+  function setProgress(sec) {
+    const total = isFinite(S.cycles) ? totalSec() : 0;
+    const a = fmt(Math.max(0, sec)), b = total ? `${fmt(Math.max(0, total - sec))} left` : 'open-ended';
+    const f = total ? Math.min(1, sec / total) : 0;
+    const k = `${a}|${b}|${f.toFixed(3)}`;
+    if (k === lastProg) return;
+    lastProg = k;
+    el.progA.textContent = a; el.progB.textContent = b;
+    el.progFill.style.transform = `scaleX(${f.toFixed(4)})`;
   }
   function frame() { logic(); render(); requestAnimationFrame(frame); }
   setInterval(logic, 250);
@@ -1986,7 +2158,7 @@
   });
   $('btn-settings').addEventListener('click', () => openDialog('dlg-settings'));
   $('btn-stats').addEventListener('click', () => openDialog('dlg-stats'));
-  $('btn-info').addEventListener('click', () => (P.ex.free ? openDialog('dlg-info') : openSafety(P.id, false)));
+  $('btn-info').addEventListener('click', () => (P.ex.free ? openInfo(P.id) : openSafety(P.id, false)));
   $('btn-done').addEventListener('click', () => closeDialog($('dlg-done')));
   $('btn-again').addEventListener('click', () => { closeDialog($('dlg-done')); requestBegin(); });
 
