@@ -70,8 +70,6 @@
     --seg0: #e59a7c; --seg1: #c99bb8; --seg2: #8fb1c9; --seg3: #b8a9b0; --strain: #d9793f;
   }
 
-  :root[data-scene="dawn"] .primary { background: #3a2f3c; border-color: #3a2f3c; color: #faf5ef; }
-  :root[data-scene="dawn"] .primary:hover { background: #2d2630; }
   :root[data-scene="dawn"] .switch input:checked + span { background: var(--accent); border-color: transparent; }
   :root[data-scene="dawn"] .switch input:checked + span::after { background: #fff; }
 
@@ -301,7 +299,6 @@
   body.in-session .sess-hint { display: block; min-height: 2.6em; max-width: 30ch; text-align: center; color: var(--muted); font-size: 0.95rem; line-height: 1.3; text-wrap: balance; }
   body.in-session .readout .phase-word, body.in-session .readout .hint { display: none; }
   body.in-session .count { font-size: 15cqw; }
-  body.in-session .legend { display: none; }
   body.in-session .meta { order: -1; font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; }
   body.in-session .sess-prog {
     display: flex; align-items: center; gap: 12px; width: min(100%, 360px);
@@ -513,6 +510,82 @@
     .tint { transition: none; }
     dialog[open], dialog.center[open], .done .mini-orb, .head-cue.next { animation: none; }
   }
+  /* Breath line design: the orb gives way to the shape of the breath. */
+  .stage { display: none !important; }
+  main { align-items: stretch; justify-content: flex-start; gap: 14px; text-align: left; }
+  body.in-session main { justify-content: center; }
+  .tonight {
+    display: flex; align-items: center; gap: 14px; padding: 14px 16px 14px 18px; border-radius: 22px;
+    background: var(--glass); border: 1px solid var(--line);
+  }
+  .t-txt { flex: 1; min-width: 0; }
+  .t-txt p { margin: 0; }
+  .t-when { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  .t-name { margin-top: 4px !important; font-family: var(--display); font-size: 1.3rem; line-height: 1.2; }
+  .t-sub { margin-top: 2px !important; font-size: 0.82rem; color: var(--muted); }
+  .t-start {
+    flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px;
+    background: var(--ink); color: var(--bg0); font: inherit; font-weight: 600; font-size: 0.95rem; cursor: pointer;
+  }
+  .t-start svg { width: 13px; height: 13px; }
+  .ex-title { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 4px 0; border: 0; background: none; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+  .ex-name { font-family: var(--display); font-size: clamp(2.4rem, 12vw, 3.2rem); line-height: 1; }
+  .ex-blurb { font-size: 0.98rem; color: var(--muted); }
+  .curve { margin: 4px 0 0; flex: 1 1 auto; min-height: 110px; max-height: 240px; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+  .curve-box { position: relative; height: clamp(100px, 22vh, 190px); }
+  .curve-box svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .curve-base, .curve-line { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .curve-base { stroke: var(--line); stroke-width: 3; }
+  .curve-line { stroke: url(#curveGrad); stroke-width: 4; }
+  .curve-fill { fill: url(#curveShade); }
+  .curve-dot {
+    position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--ink);
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  .curve .head-cue { font-size: 0.9rem; letter-spacing: 0.04em; color: var(--ink); text-align: center; margin: 0; }
+  .thumbs-head { display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .thumbs-head .link-btn { min-height: 44px; text-transform: none; letter-spacing: 0; font-size: 0.85rem; }
+  .ex-thumbs { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: -6px -16px 0; padding: 0 16px 2px; flex: none; }
+  .ex-thumbs::-webkit-scrollbar { display: none; }
+  .ex-thumb {
+    position: relative; flex: none; width: 118px; display: flex; flex-direction: column; gap: 6px; padding: 12px; scroll-snap-align: start;
+    border-radius: 18px; border: 1px solid var(--line); background: var(--glass); color: var(--ink); font: inherit; text-align: left; cursor: pointer;
+  }
+  .ex-thumb[aria-pressed="true"] { border-color: color-mix(in srgb, var(--accent) 60%, transparent); background: var(--glassHi); }
+  .ex-thumb svg { width: 92px; height: 30px; overflow: visible; }
+  .ex-thumb path { fill: none; stroke: var(--accent); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+  .ex-thumb b { font-weight: 500; font-size: 0.95rem; }
+  .ex-thumb small { font-size: 0.75rem; color: var(--muted); line-height: 1.25; }
+  .ex-thumb .lk { position: absolute; top: 10px; right: 10px; width: 13px; height: 13px; color: var(--muted); display: none; }
+  .ex-thumb.locked .lk { display: block; }
+  .ex-thumb.locked path { stroke: var(--muted); }
+  .sess-head { display: none; }
+  body.in-session .sess-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  body.in-session .sess-word { display: block; font-family: var(--display); font-size: clamp(2.2rem, 11vw, 2.9rem); line-height: 1.1; white-space: nowrap; text-align: left; min-height: 0; }
+  .big-count { font-size: clamp(3.4rem, 16vw, 4.4rem); font-weight: 300; line-height: 1; font-variant-numeric: tabular-nums; }
+  body.no-counts .big-count { display: none; }
+  body.in-session .sess-hint { text-align: left; max-width: none; margin-top: -4px; }
+  body.in-session .meta { text-align: left; }
+  body.in-session .tonight, body.in-session .ex-title, body.in-session .thumbs-head, body.in-session .ex-thumbs { display: none; }
+  body.in-session .legend { display: flex; }
+  .ctrl-bar { grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; }
+  .ctrl-bar .primary { width: 100%; height: 56px; border-radius: 18px; background: var(--ink); color: var(--bg0); border-color: transparent; font-weight: 600; }
+  .ctrl-bar .primary:hover { background: var(--ink); opacity: .92; }
+  body.in-session .ctrl-bar .primary { background: var(--glassHi); color: var(--ink); border: 1px solid var(--line); }
+  .opt-btn { min-height: 56px; border-radius: 18px; padding: 0 12px; }
+  .ctrl-left .opt-btn span { overflow: visible; }
+  .voice-btn { width: 56px; height: 56px; border-radius: 18px; }
+  .ctrl-bar .ghost { width: 56px; height: 56px; border-radius: 18px; }
+  /* Short screens: drop the row of other breaths (the title still opens the full list),
+     and let the middle scroll rather than ever run into the controls. */
+  main { overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
+  main::-webkit-scrollbar { display: none; }
+  @media (max-height: 800px) {
+    .thumbs-head, .ex-thumbs { display: none; }
+    .ex-name { font-size: clamp(2.1rem, 10vw, 2.6rem); }
+    main { gap: 10px; }
+  }
+
 </style>
 </head>
 <body>
@@ -540,11 +613,19 @@
   </header>
 
   <main>
-    <button class="ex-pick" id="exPick" type="button" aria-haspopup="dialog">
-      <span id="exPickName">4-7-6-6 breathing</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    <section class="tonight" id="tonight" aria-labelledby="tWhen">
+      <div class="t-txt">
+        <p class="t-when" id="tWhen">Tonight</p>
+        <p class="t-name" id="tName">4-7-8 breathing</p>
+        <p class="t-sub" id="tSub">5 minutes · wind down for sleep</p>
+      </div>
+      <button class="t-start" id="tStart" type="button"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>Start</button>
+    </section>
+    <button class="ex-title" id="exPick" type="button" aria-haspopup="dialog">
+      <span class="ex-name" id="exPickName">4-7-6-6</span>
+      <span class="ex-blurb" id="exBlurb"></span>
     </button>
-    <div class="sess-word" id="sessWord" aria-hidden="true"></div>
+    <div class="sess-head" aria-hidden="true"><span class="sess-word" id="sessWord"></span><span class="big-count" id="bigCount"></span></div>
 
     <div class="stage" id="stage" role="button" tabindex="0" aria-label="Start breathing session">
       <svg class="ring" viewBox="0 0 400 400" aria-hidden="true">
@@ -557,7 +638,6 @@
         <div class="orb" id="orb"></div>
       </div>
       <div class="readout">
-        <div class="head-cue" id="headCue"></div>
         <div class="phase-word" id="word">Breathe with me</div>
         <div class="count" id="count">23<small>s</small></div>
         <div class="hint" id="hint">one full breath</div>
@@ -567,7 +647,25 @@
     <div class="sess-hint" id="sessHint" aria-hidden="true"></div>
     <div class="meta" id="meta">Tap the circle or Begin</div>
 
+    <figure class="curve" aria-hidden="true">
+      <div class="curve-box">
+        <svg viewBox="0 0 1000 300" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="curveGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1000" y2="0"></linearGradient>
+            <linearGradient id="curveShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--accent); stop-opacity: .18"/><stop offset="1" style="stop-color: var(--accent); stop-opacity: 0"/></linearGradient>
+            <clipPath id="curveClip"><rect id="curveClipRect" x="0" y="0" width="1000" height="300"/></clipPath>
+          </defs>
+          <path class="curve-fill" id="curveFill"/>
+          <path class="curve-base" id="curveBase"/>
+          <path class="curve-line" id="curveLine" clip-path="url(#curveClip)"/>
+        </svg>
+        <span class="curve-dot" id="curveDot"></span>
+      </div>
+      <div class="head-cue" id="headCue"></div>
+    </figure>
     <ol class="legend" id="legend" aria-label="Pattern"></ol>
+    <div class="thumbs-head"><span>Other breaths</span><button class="link-btn" id="seeAll" type="button">See all</button></div>
+    <div class="ex-thumbs" id="exThumbs" role="group" aria-label="Other breaths"></div>
     <div class="sess-prog" id="sessProg" aria-hidden="true">
       <span id="progA">0:00</span><span class="prog-track"><span class="prog-fill" id="progFill"></span></span><span id="progB"></span>
     </div>
@@ -1140,7 +1238,7 @@
     meta: $('meta'), legend: $('legend'), segs: $('segs'), dot: $('dot'), dotGlow: $('dotGlow'),
     main: $('btn-main'), end: $('btn-end'), durations: $('durations'), durCtl: $('durCtl'), roundCtl: $('roundCtl'), methodCtl: $('methodCtl'),
     durNote: $('durNote'), live: $('live'), exercises: $('exercises'), brandTag: $('brandTag'),
-    sessWord: $('sessWord'), sessHint: $('sessHint'), progA: $('progA'), progB: $('progB'), progFill: $('progFill'),
+    sessWord: $('sessWord'), sessHint: $('sessHint'), bigCount: $('bigCount'), progA: $('progA'), progB: $('progB'), progFill: $('progFill'),
   };
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -1626,7 +1724,7 @@
     else status.textContent = 'The full app unlocks in Ribwork for Android, from Google Play.';
   }
   function refreshLocks() {
-    el.exercises.querySelectorAll('.ex-btn').forEach((b) => {
+    document.querySelectorAll('.ex-btn').forEach((b) => {
       const locked = isLocked(b.dataset.ex);
       b.classList.toggle('locked', locked);
       b.setAttribute('aria-label', locked ? `${EX[b.dataset.ex].name} (locked)` : EX[b.dataset.ex].name);
@@ -1753,13 +1851,99 @@
   });
 
   // ---------- Exercise selection ----------
+  // ---------- The breath line ----------
+  // The shape of one breath as a curve: the same timing the orb used, drawn left to right.
+  const CW = 1000, CTOP = 40, CBOT = 260;
+  function shapeScale(ph, i, pt) {
+    const p = ph[i], f = Math.min(1, Math.max(0, pt / p.d));
+    switch (p.vis) {
+      case 'rise': return lerp(SMIN, SMAX, easeInOut(f));
+      case 'full': return SMAX;
+      case 'fall': return lerp(START.fall, SMIN, easeInOut(f));
+      case 'empty': return SMIN;
+      case 'press': return lerp(SMAX, START.press, easeInOut(pt / 0.6));
+      case 'pull': return lerp(SMIN, START.pull, easeInOut(pt / 0.6));
+      case 'sniffs':
+      case 'puffs': {
+        const n = p.pips, step = p.d / n, k = Math.min(n - 1, Math.floor(pt / step));
+        const g = (k + easeInOut((pt - k * step) / (step * 0.6))) / n;
+        return p.vis === 'sniffs' ? lerp(SMIN, SMAX, g) : lerp(SMAX, SMIN, g);
+      }
+      case 'free': {
+        const from = END[ph[(i + ph.length - 1) % ph.length].vis], to = START[ph[0].vis];
+        return lerp(to, lerp(from, SMID, easeInOut(pt / 2)), easeInOut((p.d - pt) / 2.5));
+      }
+    }
+    return SMID;
+  }
+  const levelY = (scale, top = CTOP, bot = CBOT) => bot - Math.min(1, Math.max(0, (scale - SMIN) / (SMAX - SMIN))) * (bot - top);
+  function curvePoints(ph, w, top, bot, n) {
+    const cyc = ph.reduce((t, p) => t + p.d, 0), pts = [];
+    for (let k = 0; k <= n; k++) {
+      let t = Math.min(cyc - 1e-6, k / n * cyc), i = 0;
+      while (t >= ph[i].d && i < ph.length - 1) { t -= ph[i].d; i++; }
+      pts.push(`${(k / n * w).toFixed(1)} ${levelY(shapeScale(ph, i, t), top, bot).toFixed(1)}`);
+    }
+    return pts;
+  }
+  function drawCurve() {
+    const pts = curvePoints(P.ph, CW, CTOP, CBOT, 320), d = 'M' + pts.join(' L');
+    $('curveBase').setAttribute('d', d);
+    $('curveLine').setAttribute('d', d);
+    $('curveFill').setAttribute('d', `${d} L${CW} 300 L0 300 Z`);
+    // Colour each stretch of the line by its phase.
+    const g = $('curveGrad'); g.innerHTML = '';
+    P.ph.forEach((p, i) => {
+      const col = p.group != null ? GROUP_COLORS[p.group % 5] : `var(--seg${{ rise: 0, sniffs: 0, full: 1, press: 1, fall: 2, puffs: 2, empty: 3, pull: 3, free: 3 }[p.vis] ?? 0})`;
+      [P.off[i], P.off[i] + p.d].forEach((t) => {
+        const st = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        st.setAttribute('offset', (t / P.cycle).toFixed(4));
+        st.setAttribute('style', `stop-color: ${p.vis === 'press' || p.vis === 'pull' ? 'var(--strain)' : col}`);
+        g.appendChild(st);
+      });
+    });
+  }
+  let lastCurve = '';
+  function placeCurve(frac, scale, done) {
+    const x = Math.min(1, Math.max(0, frac)) * CW, y = levelY(scale);
+    const k = `${x.toFixed(1)}|${y.toFixed(1)}|${done}`;
+    if (k === lastCurve) return;
+    lastCurve = k;
+    $('curveClipRect').setAttribute('width', (done ? x : CW).toFixed(1));
+    const dot = $('curveDot');
+    dot.style.left = `${(x / CW * 100).toFixed(2)}%`;
+    dot.style.top = `${(y / 300 * 100).toFixed(2)}%`;
+  }
+  // Small curves for the other breaths, under the main one.
+  function buildThumbs() {
+    const lock = '<svg class="lk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+    $('exThumbs').innerHTML = EX_GROUPS.flatMap((g) => g.ids).map((id) => {
+      const ph = EX[id].phases(false), d = 'M' + curvePoints(ph, 100, 4, 32, 90).join(' L');
+      return `<button class="ex-btn ex-thumb" type="button" data-ex="${id}"><svg viewBox="0 0 100 36" preserveAspectRatio="none" aria-hidden="true"><path d="${d}"/></svg><b>${EX[id].name}</b><small>${BLURB[id]}</small>${lock}</button>`;
+    }).join('');
+  }
+  // Suggested breath for the time of day.
+  function tonight() {
+    const h = new Date().getHours();
+    const pick = h >= 19 || h < 5 ? { when: 'Tonight', id: '478', why: 'wind down for sleep' }
+      : h < 12 ? { when: 'This morning', id: 'box', why: 'a steady start' }
+      : { when: 'This afternoon', id: '4766', why: 'reset and slow down' };
+    $('tWhen').textContent = pick.when;
+    $('tName').textContent = PICK_NAME[pick.id];
+    $('tSub').textContent = `${set.minutes ? `${set.minutes} minutes` : 'Open-ended'} · ${pick.why}`;
+    return pick;
+  }
+
   function selectExercise(id) {
     if (!EX[id]) id = '4766';
     set.ex = id; saveSettings();
     P = buildPlan(id);
     drawPattern();
-    el.exercises.querySelectorAll('.ex-btn').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ex === id)));
-    $('exPickName').textContent = PICK_NAME[id] || EX[id].name;
+    document.querySelectorAll('.ex-btn').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ex === id)));
+    $('exPickName').textContent = EX[id].name;
+    $('exBlurb').textContent = ['4766', '478', 'box'].includes(id) ? `${BLURB[id]} · ${P.cycle} s a breath` : BLURB[id];
+    $('exPick').setAttribute('aria-label', `${PICK_NAME[id] || EX[id].name}. Choose a different breath`);
+    drawCurve(); lastCurve = '';
     el.methodCtl.hidden = id !== 'resisted';
     $('voiceBtn').hidden = !!EX[id].silent; // bunny and Yahweh have no voiceover
     reflectAdv();
@@ -1805,6 +1989,18 @@
     }).join('')).join('');
   }
   buildExerciseList();
+  buildThumbs();
+  $('exThumbs').addEventListener('click', (e) => {
+    const b = e.target.closest('.ex-btn'); if (!b || S.status !== 'idle') return;
+    if (isLocked(b.dataset.ex)) openPaywall(b.dataset.ex);
+    else selectExercise(b.dataset.ex);
+  });
+  $('seeAll').addEventListener('click', () => { if (S.status === 'idle') openDialog('dlg-ex'); });
+  $('tStart').addEventListener('click', () => {
+    if (S.status !== 'idle') return;
+    selectExercise(tonight().id);
+    requestBegin();
+  });
   $('exPick').addEventListener('click', () => { if (S.status === 'idle') openDialog('dlg-ex'); });
   $('optBtn').addEventListener('click', () => { if (S.status === 'idle') openDialog('dlg-session'); });
 
@@ -1919,12 +2115,12 @@
   }
 
   // ---------- Rendering ----------
-  const easeInOut = (x) => 0.5 - 0.5 * Math.cos(Math.PI * Math.min(1, Math.max(0, x)));
-  const lerp = (a, b, t) => a + (b - a) * t;
+  function easeInOut(x) { return 0.5 - 0.5 * Math.cos(Math.PI * Math.min(1, Math.max(0, x))); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
   let lastWord = '', lastCount = '', lastHint = '', lastMeta = '';
   function setText(word, count, hint, meta) {
     if (word !== lastWord) { el.word.textContent = word; el.sessWord.textContent = word; lastWord = word; }
-    if (count !== lastCount) { el.count.innerHTML = count; lastCount = count; }
+    if (count !== lastCount) { el.count.innerHTML = count; el.bigCount.innerHTML = count; lastCount = count; }
     if (hint !== lastHint) { el.hint.textContent = hint; el.sessHint.textContent = hint; lastHint = hint; }
     if (meta !== lastMeta) { el.meta.textContent = meta; lastMeta = meta; }
   }
@@ -1947,6 +2143,7 @@
       const effort = P.ph.find((p) => p.ticks);
       el.durNote.textContent = `${c} ${plural(c)} · ${effort.d} s ${effort.label.toLowerCase()} · about ${fmt(P.lead + c * P.cycle)}`;
     }
+    tonight();
     $('optLabel').textContent = isMinutes() ? (set.minutes ? `${set.minutes} min` : 'No limit') : `${c} ${plural(c)}`;
     $('optBtn').setAttribute('aria-label', `Session options: ${$('optLabel').textContent}${isAdv() ? ', advanced on' : ''}`);
     $('optBtn').classList.toggle('adv-on', isAdv());
@@ -1998,6 +2195,7 @@
       S.idleScale = s;
       placeOrb(s);
       placeDot(0);
+      placeCurve(0, START[P.ph[0].vis], false);
       lightPhase(-1);
       const c = cyclesFor();
       const meta = isLocked(P.id) ? 'Part of the full app' : isMinutes() ? (isFinite(c) ? `${c} breaths, about ${set.minutes} minutes` : 'Open-ended session') : `${c} ${plural(c)}, about ${fmt(P.lead + c * P.cycle)}`;
@@ -2035,6 +2233,7 @@
     }
     setHead(head, headNext);
     placeOrb(scale);
+    placeCurve(st.lead ? 0 : st.ct / P.cycle, scale, true);
     const unit = P.ex.unit[0].replace(/^./, (c) => c.toUpperCase());
     let meta;
     if (st.lead) meta = (P.ex.lead.steps ? `Setup ${leadStep(st.t).i + 1} of ${P.ex.lead.steps.length} · ` : '') + (isFinite(S.cycles) ? `${S.cycles} ${plural(S.cycles)} ahead` : 'Open-ended');
