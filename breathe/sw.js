@@ -1,5 +1,5 @@
 // Offline support for the web version: precache the app shell, fonts and voice clips.
-const CACHE = 'ribwork-v5';
+const CACHE = 'ribwork-v4';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './icon-180.png', './privacy.html', './fonts/figtree-latin.woff2', './fonts/marcellus-latin.woff2'];
 
 // Voice clips are listed in voice/index.json and precached so guided sessions work offline.
