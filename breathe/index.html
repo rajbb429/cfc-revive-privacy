@@ -70,6 +70,11 @@
     --seg0: #e59a7c; --seg1: #c99bb8; --seg2: #8fb1c9; --seg3: #b8a9b0; --strain: #d9793f;
   }
 
+  :root[data-scene="dawn"] .primary { background: #3a2f3c; border-color: #3a2f3c; color: #faf5ef; }
+  :root[data-scene="dawn"] .primary:hover { background: #2d2630; }
+  :root[data-scene="dawn"] .switch input:checked + span { background: var(--accent); border-color: transparent; }
+  :root[data-scene="dawn"] .switch input:checked + span::after { background: #fff; }
+
   *, *::before, *::after { box-sizing: border-box; }
   html, body { height: 100%; }
   body {
@@ -272,10 +277,10 @@
   #dlg-session .adv-label { white-space: normal; }
   #dlg-session .adv-label b { display: block; font-weight: 500; font-size: 0.98rem; }
   #dlg-session .adv-label small { display: block; margin-top: 2px; font-size: 0.8rem; color: var(--muted); }
-  .switch { flex: none; width: 44px; height: 26px; border-radius: 999px; background: var(--line); position: relative; transition: background-color .2s; }
-  .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); transition: transform .2s; }
-  .adv-btn[aria-pressed="true"] .switch { background: var(--strain); }
-  .adv-btn[aria-pressed="true"] .switch::after { transform: translateX(18px); }
+  .adv-switch { flex: none; width: 44px; height: 26px; border-radius: 999px; background: var(--line); position: relative; transition: background-color .2s; }
+  .adv-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); transition: transform .2s; }
+  .adv-btn[aria-pressed="true"] .adv-switch { background: var(--strain); }
+  .adv-btn[aria-pressed="true"] .adv-switch::after { transform: translateX(18px); }
   #dlg-session .adv-btn .lock-badge { position: static; flex: none; }
 
   /* Home: only the exercise, the orb and its pattern. The brand tag, count line and options move away. */
@@ -377,7 +382,9 @@
   .row:last-child { border-bottom: 0; }
   .row label, .row .lbl { display: flex; flex-direction: column; }
   .row small { color: var(--muted); font-size: 0.78rem; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+  .chips { display: flex; flex-wrap: nowrap; gap: 6px; justify-content: flex-end; flex: none; margin-left: auto; }
+  .row:has(> .chips), .row:has(> .swatches) { flex-wrap: wrap; row-gap: 10px; }
+  .row:has(> .chips) > .lbl, .row:has(> .swatches) > .lbl { flex: 1 1 100px; min-width: 0; }
   .chip {
     border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 6px 12px; cursor: pointer;
     color: var(--muted); font-size: 0.86rem;
@@ -391,14 +398,27 @@
   .switch input:checked + span::after { transform: translateX(20px); background: var(--ink); }
   .switch input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
   input[type="range"] { width: 150px; accent-color: var(--accent); }
-  .swatches { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
-  .swatch { width: 34px; height: 34px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; position: relative; }
-  .swatch[aria-pressed="true"] { border-color: var(--ink); }
-  .swatch[data-v="auto"] { background: conic-gradient(#1a2740 0 50%, #f4eee7 50% 100%); }
-  .swatch[data-v="dusk"] { background: radial-gradient(circle at 35% 35%, #c7b7dc, #1a2740 70%); }
-  .swatch[data-v="tide"] { background: radial-gradient(circle at 35% 35%, #93d3c6, #0f3035 70%); }
-  .swatch[data-v="moss"] { background: radial-gradient(circle at 35% 35%, #bccb9c, #1d2a1f 70%); }
-  .swatch[data-v="dawn"] { background: radial-gradient(circle at 35% 35%, #f1bda7, #eadfe6 70%); }
+  /* Scene swatches: a tiny preview of each scene, its sky with the orb in the middle. */
+  .swatches { display: flex; gap: 8px; flex-wrap: nowrap; justify-content: flex-end; flex: none; margin-left: auto; }
+  .swatch {
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer; padding: 0; position: relative; flex: none;
+    border: 1px solid var(--line); background: linear-gradient(180deg, var(--s1), var(--s0));
+    transition: outline-color .2s;
+    outline: 2px solid transparent; outline-offset: 3px;
+  }
+  .swatch::after {
+    content: ''; position: absolute; inset: 30%; border-radius: 50%;
+    background: radial-gradient(circle at 38% 32%, var(--o1), var(--o2));
+  }
+  .swatch[aria-pressed="true"] { outline-color: var(--accent); }
+  .swatch:focus-visible { outline-color: var(--ink); }
+  .swatch[data-v="dusk"] { --s1: #24365a; --s0: #0e1522; --o1: #f5eddc; --o2: #c7b7dc; }
+  .swatch[data-v="tide"] { --s1: #15434a; --s0: #08191c; --o1: #ecf7f2; --o2: #93d3c6; }
+  .swatch[data-v="moss"] { --s1: #2b3d2d; --s0: #111812; --o1: #f3f0de; --o2: #bccb9c; }
+  .swatch[data-v="dawn"] { --s1: #f4e2d8; --s0: #e6dde8; --o1: #fffaf3; --o2: #f1bda7; }
+  /* Auto: Dusk on the left, Dawn on the right, split down the middle. */
+  .swatch[data-v="auto"] { background: linear-gradient(90deg, #1a2740 50%, #efe4e2 50%); }
+  .swatch[data-v="auto"]::after { background: linear-gradient(90deg, #c7b7dc 50%, #f1bda7 50%); }
 
   /* Stats */
   .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -619,7 +639,7 @@
       </div></div>
       <div class="dur-note" id="durNote"></div>
     </div>
-    <button class="adv-btn" type="button" id="advBtn" aria-pressed="false" hidden><span class="adv-label"><b>Advanced: head positions</b><small>Up, down, left and right, cued by voice</small></span><span class="switch" aria-hidden="true"></span><span class="lock-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></button>
+    <button class="adv-btn" type="button" id="advBtn" aria-pressed="false" hidden><span class="adv-label"><b>Advanced: head positions</b><small>Up, down, left and right, cued by voice</small></span><span class="adv-switch" aria-hidden="true"></span><span class="lock-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></button>
   </div>
 </dialog>
 
