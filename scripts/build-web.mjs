@@ -18,6 +18,7 @@ const bundles = [
   '@capgo/native-purchases/dist/plugin.js',
   '@capacitor/app/dist/plugin.js',
   '@capacitor-community/keep-awake/dist/plugin.js',
+  '@capacitor/local-notifications/dist/plugin.js',
 ];
 const native = bundles
   .map((b) => readFileSync(require.resolve(b), 'utf8').replace(/\/\/# sourceMappingURL=.*$/m, ''))
