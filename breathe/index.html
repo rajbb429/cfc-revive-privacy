@@ -264,6 +264,10 @@
   .opt-btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .opt-btn.adv-on::after { content: ''; position: absolute; top: 4px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--strain); }
   .opt-group { margin: 6px 0 14px; }
+  .hold-out {
+    min-height: 48px; padding: 0 24px; border-radius: 999px; cursor: pointer; font: inherit; font-size: 1rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent); background: var(--glass); color: var(--ink);
+  }
   .opt-group:has(> .seg-ctl[hidden]) { display: none; }
   .opt-label { margin: 0 2px 8px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
   #dlg-session .durations { align-items: stretch; gap: 0; }
@@ -565,6 +569,7 @@
     </div>
 
     <div class="sess-hint" id="sessHint" aria-hidden="true"></div>
+    <button class="hold-out" id="holdOut" type="button" hidden>Breathe now</button>
     <div class="meta" id="meta">Tap the circle or Begin</div>
 
     <ol class="legend" id="legend" aria-label="Pattern"></ol>
@@ -887,6 +892,12 @@
   // ---------- Exercises ----------
   // vis: how the orb moves. rise/fall ease between small and full, full/empty rest,
   // press/pull tremble under effort, free breathes loosely during recovery.
+  // Breath-hold practice: the hold grows a little each time a session is finished without
+  // stopping early, stays put after one early stop, and eases back after two or more.
+  const HOLD = Object.assign({ level: 15, best: 0, sessions: 0 }, store.get('ribwork.hold', {}));
+  const HOLD_MIN = 10, HOLD_MAX = 120;
+  const holdStep = (l) => Math.max(2, Math.round(l * 0.1));
+  let holdSkips = 0;
   const RECOVER = () => ({ k: 'recover', vis: 'free', word: 'Release', d: set.recovery, hint: 'breathe normally, stay seated', say: 'Release. Breathe normally.', label: 'Recover' });
   const MANEUVER_SAFETY = {
     warn: `<h3>Don't do this if you have</h3>
@@ -935,15 +946,15 @@
   const ADV = ['4766', 'valsalva', 'muller', 'resisted', 'belt'];
   // The exercise sheet: free breaths first, then the full app.
   const EX_GROUPS = [
-    { label: 'Calm · free', ids: ['4766', '478', 'box'] },
+    { label: 'Calm · free', ids: ['4766', '478', 'box', 'hold'] },
     { label: 'Full app', ids: ['yahweh', 'bunny', 'resisted', 'belt', 'valsalva', 'muller'] },
   ];
   const BLURB = {
-    '4766': 'Slow everything down', '478': 'Wind down for sleep', box: 'Steady under pressure',
+    '4766': 'Slow everything down', '478': 'Wind down for sleep', box: 'Steady under pressure', hold: 'Longer holds, step by step',
     yahweh: 'A silent breath prayer', bunny: 'Quick sniffs to reset', resisted: 'Pinched nose or fist pinhole',
     belt: 'Ribs, arms and twists', valsalva: 'Bear down, then recover', muller: 'Pull in, then recover',
   };
-  const PICK_NAME = { '4766': '4-7-6-6 breathing', '478': '4-7-8 breathing', box: 'Box breathing' };
+  const PICK_NAME = { '4766': '4-7-6-6 breathing', '478': '4-7-8 breathing', box: 'Box breathing', hold: 'Breath-hold practice' };
   const HEAD_ABOUT = `<h3>Advanced: head positions</h3>
     <p>The Advanced version adds a progression through four head positions: up, down, left and right. When the app says "Next", move your head in the quiet part of the breath, then hold it still while you breathe in, hold or strain.</p>
     <ul><li>Use about half of your comfortable range, especially when looking up.</li><li>Never move your head while straining in Valsalva or Müller.</li><li>Skip the head positions if you have neck problems, and stop if you feel dizzy.</li></ul>`;
@@ -991,6 +1002,30 @@
         how: ['Sit upright with your feet on the floor and your shoulders loose.', 'Breathe in through your nose for 4, filling your belly and then your ribs.', 'Hold softly for 4, without clamping your throat.', 'Breathe out slowly for 4, then rest empty for 4.', 'Picture tracing the four sides of a square as you go.'],
         care: 'If 4 seconds feels too long, it is fine to breathe normally between rounds. If you feel dizzy or lightheaded, return to normal breathing. This app is for relaxation and is not medical advice.',
       },
+    },
+    hold: {
+      name: 'Breath hold', title: 'breath-hold practice', tag: 'Breath hold', free: true, safety: true, unit: ['hold', 'holds'],
+      get idle() { return ['Breath hold', `${HOLD.level} s holds today`]; },
+      lead: { d: 20, word: 'Breathe normally', hint: 'easy breaths, nothing deep', say: 'Sit down and breathe normally.' },
+      phases: () => [
+        { k: 'in', vis: 'rise', word: 'Breathe in', d: 4, hint: 'a normal breath, not a big one', say: 'Breathe in', label: 'Inhale' },
+        { k: 'hold', vis: 'full', word: 'Hold', d: HOLD.level, hint: 'soft shoulders, soft jaw', say: 'Hold', label: 'Hold', ticks: true },
+        { k: 'out', vis: 'fall', word: 'Breathe out', d: 5, hint: 'slowly, then breathe normally', say: 'Breathe out', label: 'Exhale' },
+        { k: 'recover', vis: 'free', word: 'Breathe normally', d: 40, hint: 'let your breathing settle', say: 'Release. Breathe normally.', label: 'Recover' },
+      ],
+      about: `<p>Calm breath holds after a normal breath, with easy breathing in between. Each time you finish a session without stopping early, the next one's holds get a few seconds longer, so holding your breath gets more comfortable a little at a time.</p>
+        <h3>How it goes</h3>
+        <ul><li>Breathe normally for 20 seconds to settle. Don't take big or fast breaths first.</li><li>Take a normal breath in, not a big one, and hold. Keep your shoulders and jaw soft.</li><li>Breathe out slowly, then breathe normally for 40 seconds before the next hold.</li><li>Need to breathe before the hold ends? Tap <b>Breathe now</b>. That's fine: your next session stays at the same length.</li></ul>
+        <h3>How it grows</h3>
+        <p>Holds start at 15 seconds and grow by about a tenth after each session you finish without stopping early, up to 2 minutes. If you stop early twice in one session, the next one eases back a little.</p>`,
+      warn: `<h3>Never practice breath holds</h3>
+      <p>In or near water, in the bath, while driving, standing, or anywhere fainting would be dangerous.</p>
+      <h3>Check with your doctor first if you</h3>
+      <p>Are pregnant, have epilepsy, a heart or lung condition, high blood pressure, or have ever fainted while holding your breath.</p>
+      <h3>Breathe right away if you feel</h3>
+      <p>Dizzy, tingly, lightheaded, changes in your vision, chest pain, or a strong urge to breathe. Holds should feel calm, never strained.</p>`,
+      foot: 'This is a gentle practice, not a contest: holds only grow when a session feels easy. This app guides timing only and is not medical advice.',
+      ack: "I'm sitting or lying down, on dry land, and I'll breathe the moment I need to.",
     },
     valsalva: {
       name: 'Valsalva', tag: 'Valsalva', unit: ['round', 'rounds'],
@@ -1811,7 +1846,7 @@
   // ---------- Session control ----------
   function requestBegin() {
     if (isLocked(P.id)) { openPaywall(P.id); return; }
-    if (!P.ex.free && !P.ex.noAck && !acks[P.id]) { openSafety(P.id, true); return; }
+    if ((!P.ex.free || P.ex.safety) && !P.ex.noAck && !acks[P.id]) { openSafety(P.id, true); return; }
     begin();
   }
   function begin() {
@@ -1820,6 +1855,7 @@
     S.cycles = cyclesFor();
     S.leadFrom = S.idleScale;
     S.startPerf = now(); S.pausedTotal = 0; S.lastKey = null; S.lastHead = null;
+    holdSkips = 0;
     S.status = 'running';
     if (A.ctx) { A.next = 0; freshCueBus(); startAmbience(); scheduleAhead(); }
     holdWake();
@@ -1861,9 +1897,38 @@
       $('done-title').textContent = P.ex.free ? 'Well breathed.' : 'Nicely done.';
       $('done-sum').textContent = `${reps} ${plural(reps)} · ${fmt(practiced)}`;
       $('done-note').textContent = P.ex.doneNote || (P.ex.free ? 'Stay here a moment and notice how you feel.' : 'Stay seated for a minute before you stand up.');
+      if (P.id === 'hold') $('done-note').textContent = holdProgress(completed);
       if (completed) speak('Well done');
       openDialog('dlg-done');
     }
+  }
+  // After a breath-hold session: decide the next session's hold length and say so.
+  function holdProgress(completed) {
+    const was = HOLD.level;
+    if (completed && holdSkips === 0) {
+      HOLD.best = Math.max(HOLD.best, was);
+      HOLD.level = Math.min(HOLD_MAX, was + holdStep(was));
+    } else if (holdSkips >= 2) {
+      HOLD.level = Math.max(HOLD_MIN, was - holdStep(was));
+    }
+    if (completed) HOLD.sessions++;
+    store.set('ribwork.hold', HOLD);
+    if (P.id === 'hold') { P = buildPlan('hold'); drawPattern(); durNote(); }
+    if (HOLD.level > was) return `Every hold felt manageable. Next time: ${HOLD.level} s holds.`;
+    if (HOLD.level < was) return `Next time eases back to ${HOLD.level} s holds. Easy holds build further than hard ones.`;
+    if (HOLD.level === HOLD_MAX && completed && holdSkips === 0) return `You're holding for the full ${HOLD_MAX} s. Keep it easy.`;
+    return `Your holds stay at ${HOLD.level} s next time.`;
+  }
+  // "Breathe now" during a hold: jump straight to breathing out.
+  function breatheNow() {
+    if (S.status !== 'running' || P.id !== 'hold') return;
+    const st = stateAt(elapsedSec());
+    if (st.lead || P.ph[st.i].k !== 'hold') return;
+    holdSkips++;
+    S.startPerf -= (P.ph[st.i].d - st.pt) * 1000;
+    stopVoice();
+    resyncCues();
+    logic();
   }
   function toggle() {
     if (S.status === 'idle') requestBegin();
@@ -1876,6 +1941,7 @@
     el.main.textContent = idle ? (isLocked(P.id) ? 'Unlock' : 'Begin') : S.status === 'running' ? 'Pause' : 'Resume';
     el.end.hidden = idle;
     $('optBtn').hidden = !idle;
+    if (idle) $('holdOut').hidden = true;
     $('exPick').hidden = !idle;
     document.body.classList.toggle('in-session', !idle);
     el.stage.setAttribute('aria-label', idle ? 'Start session' : S.status === 'running' ? 'Pause session' : 'Resume session');
@@ -2035,6 +2101,8 @@
     }
     setHead(head, headNext);
     placeOrb(scale);
+    const inHold = P.id === 'hold' && !paused && !st.lead && P.ph[st.i].k === 'hold';
+    if ($('holdOut').hidden === inHold) $('holdOut').hidden = !inHold;
     const unit = P.ex.unit[0].replace(/^./, (c) => c.toUpperCase());
     let meta;
     if (st.lead) meta = (P.ex.lead.steps ? `Setup ${leadStep(st.t).i + 1} of ${P.ex.lead.steps.length} · ` : '') + (isFinite(S.cycles) ? `${S.cycles} ${plural(S.cycles)} ahead` : 'Open-ended');
@@ -2178,7 +2246,7 @@
   });
   $('btn-settings').addEventListener('click', () => openDialog('dlg-settings'));
   $('btn-stats').addEventListener('click', () => openDialog('dlg-stats'));
-  $('btn-info').addEventListener('click', () => (P.ex.free ? openInfo(P.id) : openSafety(P.id, false)));
+  $('btn-info').addEventListener('click', () => (P.ex.free && !P.ex.safety ? openInfo(P.id) : openSafety(P.id, false)));
   $('btn-done').addEventListener('click', () => closeDialog($('dlg-done')));
   $('btn-again').addEventListener('click', () => { closeDialog($('dlg-done')); requestBegin(); });
 
@@ -2187,6 +2255,7 @@
   el.stage.addEventListener('click', toggle);
   el.stage.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.code === 'Space') { e.preventDefault(); toggle(); } });
   el.end.addEventListener('click', () => finish(false));
+  $('holdOut').addEventListener('click', breatheNow);
   document.addEventListener('keydown', (e) => {
     if (document.querySelector('dialog[open]')) return;
     if (e.target.closest('input, button, [role="button"]') && e.key !== 'Escape' && e.key.toLowerCase() !== 's') return;
