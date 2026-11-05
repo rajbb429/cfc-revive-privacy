@@ -1103,7 +1103,6 @@
       },
     };
   }
-  CUSTOM.forEach((c) => { EX[`c${c.id}`] = customEx(c); });
   const HEAD_ABOUT = `<h3>Advanced: head positions</h3>
     <p>The Advanced version adds a progression through four head positions: up, down, left and right. When the app says "Next", move your head in the quiet part of the breath, then hold it still while you breathe in, hold or strain.</p>
     <ul><li>Use about half of your comfortable range, especially when looking up.</li><li>Never move your head while straining in Valsalva or Müller.</li><li>Skip the head positions if you have neck problems, and stop if you feel dizzy.</li></ul>`;
@@ -1334,6 +1333,7 @@
       ack: "I'll keep the belt comfortable and stop if anything hurts.",
     },
   };
+  CUSTOM.forEach((c) => { EX[`c${c.id}`] = customEx(c); });
 
   const SMIN = 0.7, SMAX = 1, SMID = 0.85;
   const START = { rise: SMIN, sniffs: SMIN, puffs: SMAX, full: SMAX, fall: SMAX, empty: SMIN, press: 0.97, pull: 0.72, free: SMID };
