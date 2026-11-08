@@ -9,17 +9,19 @@ and don't list keywords or use words like "best" or "#1": Play's metadata policy
 
 ## App name (max 30 characters)
 
-    4-7-8 & Box Breathing: Ribwork
+    Stress to Strong: Breathe
 
-30 characters. Leads with the two most-searched named breathing patterns, which the app
-offers free; the brand, Ribwork, stays as the home-screen label. Only name patterns the app
-really has: Play rejects misleading keywords.
+25 characters. The brand comes first so it stands apart from the many apps called
+"Breathe", and it uses plain words that Play won't spell-correct. "Stress" and "Breathe"
+are both words people search for. The home-screen label is shorter, `Stress→Strong`
+(`app_name` in `android/app/src/main/res/values/strings.xml`), so launchers don't cut it off.
+Formerly "4-7-8 & Box Breathing: Ribwork"; the package ID and in-app product ID are unchanged.
 
 ## Short description (max 80 characters)
 
-    4-7-8, box and 4-7-6-6 breathing, plus ribcage and midline breath training
+    Calm your breath, then build it: 4-7-8, long exhales, breath holds and ribs
 
-74 characters. Covers "4-7-8", "box breathing", "4-7-6-6" and the training side.
+75 characters. Says what the name means and covers the main search terms.
 
 ## Full description (max 4000 characters)
 

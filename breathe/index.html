@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Ribwork</title>
-<meta name="description" content="Ribwork breathwork for your ribcage and midline: breath training with deep breathing exercises: guided 4-7-6-6 breathing with sound, voice and vibration cues, plus resisted breathing, belt breaths, Valsalva and Müller maneuvers. Works offline, no account, no ads.">
+<title>Stress to Strong</title>
+<meta name="description" content="Stress to Strong: calm breathing first, then build your breath. 4-7-8, 4-7-6-6, cyclic sighing, long exhales, box and equal breathing, breath-hold practice, plus resisted breathing, belt breaths, Valsalva and Müller maneuvers. Works offline, no account, no ads.">
 <meta name="theme-color" content="#0e1522">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -590,7 +590,7 @@
 
 <div class="app">
   <header>
-    <div class="brand"><b>Ribwork</b><span id="brandTag">4 · 7 · 6 · 6</span></div>
+    <div class="brand"><b>Stress to Strong</b><span id="brandTag">4 · 7 · 6 · 6</span></div>
     <nav class="tools" aria-label="Menu">
       <button class="icon-btn" id="btn-menu" type="button" aria-label="Menu" aria-haspopup="dialog">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
@@ -666,7 +666,7 @@
 <dialog id="dlg-menu" aria-labelledby="menu-title">
   <div class="sheet">
     <div class="grabber"></div>
-    <div class="sheet-head"><h2 id="menu-title">Ribwork</h2><button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="sheet-head"><h2 id="menu-title">Stress to Strong</h2><button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="menu-list">
       <button class="menu-row" id="btn-info" type="button">About this breath</button>
       <button class="menu-row" id="btn-stats" type="button">Your practice</button>
@@ -1002,7 +1002,7 @@
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
   };
   const DEFAULTS = {
-    ex: '4766', minutes: 5, rounds: 3, method: 'pinched', vStrain: 10, mStrain: 8, recovery: 45,
+    ex: '478', minutes: 5, rounds: 3, method: 'pinched', vStrain: 10, mStrain: 8, recovery: 45,
     sound: 'bowl', ambience: 'none', volume: 0.7, voice: false, haptics: true, counts: false, scene: 'auto', remind: { on: false, time: '21:00' },
   };
   const set = Object.assign({}, DEFAULTS, store.get('ribwork.settings', {}));
@@ -1065,20 +1065,20 @@
   const ADV = ['4766', 'valsalva', 'muller', 'resisted', 'belt'];
   // The exercise sheet: free breaths first, then the full app.
   const EX_GROUPS = [
-    { label: 'To settle', ids: ['4766', '478', 'box', 'equal', 'hold'] },
+    { label: 'To calm', ids: ['478', '4766', 'sigh', 'long', 'equal', 'box', 'yahweh'] },
     { label: 'Your breaths', custom: true, ids: [] },
-    { label: 'To train your ribs', ids: ['yahweh', 'bunny', 'resisted', 'belt', 'valsalva', 'muller'] },
+    { label: 'To build', ids: ['hold', 'resisted', 'belt', 'valsalva', 'muller', 'bunny'] },
   ];
   const BLURB = {
-    '4766': 'Slow everything down', '478': 'Wind down for sleep', box: 'Steady under pressure', hold: 'Longer holds, step by step',
+    '4766': 'Slow everything down', '478': 'Wind down for sleep', box: 'Steady under pressure', sigh: 'Two breaths in, one long out', long: 'Out twice as long as in', hold: 'Longer holds, step by step',
     yahweh: 'A silent breath prayer', bunny: 'Quick sniffs to reset', resisted: 'Pinched nose or fist pinhole',
     belt: 'Ribs, arms and twists', valsalva: 'Bear down, then recover', muller: 'Pull in, then recover',
   };
-  const PICK_NAME = { '4766': '4-7-6-6 breathing', '478': '4-7-8 breathing', box: 'Box breathing', equal: 'Equal breathing', hold: 'Breath-hold practice', holdcheck: 'Hold check' };
+  const PICK_NAME = { '4766': '4-7-6-6 breathing', '478': '4-7-8 breathing', box: 'Box breathing', equal: 'Equal breathing', sigh: 'Cyclic sighing', long: 'Long exhale', hold: 'Breath-hold practice', holdcheck: 'Hold check' };
   // What each breath is for, in the quiet list.
   const PURPOSE = {
-    '4766': 'to slow down', '478': 'for sleep', box: 'to steady', equal: 'to balance', hold: 'to build',
-    yahweh: 'to pray', bunny: 'to reset', resisted: 'to strengthen', belt: 'to expand', valsalva: 'to brace', muller: 'to pull in',
+    '4766': 'to slow down', '478': 'for sleep', sigh: 'to calm fast', long: 'to unwind', box: 'to steady', equal: 'to balance', yahweh: 'to pray',
+    hold: 'longer holds', resisted: 'breath strength', belt: 'rib expansion', valsalva: 'to brace', muller: 'to pull in', bunny: 'to wake up',
   };
 
   // ---------- Your own breaths ----------
@@ -1162,6 +1162,35 @@
       info: {
         lead: 'In for 5, out for 5, with no holds: six breaths a minute. Matching the length of each breath in and out is one of the simplest ways to steady yourself, and the easiest place to start.',
         how: ['Sit or lie comfortably and let your shoulders drop.', 'Breathe in through your nose for 5, smoothly, without straining to fill up.', 'Breathe out for 5, just as slowly.', 'Keep it soft. If 5 feels long, it gets easier after a minute or two.'],
+        care: 'If you feel lightheaded, return to your normal breathing. This app is for relaxation and is not medical advice.',
+      },
+    },
+    sigh: {
+      name: 'Cyclic sighing', title: 'cyclic sighing', tag: 'Sigh', free: true, unit: ['sigh', 'sighs'],
+      idle: ['Breathe with me', 'two breaths in, one long breath out'],
+      lead: { d: 4, word: 'Settle in', hint: 'breathe out gently', say: 'Settle in' },
+      phases: () => [
+        { k: 'in', vis: 'rise', to: 0.9, word: 'Breathe in', d: 3, hint: 'through the nose, most of the way', say: 'Breathe in', label: 'Inhale' },
+        { k: 'in2', vis: 'rise', from: 0.9, word: 'In again', d: 1, hint: 'a short sip to top up', label: 'Top up' },
+        { k: 'out', vis: 'fall', word: 'Breathe out', d: 6, hint: 'long and slow, through the mouth', say: 'Breathe out', label: 'Exhale' },
+      ],
+      info: {
+        lead: 'Two breaths in through the nose, a long one and a short top-up, then a long, slow breath out through the mouth. Also called the physiological sigh. In a 2023 Stanford study, five minutes of cyclic sighing a day lifted mood more than the same time spent in mindfulness meditation.',
+        how: ['Breathe in through your nose until you are nearly full.', 'Take one more short sip of air through the nose to top up.', 'Let it all go slowly through your mouth, longer than the breaths in.', 'Five minutes is plenty. Keep it gentle, never forced.'],
+        care: 'If you feel lightheaded, return to your normal breathing. This app is for relaxation and is not medical advice.',
+      },
+    },
+    long: {
+      name: 'Long exhale', title: 'long-exhale breathing', tag: '4 · 8', free: true, unit: ['breath', 'breaths'],
+      idle: ['Breathe with me', 'out twice as long as in'],
+      lead: { d: 4, word: 'Settle in', hint: 'breathe out gently', say: 'Settle in' },
+      phases: () => [
+        { k: 'in', vis: 'rise', word: 'Breathe in', d: 4, hint: 'soft, through the nose', say: 'Breathe in', label: 'Inhale' },
+        { k: 'out', vis: 'fall', word: 'Breathe out', d: 8, hint: 'slowly, all the way out', say: 'Breathe out', label: 'Exhale' },
+      ],
+      info: {
+        lead: 'In for 4, out for 8. Making the breath out longer than the breath in is the simplest way to tell your body it can slow down, and it needs no holds.',
+        how: ['Breathe in through your nose for 4.', 'Breathe out for 8, through the nose or softly through pursed lips.', 'Let the end of each breath out be quiet and unhurried.', 'If 8 feels long, it gets easier after a few rounds.'],
         care: 'If you feel lightheaded, return to your normal breathing. This app is for relaxation and is not medical advice.',
       },
     },
@@ -1439,7 +1468,7 @@
     let end = 0;
     for (let i = 0; i < steps.length; i++) { end += steps[i].d; if (t < end || i === steps.length - 1) return { i, step: steps[i], left: end - t }; }
   }
-  const isMinutes = () => ['4766', '478', 'box', 'equal', 'bunny', 'yahweh', 'resisted'].includes(P.id) || !!P.ex.custom;
+  const isMinutes = () => ['4766', '478', 'box', 'equal', 'sigh', 'long', 'bunny', 'yahweh', 'resisted'].includes(P.id) || !!P.ex.custom;
   const cyclesFor = () => {
     if (P.ex.rounds) return P.ex.rounds;
     if (!isMinutes()) return set.rounds;
@@ -1832,7 +1861,7 @@
     if (!Pro.checked) status.textContent = 'Connecting to Google Play…';
     else if (canPay()) status.textContent = Pro.pending ? 'Your payment is pending in Google Play. The full app unlocks once it goes through.' : '';
     else if (isNative) status.textContent = "Couldn't connect to Google Play. Check that you're signed in to the Play Store and online.";
-    else status.textContent = 'The full app unlocks in Ribwork for Android, from Google Play.';
+    else status.textContent = 'The full app unlocks in Stress to Strong for Android, from Google Play.';
   }
   function refreshLocks() {
     el.exercises.querySelectorAll('.ex-btn').forEach((b) => {
@@ -2312,7 +2341,7 @@
   function phaseScale(st) {
     const p = P.ph[st.i], jitter = reduceMotion.matches ? 0 : 1;
     switch (p.vis) {
-      case 'rise': return lerp(SMIN, SMAX, easeInOut(st.p));
+      case 'rise': return lerp(p.from ?? SMIN, p.to ?? SMAX, easeInOut(st.p));
       case 'full': return SMAX + jitter * 0.008 * Math.sin(st.pt * 1.6);
       case 'fall': return lerp(START.fall, SMIN, easeInOut(st.p));
       case 'empty': return SMIN;
@@ -2548,7 +2577,7 @@
   $('btn-remind').addEventListener('click', () => {
     const r = set.remind || { on: false, time: '21:00' };
     $('remOn').checked = !!r.on; $('remTime').value = r.time;
-    $('remStatus').textContent = Native.notes ? '' : 'Reminders work in the Ribwork app for Android.';
+    $('remStatus').textContent = Native.notes ? '' : 'Reminders work in the Stress to Strong app for Android.';
     $('remOn').disabled = !Native.notes; $('remTime').disabled = !Native.notes;
     openDialog('dlg-remind');
   });
@@ -2563,12 +2592,12 @@
       if (perm.display !== 'granted') perm = await n.requestPermissions();
       if (perm.display !== 'granted') {
         r.on = false; saveSettings(); $('remOn').checked = false;
-        $('remStatus').textContent = 'Notifications are turned off for Ribwork. Allow them in your phone settings to get a reminder.';
+        $('remStatus').textContent = 'Notifications are turned off for Stress to Strong. Allow them in your phone settings to get a reminder.';
         return;
       }
       const [hour, minute] = r.time.split(':').map(Number);
       await n.schedule({ notifications: [{
-        id: REMIND_ID, title: 'Time to breathe', body: 'A few calm minutes with Ribwork.',
+        id: REMIND_ID, title: 'Time to breathe', body: 'A few calm minutes to breathe.',
         schedule: { on: { hour, minute }, allowWhileIdle: false }, isExactNotification: false, smallIcon: 'ic_stat_ribwork',
       }] });
       $('remStatus').textContent = `Every day at ${r.time}.`;

@@ -1,7 +1,7 @@
 {
-  "name": "Breathwork: Ribcage & Midline",
-  "short_name": "Ribwork",
-  "description": "Ribcage and breath training: 4-7-6-6 deep breathing, resisted breathing, belt breaths, Valsalva and Müller maneuvers.",
+  "name": "Stress to Strong: Breathe",
+  "short_name": "Stress→Strong",
+  "description": "Calm your breath, then build it: 4-7-8, cyclic sighing, long exhales, breath holds and ribcage training.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
